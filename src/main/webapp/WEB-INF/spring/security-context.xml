@@ -14,6 +14,7 @@
                 login-page="/contacts"
                 authentication-failure-url="/security/loginfail"
                 default-target-url="/contacts"/>
+        <security:logout logout-success-url="/contacts"/>
     </security:http>
 
     <security:authentication-manager>

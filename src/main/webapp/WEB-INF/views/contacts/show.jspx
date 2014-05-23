@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<div xmlns:jsp="http://java.sun.com/JSP/Page" 
-     xmlns:c="http://java.sun.com/jsp/jstl/core"  
+<div xmlns:jsp="http://java.sun.com/JSP/Page"
+     xmlns:c="http://java.sun.com/jsp/jstl/core"
      xmlns:spring="http://www.springframework.org/tags"
-     xmlns:form="http://www.springframework.org/tags/form"
      xmlns:joda="http://www.joda.org/joda/time/tags"
+     xmlns:sec="http://www.springframework.org/security/tags"
      version="2.0">
     <jsp:directive.page contentType="text/html;charset=UTF-8"/>
     <jsp:output omit-xml-declaration="yes"/>
@@ -51,9 +51,10 @@
                 <td><img src="${contactPhotoUrl}/${contact.id}"></img></td>
             </tr>                                                                                                         
         </table>         
-       
-        <a href="${editContactUrl}/${contact.id}?form">${labelContactUpdate}</a>     
-                      
+
+        <sec:authorize access="hasRole('ROLE_USER')">
+            <a href="${editContactUrl}/${contact.id}?form">${labelContactUpdate}</a>
+        </sec:authorize>
     </div>
 
 </div>

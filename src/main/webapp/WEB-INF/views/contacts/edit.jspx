@@ -23,13 +23,23 @@
             dateFormat: 'yy-mm-dd',
             changeYear: true
         });
-        
+
         $("#contactDescription").ckeditor(
             {
-                toolbar : 'Basic',
+                toolbar : [{
+                    name    : 'clipboard',
+                    items   : [
+                        'Cut',
+                        'Copy',
+                        'Paste',
+                        'PasteText',
+                        'PasteFromWord',
+                        '-',
+                        'Undo',
+                        'Redo']}],
                 uiColor : '#CCCCCC'
-            }              
-        );     
+            }
+        );
     });
     </script>
 
