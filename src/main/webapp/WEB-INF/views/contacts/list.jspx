@@ -39,10 +39,10 @@
                 rowList     : [10,20,30],
                 sortname    : 'firstName',
                 sortorder   : 'asc',
+                autowidth   : true,
                 viewrecords : true,
                 gridview    : true,
                 height      : "100%",
-                width       : "100%",
                 caption     : '${labelContactList}',
                 onSelectRow : function(id){
                     document.location.href ="${showContactUrl}" + id;
@@ -51,14 +51,20 @@
     });
     </script>
 
+    <div class="jumbotron">
+        <h2>${labelContactList}</h2>
+    </div>
+
     <c:if test="${not empty message}">
-        <div id="message" class="${message.type}">${message.message}</div>
+        <div class="alert alert-${message.type}">${message.message}</div>
     </c:if>
 
-    <h2>${labelContactList}</h2>
-    
     <div>
-    <table id="list"><tr><td/></tr></table> 
+        <table id="list">
+            <tr>
+                <td><jsp:text/></td>
+            </tr>
+        </table>
     </div>
-    <div id="pager"></div>  
+    <div id="pager"><jsp:text/></div>
 </div>

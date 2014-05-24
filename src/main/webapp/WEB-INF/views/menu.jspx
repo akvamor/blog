@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<div
+<div  class="bs-docs-sidebar hidden-print affix-top" role="complementary" style="position: relative;"
      xmlns:jsp="http://java.sun.com/JSP/Page"
      xmlns:spring="http://www.springframework.org/tags"
      xmlns:sec="http://www.springframework.org/security/tags"     
@@ -7,13 +7,17 @@
 	<jsp:directive.page contentType="text/html;charset=UTF-8" />
 	<jsp:output omit-xml-declaration="yes" />
 	
-	<spring:message code="menu_header_text" var="menuHeaderText"/>
 	<spring:message code="menu_add_contact" var="menuAddContact"/>
 	<spring:url value="/contacts?form" var="addContactUrl"/>
 
-    <h3>${menuHeaderText}</h3>
-    <sec:authorize access="hasRole('ROLE_USER')">
-        <a href="${addContactUrl}"><h3 id="addContactLink">${menuAddContact}</h3></a>
-    </sec:authorize>
-
+    <ul class="nav">
+        <sec:authorize access="hasRole('ROLE_USER')">
+            <li>
+                <a href="${addContactUrl}" class="list-group-item">${menuAddContact}</a>
+            </li>
+        </sec:authorize>
+        <li>
+            <a href="#js-overview">Overview</a>
+        </li>
+    </ul>
 </div>

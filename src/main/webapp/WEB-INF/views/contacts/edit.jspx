@@ -43,67 +43,59 @@
     });
     </script>
 
-    <h1>${formTitle}</h1>
-
-    <div id="contactUpdate">
-    <form:form modelAttribute="contact" id="contactUpdateForm" method="post" enctype="multipart/form-data">
-
-        <c:if test="${not empty message}">
-            <div id="message" class="${message.type}">${message.message}</div>
-        </c:if>
-
-        <form:label path="firstName">
-            ${labelContactFirstName}* 
-        </form:label>
-        <form:input path="firstName" />
-        <div>
-            <form:errors path="firstName" cssClass="error" />
-        </div>
-        <p/>
-
-        <form:label path="lastName">
-            ${labelContactLastName}* 
-        </form:label>
-        <form:input path="lastName" />
-        <div>
-            <form:errors path="lastName" cssClass="error" />
-        </div>
-        <p/>    
-
-        <form:label path="birthDate">
-            ${labelContactBirthDate}
-        </form:label>
-        <form:input path="birthDate" id="birthDate"/>    
-        <div>
-            <form:errors path="birthDate" cssClass="error" />
-        </div>        
-        <p/>
-        
-        <form:label path="description">
-            ${labelContactDescription}
-        </form:label>
-        <form:textarea cols="60" rows="8" path="description" id="contactDescription"/>
-        <div>
-            <form:errors path="description" cssClass="error" />
-        </div>        
-        <p/>            
-        
-        <label for="file">
-            ${labelContactPhoto}
-        </label>
-        <input name="file" type="file"/>
-        <p/>          
-        
-        <form:hidden path="version" />
-        
-        <button name="submit" type="submit" class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only">
-            <span class="ui-button-text">Save</span>
-        </button> 
-        <button name="reset" type="reset" class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only">
-            <span class="ui-button-text">Reset</span>
-        </button>           
-                      
-    </form:form>   
+    <div class="jumbotron">
+        <h2>${formTitle}</h2>
     </div>
 
+    <c:if test="${not empty message}">
+        <div class="alert alert-${message.type}">${message.message}</div>
+    </c:if>
+
+    <form:form modelAttribute="contact" cssClass="form-horizontal" role="form" method="post" enctype="multipart/form-data">
+
+        <form:hidden path="version" />
+        <div class="form-group">
+            <label class="col-sm-5 control-label" for="file">${labelContactPhoto}</label>
+            <div class="col-sm-7">
+                <input id="file" name="file" class="form-control" type="file"/>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-5 control-label">${labelContactFirstName}</label>
+            <div class="col-sm-7">
+                <form:input path="firstName" cssClass="form-control" />
+                <form:errors path="firstName" cssClass="error" />
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-5 control-label">${labelContactLastName}</label>
+            <div class="col-sm-7">
+                <form:input path="lastName" cssClass="form-control" />
+                <form:errors path="lastName" cssClass="error" />
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-5 control-label" for="birthDate">${labelContactBirthDate}</label>
+            <div class="col-sm-7">
+                <form:input path="birthDate" cssClass="form-control"/>
+                <form:errors path="birthDate" cssClass="error" />
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-5 control-label" for="description">${labelContactDescription}</label>
+            <div class="col-sm-7">
+                <form:textarea cssClass="form-control" cols="60" rows="8" path="description" id="contactDescription"/>
+                <form:errors path="description" cssClass="error" />
+            </div>
+        </div>
+
+        <div class="btn-group pull-right">
+            <button name="submit" type="submit" class="btn btn-default">
+                <span class="ui-button-text">Save</span>
+            </button>
+            <button name="reset" type="reset" class="btn btn-default">
+                <span class="ui-button-text">Reset</span>
+            </button>
+        </div>
+    </form:form>
 </div>

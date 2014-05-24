@@ -15,46 +15,56 @@
     <spring:message code="label_contact_description" var="labelContactDescription"/>
     <spring:message code="label_contact_update" var="labelContactUpdate"/>
     <spring:message code="date_format_pattern" var="dateFormatPattern"/>
-    
     <spring:message code="label_contact_photo" var="labelContactPhoto"/>
     
     <spring:url value="/contacts" var="editContactUrl"/>    
     <spring:url value="/contacts/photo" var="contactPhotoUrl"/>
 
-    <h1>${labelContactInfo}</h1>
-
-    <div id="contactInfo">
-
-        <c:if test="${not empty message}">
-            <div id="message" class="${message.type}">${message.message}</div>
-        </c:if>
-
-        <table>
-            <tr>
-                <td>${labelContactFirstName}</td>
-                <td>${contact.firstName}</td>
-            </tr>
-            <tr>
-                <td>${labelContactLastName}</td>
-                <td>${contact.lastName}</td>
-            </tr>   
-            <tr>
-                <td>${labelContactBirthDate}</td>
-                <td><joda:format value="${contact.birthDate}" pattern="${dateFormatPattern}"/></td>
-            </tr>
-            <tr>
-                <td>${labelContactDescription}</td>
-                <td>${contact.description}</td>
-            </tr>
-            <tr>
-                <td>${labelContactPhoto}</td>
-                <td><img src="${contactPhotoUrl}/${contact.id}"></img></td>
-            </tr>                                                                                                         
-        </table>         
-
-        <sec:authorize access="hasRole('ROLE_USER')">
-            <a href="${editContactUrl}/${contact.id}?form">${labelContactUpdate}</a>
-        </sec:authorize>
+    <div class="jumbotron">
+        <h2>${labelContactInfo}</h2>
     </div>
+
+    <c:if test="${not empty message}">
+        <div class="alert alert-${message.type}">${message.message}</div>
+    </c:if>
+
+    <form class="form-horizontal" role="form">
+        <div class="form-group">
+            <label class="col-sm-5 control-label">${labelContactPhoto}</label>
+            <div class="col-sm-7">
+                <p class="form-control-static"><img class="img-circle" src="${contactPhotoUrl}/${contact.id}"></img></p>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-5 control-label">${labelContactFirstName}</label>
+            <div class="col-sm-7">
+                <p class="form-control-static">${contact.firstName}</p>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-5 control-label">${labelContactLastName}</label>
+            <div class="col-sm-7">
+                <p class="form-control-static">${contact.lastName}</p>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-5 control-label">${labelContactBirthDate}</label>
+            <div class="col-sm-7">
+                <p class="form-control-static"><joda:format value="${contact.birthDate}" pattern="${dateFormatPattern}"/></p>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-5 control-label">${labelContactDescription}</label>
+            <div class="col-sm-7">
+                <p class="form-control-static">${contact.description}</p>
+            </div>
+        </div>
+    </form>
+
+    <sec:authorize access="hasRole('ROLE_USER')">
+        <div class="btn-group pull-right">
+            <button type="button" class="btn btn-default"><a href="${editContactUrl}/${contact.id}?form">${labelContactUpdate}</a></button>
+        </div>
+    </sec:authorize>
 
 </div>
