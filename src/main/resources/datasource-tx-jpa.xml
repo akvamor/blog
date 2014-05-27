@@ -40,10 +40,26 @@
                       entity-manager-factory-ref="emf"
                       transaction-manager-ref="transactionManager"/>    
 
-	<beans profile="dev">
+	<beans profile="test">
 	    <jdbc:embedded-database id="dataSource" type="H2">
-	        <jdbc:script location="classpath:schema.sql"/>
-	        <jdbc:script location="classpath:test-data.sql"/>    
+	        <jdbc:script location="classpath:sql/schema.sql"/>
+	        <jdbc:script location="classpath:sql/initial-data.sql"/>
 	    </jdbc:embedded-database>                      
-    </beans>           
+    </beans>
+    <beans profile="dev">
+        <bean id="dataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource" destroy-method="close">
+            <property name="driverClass" value="com.mysql.jdbc.Driver"/>
+            <property name="jdbcUrl" value="jdbc:mysql://localhost:8889/blog"/>
+            <property name="user" value="blog"/>
+            <property name="password" value="blog"/>
+        </bean>
+    </beans>
+    <beans profile="prod">
+        <bean id="dataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource" destroy-method="close">
+            <property name="driverClass" value="com.mysql.jdbc.Driver"/>
+            <property name="jdbcUrl" value="jdbc:mysql://localhost:3306/blog"/>
+            <property name="user" value="blog"/>
+            <property name="password" value="blog"/>
+        </bean>
+    </beans>
 </beans>
