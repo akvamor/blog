@@ -3,11 +3,6 @@
     <output-path>$PROJECT_DIR$/target</output-path>
     <root id="archive" name="abc.war">
       <element id="artifact" artifact-name="blog:war exploded" />
-      <element id="directory" name="WEB-INF">
-        <element id="directory" name="lib">
-          <element id="library" level="application" name="org.springframework:org.springframework.instrument.tomcat:3.1.0.RELEASE" />
-        </element>
-      </element>
     </root>
   </artifact>
 </component>

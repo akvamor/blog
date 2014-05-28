@@ -1,4 +1,4 @@
-package ua.org.project.web.controller;
+package ua.org.project.web.blogapp.controller;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
