@@ -12,6 +12,7 @@ import java.util.Set;
 @Entity
 @Table(name = "app_user")
 public class AppUser implements Serializable{
+
     private String userId;
     private String password;
     private String userName;
@@ -21,25 +22,11 @@ public class AppUser implements Serializable{
     private Date lastModifiedDate;
     private Set<Role> roles = new HashSet<Role>(0);
 
-    public AppUser(){};
+    public AppUser() {
+    }
 
-    /**
-     * Without role
-     * @param userId
-     * @param password
-     * @param createdBy
-     * @param createdDate
-     * @param lastModifiedBy
-     * @param lastModifiedDate
-     */
-    public AppUser(
-            String userId,
-            String password,
-            String createdBy,
-            Date createdDate,
-            String lastModifiedBy,
-            Date lastModifiedDate
-    ){
+    public AppUser(String userId, String password, String createdBy,
+                   Date createdDate, String lastModifiedBy, Date lastModifiedDate) {
         this.userId = userId;
         this.password = password;
         this.createdBy = createdBy;
@@ -48,27 +35,12 @@ public class AppUser implements Serializable{
         this.lastModifiedDate = lastModifiedDate;
     }
 
-    /**
-     * With role
-     * @param userId
-     * @param password
-     * @param createdBy
-     * @param createdDate
-     * @param lastModifiedBy
-     * @param lastModifiedDate
-     * @param roles
-     */
-    public AppUser(
-            String userId,
-            String password,
-            String createdBy,
-            Date createdDate,
-            String lastModifiedBy,
-            Date lastModifiedDate,
-            Set<Role> roles
-    ){
+    public AppUser(String userId, String password, String userName,
+                   String createdBy, Date createdDate, String lastModifiedBy,
+                   Date lastModifiedDate, Set<Role> roles) {
         this.userId = userId;
         this.password = password;
+        this.userName = userName;
         this.createdBy = createdBy;
         this.createdDate = createdDate;
         this.lastModifiedBy = lastModifiedBy;
@@ -79,7 +51,7 @@ public class AppUser implements Serializable{
     @Id
     @Column(name = "USER_ID")
     public String getUserId() {
-        return userId;
+        return this.userId;
     }
 
     public void setUserId(String userId) {
@@ -88,7 +60,7 @@ public class AppUser implements Serializable{
 
     @Column(name = "PASSWORD")
     public String getPassword() {
-        return password;
+        return this.password;
     }
 
     public void setPassword(String password) {
@@ -97,7 +69,7 @@ public class AppUser implements Serializable{
 
     @Column(name = "USER_NAME")
     public String getUserName() {
-        return userName;
+        return this.userName;
     }
 
     public void setUserName(String userName) {
@@ -106,17 +78,17 @@ public class AppUser implements Serializable{
 
     @Column(name = "CREATED_BY")
     public String getCreatedBy() {
-        return createdBy;
+        return this.createdBy;
     }
 
     public void setCreatedBy(String createdBy) {
         this.createdBy = createdBy;
     }
 
-    @Column(name = "CREATED_DATE")
     @Temporal(TemporalType.TIMESTAMP)
+    @Column(name = "CREATED_DATE")
     public Date getCreatedDate() {
-        return createdDate;
+        return this.createdDate;
     }
 
     public void setCreatedDate(Date createdDate) {
@@ -125,17 +97,17 @@ public class AppUser implements Serializable{
 
     @Column(name = "LAST_MODIFIED_BY")
     public String getLastModifiedBy() {
-        return lastModifiedBy;
+        return this.lastModifiedBy;
     }
 
     public void setLastModifiedBy(String lastModifiedBy) {
         this.lastModifiedBy = lastModifiedBy;
     }
 
-    @Column(name = "LAST_MODIFIED_DATE")
     @Temporal(TemporalType.TIMESTAMP)
+    @Column(name = "LAST_MODIFIED_DATE")
     public Date getLastModifiedDate() {
-        return lastModifiedDate;
+        return this.lastModifiedDate;
     }
 
     public void setLastModifiedDate(Date lastModifiedDate) {
@@ -143,13 +115,11 @@ public class AppUser implements Serializable{
     }
 
     @ManyToMany(fetch = FetchType.EAGER)
-    @JoinTable(
-            name = "user_role_detail",
+    @JoinTable(name = "user_role_detail",
             joinColumns = @JoinColumn(name = "USER_ID"),
-            inverseJoinColumns = @JoinColumn(name = "ROLE_ID")
-    )
+            inverseJoinColumns = @JoinColumn(name = "ROLE_ID"))
     public Set<Role> getRoles() {
-        return roles;
+        return this.roles;
     }
 
     public void setRoles(Set<Role> roles) {

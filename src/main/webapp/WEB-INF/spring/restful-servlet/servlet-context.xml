@@ -30,12 +30,6 @@
 
     <resources mapping="/resources/**" location="/, classpath:/META-INF/web-resources" />
 
-    <!--
-    <view-controller path="/" view-name="index"/>
-    <view-controller path="/uncaughtException"/>
-    <view-controller path="/resourceNotFound"/>
-    <view-controller path="/dataAccessFailure"/>-->
-
     <security:global-method-security pre-post-annotations="enabled"/>
 
     <default-servlet-handler/>

@@ -12,9 +12,9 @@ import java.util.List;
  */
 public interface CategoryRepository extends CrudRepository<Category, String> {
 
-    @Query("SELECT c FROM category c WHERE c.parentCategory IS NULL")
+    @Query("SELECT c FROM Category c WHERE c.parentCategory IS NULL")
     public List<Category> findAllParentCategory();
 
-    @Query("SELECT c FROM category c WHERE c.parentCategory.categoryId = :parentCategoryId")
+    @Query("SELECT c FROM Category c WHERE c.parentCategory.categoryId = :parentCategoryId")
     List<Category> findAllSubCategory(@Param("parentCategoryId") String parentCategoryId);
 }

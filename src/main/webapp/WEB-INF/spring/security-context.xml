@@ -8,25 +8,21 @@
        http://www.springframework.org/schema/security/spring-security.xsd">
 
 
-    <security:http pattern="/restful/**" create-session="stateless">
-        <security:intercept-url pattern="/**" access="ROLE_REMOTE"/>
-        <security:http-basic/>
-    </security:http>
-
     <security:http use-expressions="true">
-        <security:intercept-url pattern="blogs/*/comments/*" access="isAuthenticated"/>
         <security:intercept-url pattern="/*" access="permitAll"/>
         <security:form-login
-                login-page="/blogs"
+                login-page="/index"
                 authentication-failure-url="/security/loginfail"
-                default-target-url="/blogs"/>
-        <security:logout logout-success-url="/blogs"/>
+                default-target-url="/index"/>
+        <security:logout logout-success-url="/index"/>
     </security:http>
 
     <security:authentication-manager>
-        <security:authentication-provider user-service-ref="userDetailsService"/>
+        <security:authentication-provider>
+            <security:user-service>
+                <security:user name="user" authorities="ROLE_USER" password="user"/>
+            </security:user-service>
+        </security:authentication-provider>
     </security:authentication-manager>
-
-    <bean id="userDetailsService" class="ua.org.project.security.provider.AppUserDetailsServiceImpl" />
 
 </beans>

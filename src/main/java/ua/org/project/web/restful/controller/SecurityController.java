@@ -1,4 +1,4 @@
-package ua.org.project.web.blogapp.controller;
+package ua.org.project.web.restful.controller;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -34,6 +34,6 @@ public class SecurityController {
                                 "message_login_fail",
                                 new Object[]{},
                                 locale)));
-        return "contacts/list";
+        return "blogs/index";
     }
 }

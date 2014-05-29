@@ -27,58 +27,11 @@ public class Entry extends AbstractBlog implements Serializable {
     private Set<EntryAttachment> attachments = new HashSet<EntryAttachment>();
     private Set<Comment> comments = new HashSet<Comment>();
 
-    public Entry(){}
-
-    @NotEmpty
-    @Column(name = "CATEGORY_ID")
-    public String getCategoryId() {
-        return categoryId;
-    }
-
-    public void setCategoryId(String categoryId) {
-        this.categoryId = categoryId;
-    }
-
-    @Column(name = "SUB_CATEGORY_ID")
-    public String getSubCategoryId() {
-        return subCategoryId;
-    }
-
-    public void setSubCategoryId(String subCategoryId) {
-        this.subCategoryId = subCategoryId;
-    }
-
-    @JsonIgnore
-    @NotAudited
-    @OneToMany(
-            fetch = FetchType.LAZY,
-            mappedBy = "entry",
-            cascade = CascadeType.ALL
-    )
-    public Set<EntryAttachment> getAttachments() {
-        return attachments;
-    }
-
-    public void setAttachments(Set<EntryAttachment> attachments) {
-        this.attachments = attachments;
-    }
-
-    @JsonIgnore
-    @OneToMany(
-            fetch = FetchType.LAZY,
-            mappedBy = "entry",
-            cascade = CascadeType.ALL
-    )
-    public Set<Comment> getComments() {
-        return comments;
-    }
-
-    public void setComments(Set<Comment> comments) {
-        this.comments = comments;
+    public Entry() {
     }
 
     @Transient
-    public String getShortBody(){
+    public String getShortBody() {
         if (body.length() <= MAX_BODY_LENGTH)
             return body;
         StringBuffer result = new StringBuffer(MAX_BODY_LENGTH + 3);
@@ -88,27 +41,61 @@ public class Entry extends AbstractBlog implements Serializable {
         return result.toString();
     }
 
+    @NotEmpty
+    @Column(name = "CATEGORY_ID")
+    public String getCategoryId() {
+        return this.categoryId;
+    }
+
+    public void setCategoryId(String categoryId) {
+        this.categoryId = categoryId;
+    }
+
+    @Column(name = "SUB_CATEGORY_ID")
+    public String getSubCategoryId() {
+        return this.subCategoryId;
+    }
+
+    public void setSubCategoryId(String subCategoryId) {
+        this.subCategoryId = subCategoryId;
+    }
+
+    @JsonIgnore
+    @NotAudited
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "entry", cascade = CascadeType.ALL)
+    public Set<EntryAttachment> getAttachments() {
+        return this.attachments;
+    }
+
+    public void setAttachments(Set<EntryAttachment> attachments) {
+        this.attachments = attachments;
+    }
+
+    @JsonIgnore
+    @OneToMany(fetch = FetchType.EAGER, mappedBy = "entry", cascade = CascadeType.ALL)
+    public Set<Comment> getComments() {
+        return this.comments;
+    }
+
+    public void setComments(Set<Comment> comments) {
+        this.comments = comments;
+    }
+
     public void addComment(Comment comment) {
         comment.setEntry(this);
         getComments().add(comment);
     }
 
-    public void addAttachment(EntryAttachment entryAttachment){
-        getAttachments().add(entryAttachment);
+    public void addAttachment(EntryAttachment attachment) {
+        getAttachments().add(attachment);
     }
 
-    @Override
     public String toString() {
-        return "Entry{" +
-                "categoryId='" + categoryId + "\'\n" +
-                ", subCategoryId='" + subCategoryId + "\'\n" +
-                ", attachments=" + attachments + "\n" +
-                ", comments=" + comments +
-                '}' +
-                "Inherit properties{" +
-                "Subject='" + subject + "\'\n" +
-                "Category='" + categoryId + "\'\n" +
-                "Post Date='" + postDate + "\'\n" +
-                "Version='" + version + "}" ;
+        return "Entry id: " + id + " - subject: " + subject + " - category: " + categoryId
+                + " - post date: " + postDate
+                + " - created by: " + createdBy + " - created date: " + createdDate
+                + " - last modified by: " + lastModifiedBy + " - last modified date: " + lastModifiedDate
+                + " - version: " + version;
     }
 }
+

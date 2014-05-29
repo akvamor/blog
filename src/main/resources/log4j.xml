@@ -11,33 +11,33 @@
 	</appender>
 	
 	<!-- Application Loggers -->
-	<logger name="com.apress.prospring3">
-		<level value="info" />
+	<logger name="ua.org.project">
+		<level value="debug" />
 	</logger>
 	
 	<!-- 3rdparty Loggers -->
 	<logger name="org.springframework.core">
-		<level value="info" />
+		<level value="warn" />
 	</logger>
 	
 	<logger name="org.springframework.beans">
-		<level value="info" />
+		<level value="warn" />
 	</logger>
 	
 	<logger name="org.springframework.context">
-		<level value="info" />
+		<level value="warn" />
 	</logger>
 
 	<logger name="org.springframework.web">
-		<level value="info" />
+		<level value="warn" />
 	</logger>
     
     <logger name="org.springframework.security">
-        <level value="debug" />
+        <level value="warn" />
     </logger>      
     
     <logger name="org.hibernate.validator">
-        <level value="debug" />
+        <level value="warn" />
     </logger>    
 
 	<!-- Root Logger -->

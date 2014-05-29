@@ -12,7 +12,7 @@ import java.util.List;
  */
 public interface CommentRepository extends CrudRepository<Comment, Long> {
 
-    @Query("SELECT c FROM comment c WHERE c.entry.id = :entryId")
+    @Query("SELECT c FROM Comment c WHERE c.entry.id = :entryId")
     public List<Comment> findByEntryId(@Param("entryId") Long entryId);
 
 }

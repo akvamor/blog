@@ -2,10 +2,7 @@ package ua.org.project.domain;
 
 import ua.org.project.domain.AppUser;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
 import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
@@ -51,6 +48,7 @@ public class Role implements Serializable {
         this.description = description;
     }
 
+    @ManyToMany(fetch = FetchType.LAZY, mappedBy = "roles")
     public Set<AppUser> getAppUsers() {
         return appUsers;
     }

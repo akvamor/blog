@@ -16,9 +16,8 @@ import java.util.Set;
 @Audited
 @Table(name = "comment")
 @NamedQueries({
-        @NamedQuery(
-                name="Comment.findReplyToByEntryId",
-                query = "SELECT distinct c.postBy FROM comment c WHERE c.entry.id = :entryId")
+        @NamedQuery(name="Comment.findReplyToByEntryId",
+                query="select distinct c.postBy from Comment c where c.entry.id = :entryId")
 })
 public class Comment extends AbstractBlog implements Serializable {
 
