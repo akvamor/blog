@@ -48,4 +48,5 @@ public class EntryGrid {
     public void setEntryData(List<Entry> entryData) {
         this.entryData = entryData;
     }
+
 }

@@ -133,7 +133,7 @@ public class EntryController {
         entryGrid.setEntryData(Lists.newArrayList(entryPage.iterator()));
 
         uiModel.addAttribute("entries", entryGrid);
-
+        logger.info("Current page: " + entryGrid.getCurrentPage());
         logger.info("Count entries: " + entryPage.getTotalElements());
 
         return "blogs/list";

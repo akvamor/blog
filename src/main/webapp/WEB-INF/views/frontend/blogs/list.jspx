@@ -13,9 +13,13 @@
     <spring:message code="blog_detail" var="blogDetail"/>
     <spring:message code="date_format_pattern" var="dateFormatPattern"/>
 
+    <!-- PAGINATION -->
+    <spring:url value="/index?page=${entries.currentPage-1}" var="previousPage"/>
+    <spring:url value="/index?page=${entries.currentPage+1}" var="nextPage"/>
+    <!-- END PAGINATION -->
+
     <jsp:directive.page contentType="text/html;charset=UTF-8"/>
     <jsp:output omit-xml-declaration="yes"/>
-
 
     <div class="row">
         <c:forEach var="item" items="${entries.entryData}">
@@ -54,8 +58,14 @@
     </div>
 
     <ul class="pager">
-        <li class="previous"><a href="#"><span class="glyphicon glyphicon-arrow-left"/></a></li>
-        <li class="next"><a href="#"><span class="glyphicon glyphicon-arrow-right"/></a></li>
+        <c:if test="${entries.currentPage &lt; 2}">
+            <c:set value="disabled" var="previousCss"/>
+        </c:if>
+        <c:if test="${entries.currentPage &gt;= entries.totalPages}">
+            <c:set value="disabled" var="nextCss"/>
+        </c:if>
+        <li class="previous ${previousCss}"><a href="${previousPage}"><span class="glyphicon glyphicon-arrow-left"/></a></li>
+        <li class="next ${nextCss}"><a href="${nextPage}"><span class="glyphicon glyphicon-arrow-right"/></a></li>
     </ul>
 
 </div>
