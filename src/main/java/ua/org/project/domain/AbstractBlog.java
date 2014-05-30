@@ -5,6 +5,9 @@ import org.hibernate.annotations.Type;
 import org.hibernate.envers.Audited;
 import org.hibernate.validator.constraints.NotEmpty;
 import org.joda.time.DateTime;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.context.MessageSource;
 import org.springframework.data.domain.Auditable;
 import org.springframework.format.annotation.DateTimeFormat;
 
@@ -28,6 +31,8 @@ public class AbstractBlog implements Blog, Auditable<String, Long>, Serializable
     protected DateTime createdDate;
     protected String lastModifiedBy;
     protected DateTime lastModifiedDate;
+
+    protected int likes;
     protected int version;
 
     @Id
@@ -81,6 +86,15 @@ public class AbstractBlog implements Blog, Auditable<String, Long>, Serializable
         this.lastModifiedDate = lastModifiedDate;
     }
 
+    @Column(name = "LIKES")
+    public int getLikes() {
+        return likes;
+    }
+
+    public void setLikes(int likes) {
+        this.likes = likes;
+    }
+
     @Version
     @Column(name = "VERSION")
     public int getVersion() {
@@ -130,13 +144,13 @@ public class AbstractBlog implements Blog, Auditable<String, Long>, Serializable
     }
 
     @Transient
-    public String getPostDateString(){
-        return org.joda.time.format.DateTimeFormat.forPattern("yyyy-MM-dd").print(postDate);
+    public String getPostDateString(String format){
+        return org.joda.time.format.DateTimeFormat.forPattern(format).print(postDate);
     }
 
     @Transient
-    public String getLastModifiedDateString(){
-        return org.joda.time.format.DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss").print(this.lastModifiedDate);
+    public String getLastModifiedDateString(String format){
+        return org.joda.time.format.DateTimeFormat.forPattern(format + " HH:mm:ss").print(this.lastModifiedDate);
     }
 
     @Transient

@@ -14,6 +14,7 @@ import ua.org.project.repository.EntryRepository;
 import ua.org.project.service.EntryService;
 
 import java.util.List;
+import java.util.Locale;
 
 /**
  * Created by Dmitry Petrov on 5/28/14.
@@ -41,12 +42,10 @@ public class EntryServiceImpl implements EntryService {
         return entryRepository.findByCategoryId(categoryId);
     }
 
-
     public Entry save(Entry entry) {
         return entryRepository.save(entry);
     }
 
-    @Override
     public void delete(Entry entry) {
         entryRepository.delete(entry);
     }
@@ -62,6 +61,12 @@ public class EntryServiceImpl implements EntryService {
         String categoryId = searchCriteria.getCategoryId();
         DateTime fromPostDate = searchCriteria.getFromPostDate();
         DateTime toPostDate = searchCriteria.getToPostDate();
-        return entryRepository.findEntryByCriteria(subject, categoryId, fromPostDate, toPostDate, pageable);
+        String locale = searchCriteria.getLocale();
+        return entryRepository.findEntryByCriteria(subject, categoryId, fromPostDate, toPostDate, locale, pageable);
+    }
+
+    @Transactional(readOnly = true)
+    public Page<Entry> findEntryByLocale(String locale, Pageable pageable) {
+        return entryRepository.findEntryByLocale(locale, pageable);
     }
 }

@@ -15,6 +15,8 @@ public class SearchCriteria {
 
     private DateTime toPostDate;
 
+    private String locale;
+
     public String getSubject() {
         return subject;
     }
@@ -45,5 +47,13 @@ public class SearchCriteria {
 
     public void setToPostDate(DateTime toPostDate) {
         this.toPostDate = toPostDate;
+    }
+
+    public String getLocale() {
+        return locale;
+    }
+
+    public void setLocale(String locale) {
+        this.locale = locale;
     }
 }

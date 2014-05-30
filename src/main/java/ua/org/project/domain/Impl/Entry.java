@@ -7,6 +7,7 @@ import org.hibernate.validator.constraints.NotEmpty;
 import ua.org.project.domain.AbstractBlog;
 
 import javax.persistence.*;
+import javax.validation.constraints.Size;
 import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
@@ -19,11 +20,13 @@ import java.util.Set;
 @Table(name = "entry")
 public class Entry extends AbstractBlog implements Serializable {
 
-    private static final int MAX_BODY_LENGTH = 80;
+    private static final int MAX_BODY_LENGTH = 200;
     private static final String THREE_DOTS = "...";
 
     private String categoryId;
     private String subCategoryId;
+    private String locale;
+    private int impressions;
     private Set<EntryAttachment> attachments = new HashSet<EntryAttachment>();
     private Set<Comment> comments = new HashSet<Comment>();
 
@@ -39,6 +42,24 @@ public class Entry extends AbstractBlog implements Serializable {
         result.append(THREE_DOTS);
 
         return result.toString();
+    }
+
+    @Column(name = "LOCALE")
+    public String getLocale() {
+        return locale;
+    }
+
+    public void setLocale(String locale) {
+        this.locale = locale;
+    }
+
+    @Column(name = "IMPRESSIONS")
+    public int getImpressions() {
+        return impressions;
+    }
+
+    public void setImpressions(int impressions) {
+        this.impressions = impressions;
     }
 
     @NotEmpty

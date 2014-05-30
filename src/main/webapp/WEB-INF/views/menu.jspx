@@ -7,14 +7,12 @@
 	<jsp:directive.page contentType="text/html;charset=UTF-8" />
 	<jsp:output omit-xml-declaration="yes" />
 	
-	<spring:message code="menu_add_contact" var="menuAddContact"/>
+
 	<spring:url value="/contacts?form" var="addContactUrl"/>
 
     <ul class="nav">
         <sec:authorize access="hasRole('ROLE_USER')">
-            <li>
-                <a href="${addContactUrl}" class="list-group-item">${menuAddContact}</a>
-            </li>
+
         </sec:authorize>
         <li>
             <a href="#js-overview">Overview</a>

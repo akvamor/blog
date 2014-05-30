@@ -6,6 +6,7 @@ import ua.org.project.domain.impl.Entry;
 import ua.org.project.domain.SearchCriteria;
 
 import java.util.List;
+import java.util.Locale;
 
 /**
  * Created by Dmitry Petrov on 5/28/14.
@@ -18,4 +19,5 @@ public interface EntryService {
     public void delete(Entry entry);
     public Page<Entry> findAllByPage(Pageable pageable);
     public Page<Entry> findEntryByCriteria(SearchCriteria searchCriteria, Pageable pageable);
+    public Page<Entry> findEntryByLocale(String locale, Pageable pageable);
 }

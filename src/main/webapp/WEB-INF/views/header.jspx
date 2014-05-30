@@ -6,11 +6,15 @@
 	<jsp:directive.page contentType="text/html;charset=UTF-8" />
 	<jsp:output omit-xml-declaration="yes" />
 
-    <spring:message code="home_text" var="homeText"/>
+    <spring:message code="menu_home" var="menuHome"/>
+    <spring:message code="menu_contact" var="menuContact"/>
+    <spring:message code="menu_about" var="menuAbout"/>
+
     <spring:message code="label_en_US" var="labelEnUs"/>
-    <spring:message code="label_zh_HK" var="labelZhHk"/>
+    <spring:message code="label_uk_UA" var="labelUkUa"/>
+    <spring:message code="label_ru_RU" var="labelRuRU"/>
     <spring:message code="label_current_lang" var="labelCurrentLang"/>
-    <spring:url value="/contacts" var="homeUrl"/>
+    <spring:url value="/index" var="homeUrl"/>
 
     <spring:message code="label_logout" var="labelLogout"/>
     <spring:message code="label_login" var="labelLogin"/>
@@ -28,17 +32,18 @@
         <a class="navbar-brand" href="${homeUrl}">Analytics-It.com</a>
     </div>
     <div class="collapse navbar-collapse">
-        <ul class="nav navbar-nav nav-pills">
-            <li class="active"><a href="${homeUrl}">${homeText}</a></li>
-            <li><a href="#about">About</a></li>
-            <li><a href="#contact">Contact</a></li>
+        <ul class="nav blog-nav navbar-nav">
+            <li class="blog-nav-item active"><a href="${homeUrl}">${menuHome}</a></li>
+            <li class="blog-nav-item"><a href="#">${menuContact}</a></li>
+            <li class="blog-nav-item"><a href="#">${menuAbout}</a></li>
         </ul>
-        <ul class="nav navbar-nav nav-pills navbar-right">
+        <ul class="nav navbar-nav navbar-right">
             <li class="dropdown">
                 <a href="#" class="dropdown-toggle" data-toggle="dropdown">${labelCurrentLang}<span class="caret"><jsp:text/></span></a>
                 <ul class="dropdown-menu">
                     <li><a href="${homeUrl}?lang=en_US">${labelEnUs}</a></li>
-                    <li><a href="${homeUrl}?lang=zh_HK">${labelZhHk}</a></li>
+                    <li><a href="${homeUrl}?lang=uk_UA">${labelUkUa}</a></li>
+                    <li><a href="${homeUrl}?lang=ru_RU">${labelRuRU}</a></li>
                 </ul>
             </li>
         </ul>

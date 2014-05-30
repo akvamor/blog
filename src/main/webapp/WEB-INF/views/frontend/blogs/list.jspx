@@ -8,10 +8,54 @@
 <div xmlns:jsp="http://java.sun.com/JSP/Page"
      xmlns:c="http://java.sun.com/jsp/jstl/core"
      xmlns:spring="http://www.springframework.org/tags"
+     xmlns:joda="http://www.joda.org/joda/time/tags"
      version="2.0">
+    <spring:message code="blog_detail" var="blogDetail"/>
+    <spring:message code="date_format_pattern" var="dateFormatPattern"/>
+
     <jsp:directive.page contentType="text/html;charset=UTF-8"/>
     <jsp:output omit-xml-declaration="yes"/>
 
-    <h1>Home page!!!</h1>
+
+    <div class="row">
+        <c:forEach var="item" items="${entries.entryData}">
+            <div class="col-6 col-sm-6 col-lg-6">
+                <h3>${item.subject}</h3>
+                <p>${item.shortBody}</p>
+                <p>
+                    <ul class="list-inline blog-panel-likes">
+                        <li class="item-blue">
+                            <span>${item.createdBy}</span>
+                        </li>
+                        <li class="item-blue">
+                            <span><joda:format value="${item.postDate}" pattern="${dateFormatPattern}" /></span>
+                        </li>
+                        <li class="item-red">
+                            <span class="glyphicon glyphicon-fire"><jsp:text/></span>
+                            <span> ${item.impressions}</span>
+                        </li>
+                        <li class="item-blue">
+                            <span class="glyphicon glyphicon-heart"><jsp:text/></span>
+                            <span> ${item.likes}</span>
+                        </li>
+                        <li class="item-blue">
+                            <span class="glyphicon glyphicon-comment"><jsp:text/></span>
+                            <span>
+                                <c:if test="${not empty item.comments}"> ${item.comments.size}</c:if>
+                                <c:if test="${empty item.comments}"> 0</c:if>
+                            </span>
+                        </li>
+                    </ul>
+                </p>
+                <p><a class="btn btn-default" href="#" role="button">${blogDetail}</a></p>
+            </div><!--/span-->
+        </c:forEach>
+
+    </div>
+
+    <ul class="pager">
+        <li class="previous"><a href="#"><span class="glyphicon glyphicon-arrow-left"/></a></li>
+        <li class="next"><a href="#"><span class="glyphicon glyphicon-arrow-right"/></a></li>
+    </ul>
 
 </div>

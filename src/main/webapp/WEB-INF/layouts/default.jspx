@@ -64,24 +64,32 @@
 	</head>
 	
   	<body>
-        <header class="navbar navbar-static-top navbar-inverse" role="navigation" id="top">
+        <!-- HEAD MENU-->
+        <header class="navbar navbar-static-top blog-masthead" role="navigation" id="top">
             <tiles:insertAttribute name="header" ignore="true" />
         </header>
+
    		<div class="container">
             <div class="row">
+
+                <!-- BODY -->
                 <div class="col-xs-12 col-sm-9">
                     <tiles:insertAttribute name="body"/>
                 </div>
+
+                <!-- RIGHT MENU -->
                 <div class="col-xs-6 col-sm-3">
                     <tiles:insertAttribute name="menu" ignore="true" />
                 </div>
             </div>
             <hr/>
             <a class="back-to-top" href="#top">Back to top</a>
-            <footer>
-                <tiles:insertAttribute name="footer" ignore="true"/>
-            </footer>
 		</div>
+
+        <!-- FOOTER -->
+        <div class="blog-footer">
+            <tiles:insertAttribute name="footer" ignore="true"/>
+        </div>
         <script type="text/javascript" src="${bootstrap_js}"><jsp:text/></script>
     </body>
 </html>
