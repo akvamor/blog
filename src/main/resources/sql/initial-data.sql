@@ -25,3 +25,16 @@ insert into category values ('Hibernate', 'JPA');
 insert into category values ('Eclipse Link', 'JPA');
 insert into category values ('Collections', 'Java');
 insert into category values ('JSR-303', 'Java');
+
+INSERT INTO `ENTRY` (`ID`, `SUBJECT`, `BODY`, `POST_DATE`, `CATEGORY_ID`, `SUB_CATEGORY_ID`, `CREATED_BY`, `CREATED_DATE`, `LAST_MODIFIED_BY`, `LAST_MODIFIED_DATE`, `LOCALE`, `IMPRESSIONS`, `LIKES`, `VERSION`) VALUES
+  (1, 'sjfsdkljl', 'dsfasdfsadfsdfasdfsdafsd', '2014-05-14 00:00:00', 'Java', NULL, 'admin', '2014-05-14 00:00:00', '', '2014-05-14 00:00:00', 'ru_RU,uk_UA', 0, 0, 0),
+  (2, 'sjfsdkljl', 'dsfasdfsadfsdfasdfsdafsd', '2014-05-14 00:00:00', 'Java', NULL, 'admin', '2014-05-14 00:00:00', '', '2014-05-14 00:00:00', 'ru_RU,uk_UA', 0, 0, 0),
+  (3, 'sjfsdkljl', 'dsfasdfsadfsdfasdfsdafsd', '2014-05-14 00:00:00', 'Java', NULL, '', '2014-05-14 00:00:00', '', '2014-05-14 00:00:00', 'ru_RU,uk_UA', 0, 0, 0),
+  (4, 'sjfsdkljl', 'dsfasdfsadfsdfasdfsdafsd', '2014-05-14 00:00:00', 'Java', NULL, '', '2014-05-14 00:00:00', '', '2014-05-14 00:00:00', 'ru_RU,uk_UA', 0, 0, 0),
+  (5, 'sjfsdkljl', 'dsfasdfsadfsdfasdfsdafsd', '2014-05-14 00:00:00', 'Java', NULL, 'admin', '2014-05-14 00:00:00', '', '2014-05-14 00:00:00', 'ru_RU,uk_UA', 0, 0, 0),
+  (6, 'sjfsdkljl', 'dsfasdfsadfsdfasdfsdafsd', '2014-05-14 00:00:00', 'Java', NULL, 'admin', '2014-05-14 00:00:00', '', '2014-05-14 00:00:00', 'ru_RU,uk_UA', 0, 0, 0),
+  (7, 'sjfsdkljl', 'dsfasdfsadfsdfasdfsdafsd', '2014-05-14 00:00:00', 'Java', NULL, 'admin', '2014-05-14 00:00:00', '', '2014-05-14 00:00:00', 'ru_RU,uk_UA', 0, 0, 0),
+  (8, 'sjfsdkljl', 'dsfasdfsadfsdfasdfsdafsd', '2014-05-14 00:00:00', 'Java', NULL, 'admin', '2014-05-14 00:00:00', '', '2014-05-14 00:00:00', 'ru_RU,uk_UA,en_US', 0, 0, 0),
+  (9, 'sjfsdkljl', 'dsfasdfsadfsdfasdfsdafsd', '2014-05-14 00:00:00', 'Java', NULL, 'admin', '2014-05-14 00:00:00', '', '2014-05-14 00:00:00', 'ru_RU,uk_UA', 0, 0, 0),
+  (10, 'sjfsdkljl', 'dsfasdfsadfsdfasdfsdafsd', '2014-05-14 00:00:00', 'Java', NULL, 'admin', '2014-05-14 00:00:00', '', '2014-05-14 00:00:00', 'ru_RU,uk_UA', 0, 0, 0),
+  (11, 'sjfsdkljl', 'dsfasdfsadfsdfasdfsdafsd', '2014-05-13 00:00:00', 'Java', NULL, '', '2014-05-13 00:00:00', '', '2014-05-16 00:00:00', 'ru_RU,uk_UA', 0, 0, 0);

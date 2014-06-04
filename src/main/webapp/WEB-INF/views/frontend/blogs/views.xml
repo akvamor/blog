@@ -4,4 +4,7 @@
     <definition extends="default" name="blogs/list">
         <put-attribute name="body" value="/WEB-INF/views/frontend/blogs/list.jspx" />
     </definition>
+    <definition extends="default" name="blogs/show">
+        <put-attribute name="body" value="/WEB-INF/views/frontend/blogs/show.jspx" />
+    </definition>
 </tiles-definitions>

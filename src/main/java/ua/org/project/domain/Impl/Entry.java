@@ -20,7 +20,7 @@ import java.util.Set;
 @Table(name = "entry")
 public class Entry extends AbstractBlog implements Serializable {
 
-    private static final int MAX_BODY_LENGTH = 200;
+    private static final int MAX_BODY_LENGTH = 300;
     private static final String THREE_DOTS = "...";
 
     private String categoryId;

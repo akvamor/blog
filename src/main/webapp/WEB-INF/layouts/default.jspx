@@ -60,35 +60,39 @@
         <![endif]-->
 	
 		<spring:message code="application_name" var="app_name" htmlEscape="false"/>
-		<title><spring:message code="welcome_h3" arguments="${app_name}" /></title>
+		<title><spring:message code="welcome_title" arguments="${app_name}" /></title>
 	</head>
 	
   	<body>
-        <!-- HEAD MENU-->
-        <header class="navbar navbar-static-top blog-masthead" role="navigation" id="top">
-            <tiles:insertAttribute name="header" ignore="true" />
-        </header>
+        <div id="wrap">
+            <!-- HEAD MENU-->
+            <header class="navbar navbar-static-top blog-masthead" role="navigation" id="top">
+                <tiles:insertAttribute name="header" ignore="true" />
+            </header>
 
-   		<div class="container">
-            <div class="row">
+            <div class="container">
+                <div class="row">
 
-                <!-- BODY -->
-                <div class="col-xs-12 col-sm-9">
-                    <tiles:insertAttribute name="body"/>
+                    <!-- BODY -->
+                    <div class="col-xs-12 col-sm-9 body">
+                        <tiles:insertAttribute name="body"/>
+                    </div>
+
+                    <!-- RIGHT MENU -->
+                    <div class="col-xs-6 col-sm-3">
+                        <tiles:insertAttribute name="menu" ignore="true" />
+                    </div>
                 </div>
-
-                <!-- RIGHT MENU -->
-                <div class="col-xs-6 col-sm-3">
-                    <tiles:insertAttribute name="menu" ignore="true" />
-                </div>
+                <hr/>
+                <a class="back-to-top" href="#top">Back to top</a>
             </div>
-            <hr/>
-            <a class="back-to-top" href="#top">Back to top</a>
-		</div>
+        </div>
 
         <!-- FOOTER -->
-        <div class="blog-footer">
-            <tiles:insertAttribute name="footer" ignore="true"/>
+        <div class="blog-footer" id="footer">
+            <div class="container">
+                <tiles:insertAttribute name="footer" ignore="true"/>
+            </div>
         </div>
         <script type="text/javascript" src="${bootstrap_js}"><jsp:text/></script>
     </body>

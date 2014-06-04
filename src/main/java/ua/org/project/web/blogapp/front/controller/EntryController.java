@@ -6,13 +6,14 @@ import org.joda.time.format.DateTimeFormat;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.MessageSource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -21,14 +22,17 @@ import ua.org.project.domain.impl.Entry;
 import ua.org.project.service.CategoryService;
 import ua.org.project.service.EntryService;
 import ua.org.project.web.blogapp.front.form.EntryGrid;
+import ua.org.project.web.blogapp.front.form.UploadItem;
 
-import javax.annotation.PostConstruct;
+import javax.validation.Validator;
+import javax.validation.ConstraintViolation;
 import java.util.Locale;
+import java.util.Set;
 
 /**
  * Created by Dmitry Petrov on 5/29/14.
  */
-@RequestMapping(value={"/", "/index"})
+@RequestMapping(value={"/", "/index", "/blogs"})
 @Controller
 public class EntryController {
     final Logger logger = LoggerFactory.getLogger(EntryController.class);
@@ -45,6 +49,9 @@ public class EntryController {
 
     @Autowired
     private CategoryService categoryService;
+
+    @Autowired
+    private Validator validator;
 
     @RequestMapping(method = RequestMethod.GET)
     public String list(
@@ -137,6 +144,34 @@ public class EntryController {
         logger.info("Count entries: " + entryPage.getTotalElements());
 
         return "blogs/list";
+    }
+
+    @RequestMapping(value = "/{id}", method = RequestMethod.GET)
+    public String show(
+            @PathVariable("id") Long id,
+            Model uiModel){
+
+        Entry entry = entryService.findById(id);
+        Set<ConstraintViolation<Entry>> violations = validator.validate(entry);
+
+        if (violations.isEmpty()) {
+            entry.setImpressions(entry.getImpressions() + 1);
+            entryService.save(entry);
+        } else {
+            logger.error("Invalid post Id: {}. Invalid data, count of errors: " + violations.size(), id);
+            for (ConstraintViolation<Entry> violation : violations) {
+                logger.error("Path: " + violation.getPropertyPath()
+                        + ", message template:" + violation.getMessageTemplate()
+                        + ", message: "+ violation.getMessage());
+            }
+        }
+
+        uiModel.addAttribute("entry", entry);
+
+        UploadItem uploadItem = new UploadItem();
+        uploadItem.setBlogId(entry.getId());
+        uiModel.addAttribute("uploadItem", uploadItem);
+        return "blogs/show";
     }
 
     private String getLocaleDateFormat(Locale locale){
