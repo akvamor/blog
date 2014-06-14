@@ -7,6 +7,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
 import ua.org.project.domain.impl.CommentAttachment;
 import ua.org.project.domain.impl.EntryAttachment;
 import ua.org.project.service.CommentAttachmentService;
@@ -30,6 +31,7 @@ public class FileDownloadController {
     private CommentAttachmentService commentAttachmentService;
 
     @RequestMapping(value = "/entry/{id}", method = RequestMethod.GET, produces = "application/force-download")
+    @ResponseBody
     public byte[] downloadEntryAttachment(
             @PathVariable("id") Long id,
             HttpServletRequest request,
@@ -45,6 +47,7 @@ public class FileDownloadController {
     }
 
     @RequestMapping(value = "/comment/{id}", method = RequestMethod.GET, produces = "application/force-download")
+    @ResponseBody
     public byte[] downloadCommentAttachment(
             @PathVariable("id") Long id,
             HttpServletRequest request,

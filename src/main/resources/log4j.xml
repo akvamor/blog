@@ -40,18 +40,18 @@
         <level value="warn" />
     </logger>
 
-   <!-- <logger name="org.hibernate.jdbc">
-        <level value="info" />
+    <logger name="org.hibernate.jdbc">
+        <level value="trace" />
     </logger>
     <logger name="org.hibernate.sql">
-        <level value="info" />
+        <level value="trace" />
     </logger>
     <logger name="org.hibernate.type">
         <level value="TRACE" />
     </logger>
     <logger name="org.hibernate.type.descriptor.sql.BasicBinder">
         <level value="TRACE"/>
-    </logger>-->
+    </logger>
 
 
     <!-- Root Logger -->

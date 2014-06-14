@@ -102,11 +102,6 @@ public class EntryController {
             }
         }
 
-        if (categoryId != null) {
-            String categoryIdQuery = categoryId + "%";
-            searchCriteria.setCategoryId(categoryIdQuery);
-        }
-
         searchCriteria.setLocale("%" + locale.toString() + "%");
 
         if (rows == null) {
@@ -127,6 +122,23 @@ public class EntryController {
         }
 
         Page<Entry> entryPage;
+
+        ArrayList<Category> categories;
+        if (categoryId != null) {
+            Category currentCategory = categoryService.findById(categoryId);
+            categories = Lists.newArrayList(currentCategory.getSubCategories());
+            categories.add(currentCategory);
+        } else {
+            categories = Lists.newArrayList(categoryService.findAll());
+        }
+
+        ArrayList<String> categoriesName = new ArrayList<String>();
+        for (Category category : categories) {
+            categoriesName.add(category.getCategoryId());
+        }
+
+        searchCriteria.setCategoriesId(categoriesName);
+
         logger.info("Criteria: " + searchCriteria.toString());
         entryPage = entryService.findEntryByCriteria(searchCriteria, pageRequest);
 
@@ -136,13 +148,10 @@ public class EntryController {
         entryGrid.setTotalRecords(entryPage.getTotalElements());
         entryGrid.setEntryData(Lists.newArrayList(entryPage.iterator()));
 
-        List<Category> categories = categoryService.findAll();
+
 
         uiModel.addAttribute("entries", entryGrid);
-        logger.info("Count of categories: " + categories.size());
         uiModel.addAttribute("menu", getMenu(categoryId));
-        logger.info("Current page: " + entryGrid.getCurrentPage());
-        logger.info("Count entries: " + entryPage.getTotalElements());
 
         return "blogs/list";
     }

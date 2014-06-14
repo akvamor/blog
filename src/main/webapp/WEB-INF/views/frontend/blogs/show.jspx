@@ -116,7 +116,7 @@
     <c:if test="${not empty entry.attachments}">
         <div class="panel panel-success">
             <div class="panel-heading">${attachmentLabel}</div>
-            <table>
+            <table class="table">
             <c:forEach items="${entry.attachments}" var="attachment">
                 <tr>
                     <td><a href="${homeURL}/filedownload/entry/${attachment.id}" target="_blank"><span class="glyphicon glyphicon-file"><jsp:text/></span></a></td>

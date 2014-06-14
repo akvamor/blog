@@ -13,6 +13,7 @@ import ua.org.project.domain.impl.Entry;
 import ua.org.project.repository.EntryRepository;
 import ua.org.project.service.EntryService;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Locale;
 
@@ -58,11 +59,11 @@ public class EntryServiceImpl implements EntryService {
     @Transactional(readOnly = true)
     public Page<Entry> findEntryByCriteria(SearchCriteria searchCriteria, Pageable pageable) {
         String subject = searchCriteria.getSubject();
-        String categoryId = searchCriteria.getCategoryId();
+        Collection<String> categoriesId = searchCriteria.getCategoriesId();
         DateTime fromPostDate = searchCriteria.getFromPostDate();
         DateTime toPostDate = searchCriteria.getToPostDate();
         String locale = searchCriteria.getLocale();
-        return entryRepository.findEntryByCriteria(subject, categoryId, fromPostDate, toPostDate, locale, pageable);
+        return entryRepository.findEntryByCriteria(subject, categoriesId, fromPostDate, toPostDate, locale, pageable);
     }
 
     @Transactional(readOnly = true)
