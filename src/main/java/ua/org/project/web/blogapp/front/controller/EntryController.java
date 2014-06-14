@@ -41,7 +41,7 @@ public class EntryController {
 
     final Logger logger = LoggerFactory.getLogger(EntryController.class);
     String defaultColumnSort = "postDate";
-    int defaultCountRows = 10;
+    int defaultCountRows = 4;
     int defaultStartPage = 1;
     String defaultDateFormat = "yyyy-MM-dd";
 
@@ -63,7 +63,7 @@ public class EntryController {
      * @param locale
      * @param page
      * @param rows
-     * @param isSeach
+     * @param isSearch
      * @param subject
      * @param categoryId
      * @param fromPostDateString
@@ -76,56 +76,38 @@ public class EntryController {
             Locale locale,
             @RequestParam(value = "page",       required = false) Integer page,
             @RequestParam(value = "rows",       required = false) Integer rows,
-            @RequestParam(value = "_search",    required = false) boolean isSeach,
+            @RequestParam(value = "_search",    required = false) boolean isSearch,
             @RequestParam(value = "subject",    required = false) String subject,
             @RequestParam(value = "categoryId", required = false) String categoryId,
             @RequestParam(value = "fromPostDate",required = false) String fromPostDateString,
             @RequestParam(value = "toPostDate", required = false) String toPostDateString) {
 
         SearchCriteria searchCriteria = new SearchCriteria();
-        if (isSeach) {
+        if (isSearch) {
             String dateFormat = this.getLocaleDateFormat(locale);
 
-            logger.info("Listing blog entries");
-            logger.info("Date Format: " + locale.toString());
+            if (fromPostDateString != null) {
+                DateTime fromPostDate = DateTimeFormat.forPattern(dateFormat).parseDateTime(fromPostDateString);
+                searchCriteria.setFromPostDate(fromPostDate);
+            }
 
-            DateTime fromPostDate;
-            if (fromPostDateString == null)
-                fromPostDate = new DateTime(1900, 1, 1, 0, 0);
-            else
-                fromPostDate = DateTimeFormat.forPattern(dateFormat).parseDateTime(fromPostDateString);
+            if (toPostDateString != null) {
+                DateTime toPostDate = DateTimeFormat.forPattern(dateFormat).parseDateTime(toPostDateString);
+                searchCriteria.setToPostDate(toPostDate);
+            }
 
-            DateTime toPostDate;
-            if (toPostDateString == null)
-                toPostDate = new DateTime(2200, 12, 31, 23, 59);
-            else
-                toPostDate = DateTimeFormat.forPattern(dateFormat).parseDateTime(toPostDateString);
-
-            if (subject == null)
-                subject = "%";
-            else
+            if (subject != null) {
                 subject = "%" + subject + "%";
-
-            String categoryIdQuery = "";
-            if (categoryId == null)
-                categoryIdQuery = "%";
-            else
-                categoryIdQuery = categoryId + "%";
-
-            String localeStr = "%" + locale.toString() + "%";
-
-            searchCriteria.setSubject(subject);
-            logger.info("Subject: " + subject);
-            searchCriteria.setCategoryId(categoryIdQuery);
-            logger.info("CategoryID: " + categoryIdQuery);
-            searchCriteria.setFromPostDate(fromPostDate);
-            logger.info("From post date: " + fromPostDate);
-            searchCriteria.setToPostDate(toPostDate);
-            logger.info("To post date: " + toPostDate);
-            searchCriteria.setLocale(localeStr);
-            logger.info("Locale: " + localeStr);
+                searchCriteria.setSubject(subject);
+            }
         }
 
+        if (categoryId != null) {
+            String categoryIdQuery = categoryId + "%";
+            searchCriteria.setCategoryId(categoryIdQuery);
+        }
+
+        searchCriteria.setLocale("%" + locale.toString() + "%");
 
         if (rows == null) {
             rows = defaultCountRows;
@@ -145,11 +127,8 @@ public class EntryController {
         }
 
         Page<Entry> entryPage;
-        if (isSeach) {
-            entryPage = entryService.findEntryByCriteria(searchCriteria, pageRequest);
-        } else {
-            entryPage = entryService.findEntryByLocale("%" + locale.toString() + "%", pageRequest);
-        }
+        logger.info("Criteria: " + searchCriteria.toString());
+        entryPage = entryService.findEntryByCriteria(searchCriteria, pageRequest);
 
         EntryGrid entryGrid = new EntryGrid();
         entryGrid.setCurrentPage(entryPage.getNumber() + 1);

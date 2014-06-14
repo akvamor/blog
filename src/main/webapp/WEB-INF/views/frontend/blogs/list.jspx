@@ -14,9 +14,22 @@
     <spring:message code="date_format_pattern" var="dateFormatPattern"/>
     <spring:url value="/blogs" var="homeUrl"/>
 
+
+    <c:url var="previousURLParams" value="${homeUrl}">
+        <c:forEach var="URLParam" items="${param}">
+            <c:if test="${URLParam.key != 'page'}">
+                <c:param name="${URLParam.key}" value="${URLParam.value}"/>
+            </c:if>
+        </c:forEach>
+    </c:url>
+
     <!-- PAGINATION -->
-    <spring:url value="/blogs?page=${entries.currentPage-1}" var="previousPage"/>
-    <spring:url value="/blogs?page=${entries.currentPage+1}" var="nextPage"/>
+    <c:url var="previousPage" value="${previousURLParams}">
+        <c:param name="page" value="${entries.currentPage-1}"/>
+    </c:url>
+    <c:url var="nextPage" value="${previousURLParams}">
+        <c:param name="page" value="${entries.currentPage+1}"/>
+    </c:url>
     <!-- END PAGINATION -->
 
     <jsp:directive.page contentType="text/html;charset=UTF-8"/>

@@ -7,15 +7,15 @@ import org.joda.time.DateTime;
  */
 public class SearchCriteria {
 
-    private String subject;
+    private String subject = "%";
 
-    private String categoryId;
+    private String categoryId = "%";
 
-    private DateTime fromPostDate;
+    private DateTime fromPostDate = new DateTime(1900, 1, 1, 0, 0);;
 
-    private DateTime toPostDate;
+    private DateTime toPostDate = new DateTime(2200, 12, 31, 23, 59);;
 
-    private String locale;
+    private String locale = "%en-EN%";
 
     public String getSubject() {
         return subject;
@@ -55,5 +55,16 @@ public class SearchCriteria {
 
     public void setLocale(String locale) {
         this.locale = locale;
+    }
+
+    @Override
+    public String toString() {
+        return "SearchCriteria{" +
+                "subject='" + subject + '\'' +
+                ", categoryId='" + categoryId + '\'' +
+                ", fromPostDate=" + fromPostDate +
+                ", toPostDate=" + toPostDate +
+                ", locale='" + locale + '\'' +
+                '}';
     }
 }

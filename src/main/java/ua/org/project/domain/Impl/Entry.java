@@ -94,6 +94,7 @@ public class Entry extends AbstractBlog implements Serializable {
 
     @JsonIgnore
     @OneToMany(fetch = FetchType.EAGER, mappedBy = "entry", cascade = CascadeType.ALL)
+    @OrderBy("createdDate ASC ")
     public Set<Comment> getComments() {
         return this.comments;
     }
