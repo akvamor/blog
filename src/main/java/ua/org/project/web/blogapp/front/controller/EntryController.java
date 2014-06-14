@@ -17,24 +17,28 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import ua.org.project.domain.Category;
 import ua.org.project.domain.SearchCriteria;
 import ua.org.project.domain.impl.Entry;
 import ua.org.project.service.CategoryService;
 import ua.org.project.service.EntryService;
 import ua.org.project.web.blogapp.front.form.EntryGrid;
+import ua.org.project.web.blogapp.front.form.MenuShow;
 import ua.org.project.web.blogapp.front.form.UploadItem;
 
 import javax.validation.Validator;
 import javax.validation.ConstraintViolation;
-import java.util.Locale;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Created by Dmitry Petrov on 5/29/14.
+ *
+ * This controller is responsible for posts
  */
 @RequestMapping(value={"/", "/index", "/blogs"})
 @Controller
 public class EntryController {
+
     final Logger logger = LoggerFactory.getLogger(EntryController.class);
     String defaultColumnSort = "postDate";
     int defaultCountRows = 10;
@@ -53,6 +57,19 @@ public class EntryController {
     @Autowired
     private Validator validator;
 
+    /**
+     * Show list of Posts by criteria and without.
+     * @param uiModel
+     * @param locale
+     * @param page
+     * @param rows
+     * @param isSeach
+     * @param subject
+     * @param categoryId
+     * @param fromPostDateString
+     * @param toPostDateString
+     * @return
+     */
     @RequestMapping(method = RequestMethod.GET)
     public String list(
             Model uiModel,
@@ -89,17 +106,18 @@ public class EntryController {
             else
                 subject = "%" + subject + "%";
 
+            String categoryIdQuery = "";
             if (categoryId == null)
-                categoryId = "%";
+                categoryIdQuery = "%";
             else
-                categoryId = categoryId + "%";
+                categoryIdQuery = categoryId + "%";
 
             String localeStr = "%" + locale.toString() + "%";
 
             searchCriteria.setSubject(subject);
             logger.info("Subject: " + subject);
-            searchCriteria.setCategoryId(categoryId);
-            logger.info("CategoryID: " + categoryId);
+            searchCriteria.setCategoryId(categoryIdQuery);
+            logger.info("CategoryID: " + categoryIdQuery);
             searchCriteria.setFromPostDate(fromPostDate);
             logger.info("From post date: " + fromPostDate);
             searchCriteria.setToPostDate(toPostDate);
@@ -139,13 +157,23 @@ public class EntryController {
         entryGrid.setTotalRecords(entryPage.getTotalElements());
         entryGrid.setEntryData(Lists.newArrayList(entryPage.iterator()));
 
+        List<Category> categories = categoryService.findAll();
+
         uiModel.addAttribute("entries", entryGrid);
+        logger.info("Count of categories: " + categories.size());
+        uiModel.addAttribute("menu", getMenu(categoryId));
         logger.info("Current page: " + entryGrid.getCurrentPage());
         logger.info("Count entries: " + entryPage.getTotalElements());
 
         return "blogs/list";
     }
 
+    /**
+     * Show post Details
+     * @param id
+     * @param uiModel
+     * @return
+     */
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
     public String show(
             @PathVariable("id") Long id,
@@ -170,15 +198,47 @@ public class EntryController {
 
         UploadItem uploadItem = new UploadItem();
         uploadItem.setBlogId(entry.getId());
+
         uiModel.addAttribute("uploadItem", uploadItem);
+        uiModel.addAttribute("menu", this.getMenu(entry.getCategoryId()));
+
         return "blogs/show";
     }
 
+    /**
+     * Return date format by Locale
+     * @param locale
+     * @return
+     */
     private String getLocaleDateFormat(Locale locale){
         String dateFormat = messageSource.getMessage("date_format_pattern", new Object[]{}, locale);
         if (dateFormat == null){
             dateFormat = defaultDateFormat;
         }
         return dateFormat;
+    }
+
+    /**
+     * Return Right Menu
+     * @param categoryId
+     * @return MenuShow
+     */
+    private MenuShow getMenu(String categoryId){
+        logger.info("Get category id: " + categoryId);
+        MenuShow menu = new MenuShow();
+        List<Category> categories = categoryService.findAll();
+        Category currentCategory = null;
+        if (categoryId != null) {
+
+            currentCategory = categoryService.findById(categoryId);
+            if (currentCategory.getParentCategory() != null){
+                logger.info("Get parent category id: " + currentCategory.getParentCategory().getCategoryId());
+                menu.setParentCategory(currentCategory.getParentCategory().getCategoryId());
+            }
+        }
+        menu.setCategories(categories);
+        menu.setCurrentCategory(categoryId);
+
+        return menu;
     }
 }

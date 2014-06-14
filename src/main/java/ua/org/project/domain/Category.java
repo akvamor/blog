@@ -6,13 +6,14 @@ import javax.persistence.*;
 import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.TreeSet;
 
 /**
  * Created by Dmitry Petrov on 5/28/14.
  */
 @Entity
 @Table(name = "category")
-public class Category implements Serializable {
+public class Category implements Serializable{
     private String categoryId;
     private Category parentCategory;
     private Set<Category> subCategories = new HashSet<Category>();
@@ -56,9 +57,10 @@ public class Category implements Serializable {
 
     @JsonIgnore
     @OneToMany(
-            fetch = FetchType.LAZY,
+            fetch = FetchType.EAGER,
             mappedBy = "parentCategory"
     )
+    @OrderBy("categoryId ASC ")
     public Set<Category> getSubCategories() {
         return subCategories;
     }
@@ -66,4 +68,5 @@ public class Category implements Serializable {
     public void setSubCategories(Set<Category> subCategories) {
         this.subCategories = subCategories;
     }
+
 }

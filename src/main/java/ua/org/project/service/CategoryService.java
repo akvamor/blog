@@ -9,6 +9,7 @@ import java.util.List;
  */
 public interface CategoryService {
     public List<Category> findAll();
+    public Category findById(String id);
     public List<Category> findAllParentCategory();
     public List<Category> findAllSubCategory(String parentCategoryId);
 }

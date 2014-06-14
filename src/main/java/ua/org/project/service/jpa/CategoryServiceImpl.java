@@ -27,6 +27,11 @@ public class CategoryServiceImpl implements CategoryService{
         return Lists.newArrayList(categoryRepository.findAll());
     }
 
+    @Override
+    public Category findById(String id) {
+        return categoryRepository.findOne(id);
+    }
+
     @Transactional(readOnly = true)
     public List<Category> findAllParentCategory(){
         return categoryRepository.findAllParentCategory();
