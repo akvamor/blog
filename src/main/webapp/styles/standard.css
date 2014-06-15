@@ -229,12 +229,32 @@ h6, .h6 {
     .body .row > div {
         min-height: 350px;
     }
+    .blog-post .carousel img{
+        height: 353px !important;
+    }
 }
+@media (min-width: 1201px) {
+    .blog-post .carousel img{
+        height: 500px !important;
+    }
+}
+
 @media (min-width: 992px) and (max-width: 1200px){
     .body .row > div {
         min-height: 300px;
     }
+
+    .blog-post .carousel img{
+        height: 500px !important;
+    }
 }
+
+.blog-post .carousel img {
+    display: block;
+    margin: 0 auto;
+}
+
+
 
 /**
 * Right menu

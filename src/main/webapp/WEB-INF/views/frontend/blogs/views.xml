@@ -7,4 +7,10 @@
     <definition extends="default" name="blogs/show">
         <put-attribute name="body" value="/WEB-INF/views/frontend/blogs/show.jspx" />
     </definition>
+    <definition extends="default" name="blogs/update">
+        <put-attribute name="body" value="/WEB-INF/views/frontend/blogs/edit.jspx" />
+    </definition>
+    <definition extends="default" name="blogs/create">
+        <put-attribute name="body" value="/WEB-INF/views/frontend/blogs/edit.jspx" />
+    </definition>
 </tiles-definitions>

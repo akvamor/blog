@@ -1,35 +1,34 @@
 package ua.org.project.web.blogapp.front.form;
 
+import ua.org.project.domain.Attachment;
+import ua.org.project.domain.impl.Comment;
+import ua.org.project.domain.impl.Entry;
+
+import java.util.List;
+import java.util.Set;
+
 /**
  * Created by Dmitry Petrov on 5/31/14.
  */
 public class EntryShow {
 
-    private Long blogId;
-    private Long commentId;
-    private String uploadType;
+    private Entry entry;
 
-    public Long getBlogId() {
-        return blogId;
+    private List<String> images;
+
+    public Entry getEntry() {
+        return entry;
     }
 
-    public void setBlogId(Long blogId) {
-        this.blogId = blogId;
+    public void setEntry(Entry entry) {
+        this.entry = entry;
     }
 
-    public Long getCommentId() {
-        return commentId;
+    public List<String> getImages() {
+        return images;
     }
 
-    public void setCommentId(Long commentId) {
-        this.commentId = commentId;
-    }
-
-    public String getUploadType() {
-        return uploadType;
-    }
-
-    public void setUploadType(String uploadType) {
-        this.uploadType = uploadType;
+    public void setImages(List<String> images) {
+        this.images = images;
     }
 }

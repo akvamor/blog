@@ -5,15 +5,14 @@ import org.hibernate.annotations.Type;
 import org.hibernate.envers.Audited;
 import org.hibernate.validator.constraints.NotEmpty;
 import org.joda.time.DateTime;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.context.MessageSource;
 import org.springframework.data.domain.Auditable;
 import org.springframework.format.annotation.DateTimeFormat;
+import ua.org.project.domain.impl.EntryAttachment;
 
 import javax.persistence.*;
 import javax.validation.constraints.Size;
 import java.io.Serializable;
+import java.util.*;
 
 /**
  * Created by Dmitry Petrov on 5/27/14.
@@ -21,7 +20,7 @@ import java.io.Serializable;
 
 @MappedSuperclass
 @Audited
-public class AbstractBlog implements Blog, Auditable<String, Long>, Serializable {
+abstract public class AbstractBlog implements Blog, Auditable<String, Long>, Serializable {
 
     protected Long id;
     protected String subject;
@@ -159,5 +158,22 @@ public class AbstractBlog implements Blog, Auditable<String, Long>, Serializable
             return true;
         else
             return false;
+    }
+
+    @Transient
+    abstract public Set<Attachment> getAttachmentAbstract();
+
+    @Transient
+    public Set<Long> getImagesId(){
+        TreeSet<Long> list = new TreeSet<Long>();
+
+        Set<Attachment> attachments = this.getAttachmentAbstract();
+        for (Attachment attachment : attachments) {
+            if (attachment.getContentType().equals("image/jpeg")){
+                list.add(attachment.getId());
+            }
+        }
+        System.out.println(list.toString());
+        return list;
     }
 }

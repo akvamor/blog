@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
+import ua.org.project.domain.Attachment;
 import ua.org.project.domain.impl.CommentAttachment;
 import ua.org.project.domain.impl.EntryAttachment;
 import ua.org.project.service.CommentAttachmentService;
@@ -61,4 +62,23 @@ public class FileDownloadController {
 
         return commentAttachment.getFileData();
     }
+
+    @RequestMapping(value = "/images/{type}/{id}", method = RequestMethod.GET)
+    @ResponseBody
+    public byte[] showPhoto(
+            @PathVariable("type") String type,
+            @PathVariable("id") Long id
+    ){
+        Attachment attachment;
+        if (type.equals("entry")){
+            attachment = entryAttachmentService.findById(id);
+        } else {
+            attachment = commentAttachmentService.findById(id);
+        }
+        if (attachment.getFileData() != null) {
+            logger.info("Download photo for {}, id: {}", type, id);
+        }
+        return attachment.getFileData();
+    }
+
 }

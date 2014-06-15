@@ -1,6 +1,7 @@
 package ua.org.project.web.blogapp.front.controller;
 
 import com.google.common.collect.Lists;
+import org.apache.xpath.operations.Mod;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.slf4j.Logger;
@@ -10,22 +11,30 @@ import org.springframework.context.MessageSource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import ua.org.project.domain.Category;
 import ua.org.project.domain.SearchCriteria;
 import ua.org.project.domain.impl.Entry;
 import ua.org.project.service.CategoryService;
 import ua.org.project.service.EntryService;
 import ua.org.project.web.blogapp.front.form.EntryGrid;
+import ua.org.project.web.blogapp.front.form.EntryShow;
 import ua.org.project.web.blogapp.front.form.MenuShow;
 import ua.org.project.web.blogapp.front.form.UploadItem;
+import ua.org.project.web.form.Message;
+import ua.org.project.web.util.UrlUtil;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
 import javax.validation.Validator;
 import javax.validation.ConstraintViolation;
 import java.util.*;
@@ -228,5 +237,75 @@ public class EntryController {
         menu.setCurrentCategory(categoryId);
 
         return menu;
+    }
+
+    @PreAuthorize("isAuthenticated()")
+    @RequestMapping(params = "form", method = RequestMethod.GET)
+    public String createForm(Model uiModel){
+        Entry entry = new Entry();
+        uiModel.addAttribute("entry", entry);
+        return "blogs/create";
+    }
+
+    @RequestMapping(params="form", method = RequestMethod.POST)
+    public String create(
+            @Valid Entry entry,
+            BindingResult bindingResult,
+            Model uiModel,
+            HttpServletRequest httpServletRequest,
+            RedirectAttributes redirectAttributes,
+            Locale locale
+    ) {
+        logger.info("Create post: " + entry.getId());
+        if (bindingResult.hasErrors()) {
+            uiModel.addAttribute("message", new Message(
+                    "error",
+                    messageSource.getMessage("entry_save_fail", new Object[]{}, locale)));
+            uiModel.addAttribute("entry", entry);
+            return "blogs/create";
+        }
+        uiModel.asMap().clear();
+        redirectAttributes.addFlashAttribute("message", new Message(
+                "success",
+                messageSource.getMessage("entry_save_success", new Object[]{}, locale)));
+
+        entryService.save(entry);
+        return "redirect:/blogs/" + UrlUtil.encodeUrlPathSegment(entry.getId().toString(), httpServletRequest);
+    }
+
+
+    @PreAuthorize("isAuthenticated()")
+    @RequestMapping(value = "/{id}", params = "form", method = RequestMethod.GET)
+    public String updateForm(
+            @PathVariable("id") Long id,
+            Model uiModel
+    ){
+        uiModel.addAttribute("entry", entryService.findById(id));
+        return "blogs/update";
+    }
+
+    @RequestMapping(value = "/{id}", params = "form", method = RequestMethod.POST)
+    public String update(
+            @Valid Entry entry,
+            BindingResult bindingResult,
+            Model uiModel,
+            HttpServletRequest httpServletRequest,
+            RedirectAttributes redirectAttributes,
+            Locale locale){
+        logger.info("Updating post id: " + entry.getId());
+        if (bindingResult.hasErrors()) {
+            uiModel.addAttribute("message", new Message(
+                    "error",
+                    messageSource.getMessage("entry_save_fail", new Object[]{}, locale)));
+            uiModel.addAttribute("entry", entry);
+            return "blogs/update";
+        }
+        uiModel.asMap().clear();
+        redirectAttributes.addFlashAttribute("message", new Message(
+                "success",
+                messageSource.getMessage("entry_save_success", new Object[]{}, locale)));
+
+        entryService.save(entry);
+        return "redirect:/blogs/" + UrlUtil.encodeUrlPathSegment(entry.getId().toString(), httpServletRequest);
     }
 }

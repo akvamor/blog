@@ -27,16 +27,16 @@
 <spring:message code="label_file_upload" var="labelFileUpload"/>
 
 <spring:url value="/blogs" var="homeURL"/>
+<spring:url value="/blogs/filedownload/images" var="imageUrl" />
 
 <script type="text/javascript">
     $(document).ready(function(){
-        $('.carousel').carousel();
+        $('.carousel').carousel({
+            interval: 20000000
+        })
 
         $('#uploadEntryAttachment').click(function() {
             $('#entryAttachmentUpload').show();
-        });
-        $('.commentAttachmentUpload').click(function(event) {
-            $("#commentAttachmentUpload_" + event.target.id).show();
         });
 
         $('#dialog-audit').dialog({
@@ -85,6 +85,7 @@
 
 <h3>${entry.subject}</h3>
 
+
 <div class="blog-post">
     <c:if test="${not empty message}">
         <div class="alert alert-${message.type}">${message.message}</div>
@@ -111,7 +112,50 @@
         ${entry.body}
     </p>
 
+    <!-- Carusel -->
+    <c:if test="${not empty entry.attachments and not empty entry.getImagesId()}">
+        <div id="carousel-example-generic" class="carousel slide" data-ride="carousel">
+            <!-- Indicators -->
+            <ol class="carousel-indicators">
+                <c:set var="key" value="0"/>
+                <c:forEach items="${entry.getImagesId()}">
+                    <c:if test="${key eq 0}">
+                        <c:set value="active" var="active"/>
+                    </c:if>
+                    <c:if test="${key ne 0}">
+                        <c:remove var="active"/>
+                    </c:if>
+                    <li data-target="#carousel-example-generic" class="${active}" data-slide-to="${key}">${key}</li>
+                    <c:set var="key" value="${key+1}"/>
+                </c:forEach>
+                <c:remove var="key"/>
+            </ol>
 
+            <!-- Wrapper for slides -->
+            <div class="carousel-inner">
+                <c:forEach var="attachmentId" items="${entry.getImagesId()}">
+                    <c:set var="key" value="${key+1}"/>
+                    <c:if test="${key eq 1}">
+                        <c:set value="active" var="active"/>
+                    </c:if>
+                    <c:if test="${key ne 1}">
+                        <c:remove var="active"/>
+                    </c:if>
+                    <div class="item ${active}">
+                        <img data-src="holder.js/900x500/auto/#777:#555/" src="${imageUrl}/entry/${attachmentId}" class="centre" alt="..."/>
+                    </div>
+                </c:forEach>
+            </div>
+
+            <!-- Controls -->
+            <a class="left carousel-control" href="#carousel-example-generic" data-slide="prev">
+                <span class="glyphicon glyphicon-chevron-left"></span>
+            </a>
+            <a class="right carousel-control" href="#carousel-example-generic" data-slide="next">
+                <span class="glyphicon glyphicon-chevron-right"></span>
+            </a>
+        </div>
+    </c:if>
 
     <c:if test="${not empty entry.attachments}">
         <div class="panel panel-success">
@@ -128,31 +172,41 @@
     </c:if>
 
 
+    <!-- Control Panel -->
+    <sec:authorize access="isAuthenticated()">
+        <div class="btn-group btn-group-justified">
+            <c:if test="${entry.createdBy == pageContext.request.userPrincipal.name}">
+                <div class="btn-group">
+                    <a class="btn btn-info" href="/springblog/blogs/${entry.id}?form">Edit</a>
+                </div>
+                <div class="btn-group">
+                    <a class="btn btn-info" href="javascript:void(0);" id="uploadEntryAttachment">Upload Attachment</a>
+                </div>
+            </c:if>
+            <div class="btn-group">
+                <a class="btn btn-info" href="${homeURL}/${entry.id}/comments?form">Post a comment</a>
+            </div>
+            <sec:authorize access="hasRole('ROLE_ADMIN')">
+                <div class="btn-group">
+                    <a href="javascript:void(0);" id="${entry.id}" class="btn btn-info">View Audit History</a>
+                </div>
+            </sec:authorize>
+        </div>
+    </sec:authorize>
 
-    <sec:authorize access="isAuthenticated()">
-        <c:if test="${entry.createdBy == pageContext.request.userPrincipal.name}">
-            <a href="/springblog/blogs/${entry.id}?form">Edit</a> |
-            <a href="javascript:void(0);" id="uploadEntryAttachment">Upload Attachment</a> |
-        </c:if>
-    </sec:authorize>
-    <sec:authorize access="isAuthenticated()">
-        <a href="/springblog/blogs/${entry.id}/comments?form">Post a comment</a>
-    </sec:authorize>
-    <sec:authorize access="hasRole('ROLE_ADMIN')">
-        | <a href="javascript:void(0);" id="${entry.id}" class="viewEntryAuditLink">View Audit History</a>
-    </sec:authorize>
 
 </div>
 
 <div id="entryAttachmentUpload" hidden="true">
     <h5>${labelFileUpload}</h5>
-    <form:form action="fileupload" modelAttribute="uploadItem" name="fileuploadForm" method="post" enctype="multipart/form-data">
-
+    <form:form cssClass="form-horizontal" action="fileupload" modelAttribute="uploadItem" name="fileuploadForm" method="post" enctype="multipart/form-data">
         <input name="blogId" type="hidden" value="${entry.id}"/>
         <input name="uploadType" type="hidden" value="entry"/>
         <div class="form-group">
-            <label for="file">File</label>
-            <input name="file" type="file"/>
+            <label class="col-sm-2 control-label" for="file">File</label>
+            <div class="col-sm-10">
+                <input name="file" type="file"/>
+            </div>
         </div>
         <button type="submit" class="btn btn-default"><span class="glyphicon glyphicon-import">Upload</span></button>
     </form:form>

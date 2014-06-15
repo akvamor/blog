@@ -5,6 +5,7 @@ import org.hibernate.envers.Audited;
 import org.hibernate.envers.NotAudited;
 import org.hibernate.validator.constraints.NotEmpty;
 import ua.org.project.domain.AbstractBlog;
+import ua.org.project.domain.Attachment;
 
 import javax.persistence.*;
 import javax.validation.constraints.Size;
@@ -84,8 +85,15 @@ public class Entry extends AbstractBlog implements Serializable {
     @JsonIgnore
     @NotAudited
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "entry", cascade = CascadeType.ALL)
+    @OrderBy("id DESC ")
     public Set<EntryAttachment> getAttachments() {
         return this.attachments;
+    }
+
+    @Transient
+    public Set<Attachment> getAttachmentAbstract(){
+        Set<Attachment> attach = new HashSet<Attachment>(this.attachments);
+        return attach;
     }
 
     public void setAttachments(Set<EntryAttachment> attachments) {

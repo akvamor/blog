@@ -3,6 +3,7 @@ package ua.org.project.domain.impl;
 import org.hibernate.envers.Audited;
 import org.hibernate.envers.NotAudited;
 import ua.org.project.domain.AbstractBlog;
+import ua.org.project.domain.Attachment;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -62,6 +63,7 @@ public class Comment extends AbstractBlog implements Serializable {
             mappedBy = "comment",
             cascade = CascadeType.ALL
     )
+    @OrderBy("id DESC ")
     public Set<CommentAttachment> getAttachments() {
         return attachments;
     }
@@ -72,5 +74,11 @@ public class Comment extends AbstractBlog implements Serializable {
 
     public void setAttachments(Set<CommentAttachment> attachments) {
         this.attachments = attachments;
+    }
+
+    @Transient
+    public Set<Attachment> getAttachmentAbstract(){
+        Set<Attachment> attach = new HashSet<Attachment>(this.attachments);
+        return attach;
     }
 }
