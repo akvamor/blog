@@ -164,8 +164,6 @@ public class EntryController {
         entryGrid.setTotalRecords(entryPage.getTotalElements());
         entryGrid.setEntryData(Lists.newArrayList(entryPage.iterator()));
 
-
-
         uiModel.addAttribute("entries", entryGrid);
         uiModel.addAttribute("menu", getMenu(categoryId));
 
@@ -219,6 +217,7 @@ public class EntryController {
     public String createForm(Model uiModel, @AuthenticationPrincipal User user){
         Entry entry = new Entry();
         uiModel.addAttribute("entry", entry);
+        uiModel.addAttribute("currentDate", new DateTime());
         uiModel.addAttribute("menu", this.getMenu(entry.getCategoryId()));
         return "blogs/create";
     }
@@ -248,6 +247,7 @@ public class EntryController {
                     "danger",
                     messageSource.getMessage("message_entry_save_fail", new Object[]{}, locale)));
             uiModel.addAttribute("entry", entry);
+            uiModel.addAttribute("menu", this.getMenu(entry.getCategoryId()));
             return "blogs/create";
         }
         uiModel.asMap().clear();

@@ -1,8 +1,29 @@
+/*
+ * Globals
+ */
+
+
+h1, .h1,
+h2, .h2,
+h3, .h3,
+h4, .h4,
+h5, .h5,
+h6, .h6 {
+    margin-top: 0;
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+    font-weight: normal;
+    color: #333;
+}
+
 html,
 body {
     height: 100%;
     /* The html and body elements cannot have any padding or margin. */
+    font: 12px/18px "Lucida Grande", "Lucida Sans Unicode", Helvetica, Arial, Verdana, sans-serif !important;
+    color: #555;
+    font-size: 12px;
 }
+
 
 /* Wrapper for page content to push down footer */
 #wrap {
@@ -67,38 +88,12 @@ body {
         text-align: center;
     }
 }
-/*
- * Globals
- */
-
-body {
-    font-family: Georgia, "Times New Roman", Times, serif;
-    color: #555;
-}
-
-h1, .h1,
-h2, .h2,
-h3, .h3,
-h4, .h4,
-h5, .h5,
-h6, .h6 {
-    margin-top: 0;
-    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-    font-weight: normal;
-    color: #333;
-}
-
-
 
 /*
  * Override Bootstrap's default container.
  */
 
-@media (min-width: 1200px) {
-    .container {
-        width: 970px;
-    }
-}
+
 
 
 /*
@@ -227,7 +222,7 @@ h6, .h6 {
 
 @media (min-width: 768px) and (max-width: 991px){
     .body .row > div {
-        min-height: 350px;
+        min-height: 400px;
     }
     .blog-post .carousel img{
         height: 353px !important;
@@ -235,7 +230,7 @@ h6, .h6 {
 }
 @media (min-width: 992px) and (max-width: 1200px){
     .body .row > div {
-        min-height: 300px;
+        min-height: 328px;
     }
 
     .blog-post .carousel img{
@@ -244,7 +239,7 @@ h6, .h6 {
 }
 @media (min-width: 1201px) {
     .body .row > div {
-        min-height: 280px;
+        min-height: 273px;
     }
     .blog-post .carousel img{
         height: 563px !important;

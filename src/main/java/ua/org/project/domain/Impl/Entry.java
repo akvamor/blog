@@ -21,7 +21,7 @@ import java.util.Set;
 @Table(name = "entry")
 public class Entry extends AbstractBlog implements Serializable {
 
-    private static final int MAX_BODY_LENGTH = 300;
+    private static final int SHORT_BODY_LENGTH = 500;
     private static final String THREE_DOTS = "...";
 
     private String categoryId;
@@ -35,10 +35,10 @@ public class Entry extends AbstractBlog implements Serializable {
 
     @Transient
     public String getShortBody() {
-        if (body.length() <= MAX_BODY_LENGTH)
+        if (body.length() <= SHORT_BODY_LENGTH)
             return body;
-        StringBuffer result = new StringBuffer(MAX_BODY_LENGTH + 3);
-        result.append(body.substring(0, MAX_BODY_LENGTH));
+        StringBuffer result = new StringBuffer(SHORT_BODY_LENGTH + 3);
+        result.append(body.substring(0, SHORT_BODY_LENGTH));
         result.append(THREE_DOTS);
 
         return result.toString();

@@ -43,33 +43,33 @@
         <c:forEach var="item" items="${entries.entryData}">
             <div class="col-6 col-sm-6 col-lg-6">
                 <h4>${item.subject}</h4>
-                <p align="justify">${item.shortBody}</p>
-                <p>
-                    <ul class="list-inline blog-panel-likes">
-                        <li class="item-blue">
-                            <span>${item.createdBy}</span>
-                        </li>
-                        <li class="item-blue">
-                            <span><joda:format value="${item.postDate}" pattern="${dateFormatPattern}" /></span>
-                        </li>
-                        <li class="item-red">
-                            <span class="glyphicon glyphicon-fire"><jsp:text/></span>
-                            <span> ${item.impressions}</span>
-                        </li>
-                        <li class="item-blue">
-                            <span class="glyphicon glyphicon-heart"><jsp:text/></span>
-                            <span> ${item.likes}</span>
-                        </li>
-                        <li class="item-blue">
-                            <span class="glyphicon glyphicon-comment"><jsp:text/></span>
-                            <span>
-                                <c:if test="${not empty item.comments}"> ${item.comments.size()}</c:if>
-                                <c:if test="${empty item.comments}"> 0</c:if>
-                            </span>
-                        </li>
-                    </ul>
-                </p>
-                <p><a class="btn btn-default" href="${homeUrl}/${item.id}" role="button">${blogDetail}</a></p>
+                ${item.shortBody}
+
+                <ul class="list-inline blog-panel-likes">
+                    <li class="item-blue">
+                        <span><joda:format value="${item.postDate}" pattern="${dateFormatPattern}" /></span>
+                    </li>
+                    <li class="item-blue">
+                        <span>${item.createdBy}</span>
+                    </li>
+                    <li class="item-blue pull-right">
+                        <span class="glyphicon glyphicon-comment"><jsp:text/></span>
+                        <span>
+                            <c:if test="${not empty item.comments}"> ${item.comments.size()}</c:if>
+                            <c:if test="${empty item.comments}"> 0</c:if>
+                        </span>
+                    </li>
+                    <li class="item-blue pull-right">
+                        <span class="glyphicon glyphicon-heart"><jsp:text/></span>
+                        <span> ${item.likes}</span>
+                    </li>
+                    <li class="item-red pull-right">
+                        <span class="glyphicon glyphicon-fire"><jsp:text/></span>
+                        <span> ${item.impressions}</span>
+                    </li>
+                </ul>
+
+                <p><a class="btn btn-warning btn-xs" style="width: 30%" href="${homeUrl}/${item.id}" role="button">${blogDetail}</a></p>
             </div><!--/span-->
         </c:forEach>
 

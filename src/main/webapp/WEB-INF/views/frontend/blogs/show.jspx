@@ -85,37 +85,29 @@
 </script>
 
 <h3>${entry.subject}</h3>
-
+<hr/>
 
 <div class="blog-post">
-    <c:if test="${not empty message}">
-        <div class="alert alert-${message.type}">${message.message}</div>
-    </c:if>
-    <p>
-        <ul class="list-inline blog-panel-likes">
-            <li class="item-blue">
-                <span>${entry.createdBy}</span>
-            </li>
-            <li class="item-blue">
-                <span><joda:format value="${entry.postDate}" pattern="${dateFormatPattern}" /></span>
-            </li>
-            <li class="item-red">
-                <span class="glyphicon glyphicon-fire"><jsp:text/></span>
-                <span> ${entry.impressions}</span>
-            </li>
-            <li class="item-blue">
-                <span class="glyphicon glyphicon-heart"><jsp:text/></span>
-                <span> ${entry.likes}</span>
-            </li>
-        </ul>
-    </p>
-    <p align="justify">
-        ${entry.body}
-    </p>
 
     <!-- Carusel -->
     <c:if test="${not empty entry.attachments and not empty entry.getImagesId()}">
         <div id="carousel-generic" class="carousel slide" data-ride="carousel">
+            <!-- Indicators -->
+            <ol class="carousel-indicators">
+                <c:set var="key" value="0"/>
+                <c:forEach items="${entry.getImagesId()}">
+                    <c:if test="${key eq 0}">
+                        <c:set value="active" var="active"/>
+                    </c:if>
+                    <c:if test="${key ne 0}">
+                        <c:remove var="active"/>
+                    </c:if>
+                    <li data-target="#carousel-generic" class="${active}" data-slide-to="${key}"><jsp:text/></li>
+                    <c:set var="key" value="${key+1}"/>
+                </c:forEach>
+                <c:remove var="key"/>
+            </ol>
+
             <!-- Wrapper for slides -->
             <div class="carousel-inner">
                 <c:forEach var="attachmentId" items="${entry.getImagesId()}">
@@ -140,25 +132,16 @@
                 <span class="glyphicon glyphicon-chevron-right"></span>
             </a>
         </div>
-
-        <!-- Indicators -->
-        <ul class="pagination">
-            <c:set var="key" value="0"/>
-            <c:forEach items="${entry.getImagesId()}">
-                <c:if test="${key eq 0}">
-                    <c:set value="active" var="active"/>
-                </c:if>
-                <c:if test="${key ne 0}">
-                    <c:remove var="active"/>
-                </c:if>
-                <li data-target="#carousel-generic" class="${active} btn btn-info" data-slide-to="${key}">${key}</li>
-                <c:set var="key" value="${key+1}"/>
-            </c:forEach>
-        </ul>
-
     </c:if>
 
+    <c:if test="${not empty message}">
+        <div class="alert alert-${message.type}">${message.message}</div>
+    </c:if>
+
+    ${entry.body}
+
     <c:if test="${not empty entry.attachments}">
+        <hr/>
         <div class="panel panel-success">
             <div class="panel-heading">${attachmentLabel}</div>
             <table class="table">
@@ -172,46 +155,74 @@
         </div>
     </c:if>
 
+    <!-- Number of comments & likes & impression -->
+    <hr/>
+    <ul class="list-inline blog-panel-likes">
+        <li class="item-blue">
+            <span><joda:format value="${entry.postDate}" pattern="${dateFormatPattern}" /></span>
+        </li>
+        <li class="item-blue">
+            <span>${entry.createdBy}</span>
+        </li>
+        <li class="item-blue pull-right">
+            <span class="glyphicon glyphicon-comment"><jsp:text/></span>
+            <span>
+                <c:if test="${not empty entry.comments}"> ${entry.comments.size()}</c:if>
+                <c:if test="${empty entry.comments}"> 0</c:if>
+            </span>
+        </li>
+        <li class="item-blue pull-right">
+            <span class="glyphicon glyphicon-heart"><jsp:text/></span>
+            <span> ${entry.likes}</span>
+        </li>
+        <li class="item-red pull-right">
+            <span class="glyphicon glyphicon-fire"><jsp:text/></span>
+            <span> ${entry.impressions}</span>
+        </li>
+    </ul>
 
     <!-- Control Panel -->
     <sec:authorize access="isAuthenticated()">
         <div class="btn-group btn-group-justified">
             <c:if test="${entry.createdBy == pageContext.request.userPrincipal.name}">
                 <div class="btn-group">
-                    <a class="btn btn-info" href="${homeURL}/${entry.id}?form">Edit</a>
+                    <a class="btn btn-xs  btn-info" href="${homeURL}/${entry.id}?form">Edit</a>
                 </div>
                 <div class="btn-group">
-                    <a class="btn btn-info" href="javascript:void(0);" id="uploadEntryAttachment">Upload Attachment</a>
+                    <a class="btn btn-xs  btn-info" href="javascript:void(0);" id="uploadEntryAttachment">Upload Attachment</a>
                 </div>
             </c:if>
             <div class="btn-group">
-                <a class="btn btn-info" href="${homeURL}/${entry.id}/comments?form">Post a comment</a>
+                <a class="btn btn-xs  btn-info" href="${homeURL}/${entry.id}/comments?form">Post a comment</a>
             </div>
             <sec:authorize access="hasRole('ROLE_ADMIN')">
                 <div class="btn-group">
-                    <a href="javascript:void(0);" id="${entry.id}" class="btn btn-info">View Audit History</a>
+                    <a href="javascript:void(0);" id="${entry.id}" class="btn btn-xs btn-info">View Audit History</a>
                 </div>
             </sec:authorize>
         </div>
     </sec:authorize>
 
 
+
 </div>
 
 <div id="entryAttachmentUpload" hidden="true">
-    <h5>${labelFileUpload}</h5>
+    <hr/>
     <form:form cssClass="form-horizontal" action="fileupload" modelAttribute="uploadItem" name="fileuploadForm" method="post" enctype="multipart/form-data">
         <input name="blogId" type="hidden" value="${entry.id}"/>
         <input name="uploadType" type="hidden" value="entry"/>
         <div class="form-group">
-            <label class="col-sm-2 control-label" for="file">${labelFile}</label>
+            <label class="col-sm-2 control-label" for="file">${labelFileUpload}:</label>
             <div class="col-sm-10">
                 <input name="file" type="file" class="form-control"/>
             </div>
         </div>
-        <button type="submit" class="btn btn-default"><span class="glyphicon glyphicon-import">Upload</span></button>
+        <button type="submit" class="btn btn-primary btn-xs" style="width:100%;"><span class="glyphicon glyphicon-import">Upload</span></button>
     </form:form>
 </div>
+
+<hr/>
 
 <!-- Display comments -->
 <c:if test="${not empty entry.comments}">
