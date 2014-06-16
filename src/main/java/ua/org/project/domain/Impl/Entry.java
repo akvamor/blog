@@ -25,7 +25,6 @@ public class Entry extends AbstractBlog implements Serializable {
     private static final String THREE_DOTS = "...";
 
     private String categoryId;
-    private String subCategoryId;
     private String locale;
     private int impressions;
     private Set<EntryAttachment> attachments = new HashSet<EntryAttachment>();
@@ -46,6 +45,8 @@ public class Entry extends AbstractBlog implements Serializable {
     }
 
     @Column(name = "LOCALE")
+    @NotEmpty(message = "{validation.posting.locale.NotEmpty.message}")
+    @Size(min = 4, max = 17, message = "{validation.posting.body.Size.message}")
     public String getLocale() {
         return locale;
     }
@@ -71,15 +72,6 @@ public class Entry extends AbstractBlog implements Serializable {
 
     public void setCategoryId(String categoryId) {
         this.categoryId = categoryId;
-    }
-
-    @Column(name = "SUB_CATEGORY_ID")
-    public String getSubCategoryId() {
-        return this.subCategoryId;
-    }
-
-    public void setSubCategoryId(String subCategoryId) {
-        this.subCategoryId = subCategoryId;
     }
 
     @JsonIgnore

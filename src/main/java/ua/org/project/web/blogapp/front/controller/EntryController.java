@@ -12,6 +12,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.userdetails.User;
+import org.springframework.security.web.bind.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 
@@ -21,9 +23,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import ua.org.project.domain.AppUser;
 import ua.org.project.domain.Category;
 import ua.org.project.domain.SearchCriteria;
 import ua.org.project.domain.impl.Entry;
+import ua.org.project.service.AppUserService;
 import ua.org.project.service.CategoryService;
 import ua.org.project.service.EntryService;
 import ua.org.project.web.blogapp.front.form.EntryGrid;
@@ -39,11 +43,11 @@ import javax.validation.Validator;
 import javax.validation.ConstraintViolation;
 import java.util.*;
 
-/**
+/************************************************
  * Created by Dmitry Petrov on 5/29/14.
  *
  * This controller is responsible for posts
- */
+ ***********************************************/
 @RequestMapping(value={"/", "/index", "/blogs"})
 @Controller
 public class EntryController {
@@ -64,9 +68,12 @@ public class EntryController {
     private CategoryService categoryService;
 
     @Autowired
+    private AppUserService appUserService;
+
+    @Autowired
     private Validator validator;
 
-    /**
+    /************************************************
      * Show list of Posts by criteria and without.
      * @param uiModel
      * @param locale
@@ -78,7 +85,7 @@ public class EntryController {
      * @param fromPostDateString
      * @param toPostDateString
      * @return
-     */
+     ************************************************/
     @RequestMapping(method = RequestMethod.GET)
     public String list(
             Model uiModel,
@@ -165,12 +172,12 @@ public class EntryController {
         return "blogs/list";
     }
 
-    /**
+    /************************************************
      * Show post Details
      * @param id
      * @param uiModel
      * @return
-     */
+     ************************************************/
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
     public String show(
             @PathVariable("id") Long id,
@@ -202,11 +209,131 @@ public class EntryController {
         return "blogs/show";
     }
 
-    /**
+    /************************************************
+     * Form for creating new post
+     * @param uiModel
+     * @return
+     ************************************************/
+    @PreAuthorize("isAuthenticated()")
+    @RequestMapping(params = "form", method = RequestMethod.GET)
+    public String createForm(Model uiModel, @AuthenticationPrincipal User user){
+        Entry entry = new Entry();
+        uiModel.addAttribute("entry", entry);
+        uiModel.addAttribute("menu", this.getMenu(entry.getCategoryId()));
+        return "blogs/create";
+    }
+
+    /************************************************
+     * Process of saving new post
+     * @param entry
+     * @param bindingResult
+     * @param uiModel
+     * @param httpServletRequest
+     * @param redirectAttributes
+     * @param locale
+     * @return
+     ************************************************/
+    @RequestMapping(params="form", method = RequestMethod.POST)
+    public String create(
+            @Valid Entry entry,
+            BindingResult bindingResult,
+            Model uiModel,
+            HttpServletRequest httpServletRequest,
+            RedirectAttributes redirectAttributes,
+            Locale locale
+    ) {
+        logger.info("Create post: " + entry.getId());
+        if (bindingResult.hasErrors()) {
+            uiModel.addAttribute("message", new Message(
+                    "danger",
+                    messageSource.getMessage("message_entry_save_fail", new Object[]{}, locale)));
+            uiModel.addAttribute("entry", entry);
+            return "blogs/create";
+        }
+        uiModel.asMap().clear();
+        redirectAttributes.addFlashAttribute("message", new Message(
+                "success",
+                messageSource.getMessage("message_entry_save_success", new Object[]{}, locale)));
+
+        entryService.save(entry);
+        return "redirect:/blogs/" + UrlUtil.encodeUrlPathSegment(entry.getId().toString(), httpServletRequest);
+    }
+
+    /************************************************
+     * Form for updating post
+     * @param id
+     * @param uiModel
+     * @return
+     ************************************************/
+    @PreAuthorize("isAuthenticated()")
+    @RequestMapping(value = "/{id}", params = "form", method = RequestMethod.GET)
+    public String updateForm(
+            @PathVariable("id") Long id,
+            Model uiModel,
+            HttpServletRequest httpServletRequest,
+            RedirectAttributes redirectAttributes,
+            @AuthenticationPrincipal User user,
+            Locale locale
+    ){
+        logger.info("Get update form: " + user.toString());
+        Entry entry = entryService.findById(id);
+
+        if (!entry.getCreatedBy().equals(user.getUsername())){
+            redirectAttributes.addFlashAttribute("message", new Message(
+                    "warning",
+                    messageSource.getMessage("message_entry_access_fail", new Object[]{}, locale)));
+            return "redirect:/blogs/" + UrlUtil.encodeUrlPathSegment(entry.getId().toString(), httpServletRequest);
+        }
+        uiModel.addAttribute("entry", entry);
+        uiModel.addAttribute("currentDate", new DateTime());
+        uiModel.addAttribute("menu", this.getMenu(entry.getCategoryId()));
+        return "blogs/update";
+    }
+
+    /***********************************************
+     * Process for saving post
+     * @param entry
+     * @param bindingResult
+     * @param uiModel
+     * @param httpServletRequest
+     * @param redirectAttributes
+     * @param locale
+     * @return
+     ***********************************************/
+    @RequestMapping(value = "/{id}", params = "form", method = RequestMethod.POST)
+    public String update(
+            @Valid Entry entry,
+            BindingResult bindingResult,
+            Model uiModel,
+            HttpServletRequest httpServletRequest,
+            RedirectAttributes redirectAttributes,
+            @AuthenticationPrincipal User user,
+            Locale locale){
+
+        logger.info("Updating post id: " + entry.getId());
+        if (bindingResult.hasErrors()) {
+            uiModel.addAttribute("message", new Message(
+                    "danger",
+                    messageSource.getMessage("message_entry_save_fail", new Object[]{}, locale)));
+            logger.warn(bindingResult.getAllErrors().toString());
+            logger.warn(entry.toString());
+            uiModel.addAttribute("entry", entry);
+            uiModel.addAttribute("menu", this.getMenu(entry.getCategoryId()));
+            return "blogs/update";
+        }
+        uiModel.asMap().clear();
+        redirectAttributes.addFlashAttribute("message", new Message(
+                "success",
+                messageSource.getMessage("message_entry_save_success", new Object[]{}, locale)));
+        entryService.save(entry);
+        return "redirect:/blogs/" + UrlUtil.encodeUrlPathSegment(entry.getId().toString(), httpServletRequest);
+    }
+
+    /************************************************
      * Return date format by Locale
      * @param locale
      * @return
-     */
+     ************************************************/
     private String getLocaleDateFormat(Locale locale){
         String dateFormat = messageSource.getMessage("date_format_pattern", new Object[]{}, locale);
         if (dateFormat == null){
@@ -215,11 +342,11 @@ public class EntryController {
         return dateFormat;
     }
 
-    /**
+    /************************************************
      * Return Right Menu
      * @param categoryId
      * @return MenuShow
-     */
+     ************************************************/
     private MenuShow getMenu(String categoryId){
         logger.info("Get category id: " + categoryId);
         MenuShow menu = new MenuShow();
@@ -239,73 +366,5 @@ public class EntryController {
         return menu;
     }
 
-    @PreAuthorize("isAuthenticated()")
-    @RequestMapping(params = "form", method = RequestMethod.GET)
-    public String createForm(Model uiModel){
-        Entry entry = new Entry();
-        uiModel.addAttribute("entry", entry);
-        return "blogs/create";
-    }
 
-    @RequestMapping(params="form", method = RequestMethod.POST)
-    public String create(
-            @Valid Entry entry,
-            BindingResult bindingResult,
-            Model uiModel,
-            HttpServletRequest httpServletRequest,
-            RedirectAttributes redirectAttributes,
-            Locale locale
-    ) {
-        logger.info("Create post: " + entry.getId());
-        if (bindingResult.hasErrors()) {
-            uiModel.addAttribute("message", new Message(
-                    "error",
-                    messageSource.getMessage("entry_save_fail", new Object[]{}, locale)));
-            uiModel.addAttribute("entry", entry);
-            return "blogs/create";
-        }
-        uiModel.asMap().clear();
-        redirectAttributes.addFlashAttribute("message", new Message(
-                "success",
-                messageSource.getMessage("entry_save_success", new Object[]{}, locale)));
-
-        entryService.save(entry);
-        return "redirect:/blogs/" + UrlUtil.encodeUrlPathSegment(entry.getId().toString(), httpServletRequest);
-    }
-
-
-    @PreAuthorize("isAuthenticated()")
-    @RequestMapping(value = "/{id}", params = "form", method = RequestMethod.GET)
-    public String updateForm(
-            @PathVariable("id") Long id,
-            Model uiModel
-    ){
-        uiModel.addAttribute("entry", entryService.findById(id));
-        return "blogs/update";
-    }
-
-    @RequestMapping(value = "/{id}", params = "form", method = RequestMethod.POST)
-    public String update(
-            @Valid Entry entry,
-            BindingResult bindingResult,
-            Model uiModel,
-            HttpServletRequest httpServletRequest,
-            RedirectAttributes redirectAttributes,
-            Locale locale){
-        logger.info("Updating post id: " + entry.getId());
-        if (bindingResult.hasErrors()) {
-            uiModel.addAttribute("message", new Message(
-                    "error",
-                    messageSource.getMessage("entry_save_fail", new Object[]{}, locale)));
-            uiModel.addAttribute("entry", entry);
-            return "blogs/update";
-        }
-        uiModel.asMap().clear();
-        redirectAttributes.addFlashAttribute("message", new Message(
-                "success",
-                messageSource.getMessage("entry_save_success", new Object[]{}, locale)));
-
-        entryService.save(entry);
-        return "redirect:/blogs/" + UrlUtil.encodeUrlPathSegment(entry.getId().toString(), httpServletRequest);
-    }
 }

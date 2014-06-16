@@ -5,9 +5,9 @@
       xmlns:spring="http://www.springframework.org/tags">  
 
     <jsp:output doctype-root-element="HTML" doctype-system="about:legacy-compat" />
-    
     <jsp:directive.page contentType="text/html;charset=UTF-8" />
     <jsp:directive.page pageEncoding="UTF-8" />
+    <spring:message code="label_current_lang" var="labelCurrentLang"/>
 		
 	<head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
@@ -33,7 +33,7 @@
 
         <!-- jqGrid -->
         <spring:url value="/resources/jqGrid/css/ui.jqgrid.css" var="jqgrid_css" />
-        <spring:url value="/resources/jqGrid/js/i18n/grid.locale-en.js" var="jqgrid_locale_url" />
+        <spring:url value="/resources/jqGrid/js/i18n/grid.locale-${labelCurrentLang}.js" var="jqgrid_locale_url" />
         <spring:url value="/resources/jqGrid/js/jquery.jqGrid.min.js" var="jqgrid_url" />
         <link rel="stylesheet" type="text/css" media="screen" href="${jqgrid_css}" />
         <script type="text/javascript" src="${jqgrid_locale_url}"><jsp:text/></script>

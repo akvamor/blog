@@ -25,6 +25,7 @@
 <spring:message code="label_last_modified_by" var="labelLastModifiedBy"/>
 <spring:message code="label_attachment" var="attachmentLabel"/>
 <spring:message code="label_file_upload" var="labelFileUpload"/>
+<spring:message code="label_file" var="labelFile"/>
 
 <spring:url value="/blogs" var="homeURL"/>
 <spring:url value="/blogs/filedownload/images" var="imageUrl" />
@@ -114,23 +115,7 @@
 
     <!-- Carusel -->
     <c:if test="${not empty entry.attachments and not empty entry.getImagesId()}">
-        <div id="carousel-example-generic" class="carousel slide" data-ride="carousel">
-            <!-- Indicators -->
-            <ol class="carousel-indicators">
-                <c:set var="key" value="0"/>
-                <c:forEach items="${entry.getImagesId()}">
-                    <c:if test="${key eq 0}">
-                        <c:set value="active" var="active"/>
-                    </c:if>
-                    <c:if test="${key ne 0}">
-                        <c:remove var="active"/>
-                    </c:if>
-                    <li data-target="#carousel-example-generic" class="${active}" data-slide-to="${key}">${key}</li>
-                    <c:set var="key" value="${key+1}"/>
-                </c:forEach>
-                <c:remove var="key"/>
-            </ol>
-
+        <div id="carousel-generic" class="carousel slide" data-ride="carousel">
             <!-- Wrapper for slides -->
             <div class="carousel-inner">
                 <c:forEach var="attachmentId" items="${entry.getImagesId()}">
@@ -148,13 +133,29 @@
             </div>
 
             <!-- Controls -->
-            <a class="left carousel-control" href="#carousel-example-generic" data-slide="prev">
+            <a class="left carousel-control" href="#carousel-generic" data-slide="prev">
                 <span class="glyphicon glyphicon-chevron-left"></span>
             </a>
-            <a class="right carousel-control" href="#carousel-example-generic" data-slide="next">
+            <a class="right carousel-control" href="#carousel-generic" data-slide="next">
                 <span class="glyphicon glyphicon-chevron-right"></span>
             </a>
         </div>
+
+        <!-- Indicators -->
+        <ul class="pagination">
+            <c:set var="key" value="0"/>
+            <c:forEach items="${entry.getImagesId()}">
+                <c:if test="${key eq 0}">
+                    <c:set value="active" var="active"/>
+                </c:if>
+                <c:if test="${key ne 0}">
+                    <c:remove var="active"/>
+                </c:if>
+                <li data-target="#carousel-generic" class="${active} btn btn-info" data-slide-to="${key}">${key}</li>
+                <c:set var="key" value="${key+1}"/>
+            </c:forEach>
+        </ul>
+
     </c:if>
 
     <c:if test="${not empty entry.attachments}">
@@ -177,7 +178,7 @@
         <div class="btn-group btn-group-justified">
             <c:if test="${entry.createdBy == pageContext.request.userPrincipal.name}">
                 <div class="btn-group">
-                    <a class="btn btn-info" href="/springblog/blogs/${entry.id}?form">Edit</a>
+                    <a class="btn btn-info" href="${homeURL}/${entry.id}?form">Edit</a>
                 </div>
                 <div class="btn-group">
                     <a class="btn btn-info" href="javascript:void(0);" id="uploadEntryAttachment">Upload Attachment</a>
@@ -203,9 +204,9 @@
         <input name="blogId" type="hidden" value="${entry.id}"/>
         <input name="uploadType" type="hidden" value="entry"/>
         <div class="form-group">
-            <label class="col-sm-2 control-label" for="file">File</label>
+            <label class="col-sm-2 control-label" for="file">${labelFile}</label>
             <div class="col-sm-10">
-                <input name="file" type="file"/>
+                <input name="file" type="file" class="form-control"/>
             </div>
         </div>
         <button type="submit" class="btn btn-default"><span class="glyphicon glyphicon-import">Upload</span></button>
