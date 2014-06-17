@@ -12,12 +12,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @RequestMapping("comment")
 public class CommentController {
 
-    @PreAuthorize("isAuthenticated()")
-    public String dialog(){
+
+    public String list(){
         return "comments/dialog";
     }
 
-    @PreAuthorize("isAuthenticated()")
+
+
     public String edit(){
         return "comments/edit";
     }

@@ -1,0 +1,41 @@
+<?xml version="1.0"?>
+<mapping>
+    <class name="ua.org.project.domain.impl.Comment">
+        <map-to xml="comment"/>
+        <field name="id" type="long" required="true">
+            <bind-xml name="id" node="element"/>
+        </field>
+        <field name="entry" type="entry" handler="entryHandler" required="true">
+            <bind-xml name="entryId" node="element"/>
+        </field>
+        <field name="comment" type="comment" handler="commentHandler">
+            <bind-xml name="parentCommentId" node="element"/>
+        </field>
+        <field name="body" type="string" required="true">
+            <bind-xml name="body" node="element"/>
+        </field>
+        <field name="postDate" type="string" handler="dateHandler">
+            <bind-xml name="postDate" node="element"/>
+        </field>
+        <field name="postBy" type="string">
+            <bind-xml name="postBy" node="element"/>
+        </field>
+        <field name="createdDate" type="string" handler="dateHandler">
+            <bind-xml name="createdDate" node="element"/>
+        </field>
+        <field name="createdBy" type="string">
+            <bind-xml name="createdBy" node="element"/>
+        </field>
+        <field name="lastModifiedDate" type="string" handler="dateHandler">
+            <bind-xml name="lastModifiedDate" node="element"/>
+        </field>
+        <field name="version" type="integer">
+            <bind-xml name="version" node="element"/>
+        </field>
+    </class>
+
+    <field-handler name="dateHandler" class="ua.org.project.util.DateTimeFieldHandler"/>
+    <field-handler name="entryHandler" class="ua.org.project.util.EntryHandler"/>
+    <field-handler name="commentHandler" class="ua.org.project.util.CommentHandler"/>
+
+</mapping>
