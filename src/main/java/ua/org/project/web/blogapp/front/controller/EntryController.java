@@ -68,9 +68,6 @@ public class EntryController {
     private CategoryService categoryService;
 
     @Autowired
-    private AppUserService appUserService;
-
-    @Autowired
     private Validator validator;
 
     /************************************************

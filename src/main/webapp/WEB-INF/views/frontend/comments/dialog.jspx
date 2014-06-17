@@ -242,6 +242,9 @@
                 <li class="item-blue">
                     <span><joda:format value="${comment.postDate}" pattern="${dateFormatPatternComments}"/></span>
                 </li>
+                <li>
+                    ${comment.subject}
+                </li>
                 <li class="item-blue pull-right">
                     <span class="glyphicon glyphicon-thumbs-up"><jsp:text/></span>
                     <span> ${comment.countLikes}</span>

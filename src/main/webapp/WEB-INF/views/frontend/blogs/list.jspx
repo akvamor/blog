@@ -60,8 +60,8 @@
                         </span>
                     </li>
                     <li class="item-blue pull-right">
-                        <span class="glyphicon glyphicon-heart"><jsp:text/></span>
-                        <span> ${item.likes}</span>
+                        <span class="glyphicon glyphicon-thumbs-up"><jsp:text/></span>
+                        <span> ${item.countLikes}</span>
                     </li>
                     <li class="item-red pull-right">
                         <span class="glyphicon glyphicon-fire"><jsp:text/></span>
@@ -76,11 +76,13 @@
     </div>
 
     <ul class="pager">
-        <c:if test="${entries.currentPage &lt; 2}">
+        <c:if test="${entries.currentPage lt 2}">
             <c:set value="disabled" var="previousCss"/>
+            <c:remove var="previousPage"/>
         </c:if>
-        <c:if test="${entries.currentPage &gt;= entries.totalPages}">
+        <c:if test="${entries.currentPage ge entries.totalPages}">
             <c:set value="disabled" var="nextCss"/>
+            <c:remove var="nextPage"/>
         </c:if>
         <li class="previous ${previousCss}"><a href="${previousPage}"><span class="glyphicon glyphicon-arrow-left"/></a></li>
         <li class="next ${nextCss}"><a href="${nextPage}"><span class="glyphicon glyphicon-arrow-right"/></a></li>

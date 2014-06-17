@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!--
+Created by IntelliJ IDEA.
+User: dimon
+Date: 15.06.14
+Time: 14:43
+To change this template use File | Settings | File Templates.
+-->
+<div xmlns:jsp="http://java.sun.com/JSP/Page"
+     xmlns:c="http://java.sun.com/jsp/jstl/core"
+     xmlns:spring="http://www.springframework.org/tags"
+     xmlns:form="http://www.springframework.org/tags/form"
+     version="2.0">
+    <jsp:directive.page contentType="text/html;charset=UTF-8"/>
+    <jsp:output omit-xml-declaration="yes"/>
+
+    <spring:url value="/blogs" var="homeURL"/>
+    <spring:message code="label_blog_new" var="labelBlogNew"/>
+    <spring:message code="label_blog_update" var="labelBlogUpdate"/>
+    <spring:eval expression="entry.id == null ? labelBlogNew:labelBlogUpdate" var="postTitle"/>
+    <spring:message code="label_subject" var="labelSubject"/>
+    <spring:message code="label_category" var="labelCategory"/>
+    <spring:message code="label_body" var="labelBody"/>
+    <spring:message code="button_save" var="buttonSave"/>
+    <spring:message code="label_current_lang" var="language"/>
+    <spring:message code="label_locale" var="labelLocale"/>
+
+    <h3>${postTitle}</h3>
+
+    <div class="blog-post">
+        <c:if test="${not empty message}">
+            <div class="alert alert-${message.type}">${message.message}</div>
+        </c:if>
+
+        <form:form
+                modelAttribute="entry"
+                method="post"
+                cssClass="form-horizontal"
+                role="form">
+
+
+            <form:errors path="subject" element="div" cssClass="alert alert-warning"/>
+            <div class="form-group">
+                <form:label cssClass="col-sm-2 control-label" path="subject">${labelSubject}:</form:label>
+                <div class="col-sm-10">
+                    <form:input path="subject" cssClass="form-control"/>
+                </div>
+            </div>
+
+            <form:errors path="locale" element="div" cssClass="alert alert-warning"/>
+            <div class="form-group">
+                <form:label cssClass="col-sm-2 control-label" path="locale">${labelLocale}:</form:label>
+                <div class="col-sm-10">
+                    <form:input path="locale" cssClass="form-control"/>
+                </div>
+            </div>
+
+            <form:errors path="categoryId" element="div" cssClass="alert alert-warning"/>
+            <div class="form-group">
+                <form:label cssClass="col-sm-2 control-label" path="categoryId">${labelCategory}:</form:label>
+                <div class="col-sm-10">
+                    <form:select path="categoryId" cssClass="form-control">
+                        <c:forEach items="${menu.categories}" var="categorySelect">
+                            <c:choose>
+                                <c:when test="${categorySelect.categoryId == entry.categoryId}">
+                                    <option value="${categorySelect.categoryId}" selected="true">
+                                        ${categorySelect.categoryId}
+                                    </option>
+                                </c:when>
+                                <c:otherwise>
+                                    <option value="${categorySelect.categoryId}">
+                                        ${categorySelect.categoryId}
+                                    </option>
+                                </c:otherwise>
+                            </c:choose>
+                        </c:forEach>
+                    </form:select>
+                </div>
+            </div>
+
+
+            <form:errors path="body" element="div" cssClass="alert alert-warning"/>
+            <div class="form-group">
+                <form:label cssClass="col-sm-2 control-label" path="body">${labelBody}:</form:label>
+                <div class="col-sm-10">
+                    <form:textarea rows="100" path="body" id="postBody" cssClass="form-control"/>
+                    <script type="text/javascript">
+                        $('#postBody').ckeditor({
+                            language: '${language}',
+                            toolbarGroups : [
+                                { name: 'clipboard',   groups: [ 'clipboard', 'undo' ] },
+                                { name: 'editing',     groups: [ 'find', 'selection', 'spellchecker' ] },
+                                { name: 'forms' },
+                                '/',
+                                { name: 'basicstyles', groups: [ 'basicstyles', 'cleanup' ] },
+                                { name: 'paragraph',   groups: [ 'list', 'indent', 'blocks', 'align', 'bidi' ] },
+                                { name: 'links' },
+                                { name: 'insert' },
+                                '/',
+                                { name: 'styles' },
+                                { name: 'colors' },
+                                { name: 'tools' },
+                                { name: 'others' }
+                            ],
+                            autoGrow_minHeight : 338,
+                            uiColor: '#CCCCCC'
+                        })
+                    </script>
+                </div>
+            </div>
+
+            <form:hidden path="lastModifiedBy" value="${pageContext.request.userPrincipal.name}"/>
+            <form:hidden path="lastModifiedDate" value="${currentDate}"/>
+            <c:if test="${not empty entry.id}">
+                <form:hidden path="createdBy" />
+                <form:hidden path="createdDate"/>
+            </c:if>
+            <c:if test="${empty entry.id}">
+                <form:hidden path="createdBy" value="${pageContext.request.userPrincipal.name}"/>
+                <form:hidden path="createdDate" value="${currentDate}"/>
+            </c:if>
+
+            <form:hidden path="postDate" />
+            <form:hidden path="version"/>
+
+            <button type="submit" class="btn btn-success pull-right">
+                <span>${buttonSave}</span>
+            </button>
+
+        </form:form>
+    </div>
+
+</div>

@@ -10,6 +10,4 @@ public interface Blog {
     public void setBody(String body);
     public DateTime getPostDate();
     public void setPostDate(DateTime postDate);
-    public String getSubject();
-    public void setSubject(String subject);
 }

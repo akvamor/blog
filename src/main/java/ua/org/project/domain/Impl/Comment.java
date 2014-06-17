@@ -1,11 +1,15 @@
 package ua.org.project.domain.impl;
 
+import org.codehaus.jackson.annotate.JsonIgnore;
 import org.hibernate.envers.Audited;
 import org.hibernate.envers.NotAudited;
+import org.hibernate.validator.constraints.NotEmpty;
 import ua.org.project.domain.AbstractBlog;
+import ua.org.project.domain.AbstractLike;
 import ua.org.project.domain.Attachment;
 
 import javax.persistence.*;
+import javax.validation.constraints.Size;
 import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
@@ -16,18 +20,30 @@ import java.util.Set;
 @Entity
 @Audited
 @Table(name = "comment")
-@NamedQueries({
-        @NamedQuery(name="Comment.findReplyToByEntryId",
-                query="select distinct c.postBy from Comment c where c.entry.id = :entryId")
-})
 public class Comment extends AbstractBlog implements Serializable {
 
     private Entry entry;
-    private String replyTo;
+    private String body;
+    private Comment parentComment;
     private String postBy;
+    private Set<CommentLike> likes = new HashSet<CommentLike>();
     private Set<CommentAttachment> attachments = new HashSet<CommentAttachment>();
 
-    public  Comment(){}
+    public Comment() {
+    }
+
+    @JsonIgnore
+    @NotEmpty(message = "{validation.posting.body.NotEmpty.message}")
+    @Size(min = 10, max = 2000, message = "{validation.posting.body.Size.message}")
+    @Column(name = "BODY")
+    public String getBody() {
+        return this.body;
+    }
+
+    @Override
+    public void setBody(String body) {
+        this.body = body;
+    }
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ENTRY_ID")
@@ -39,13 +55,24 @@ public class Comment extends AbstractBlog implements Serializable {
         this.entry = entry;
     }
 
-    @Column(name = "REPLY_TO")
-    public String getReplyTo() {
-        return replyTo;
+    @OneToMany(fetch = FetchType.EAGER, mappedBy = "comment", cascade = CascadeType.ALL)
+    public Set<CommentLike> getLikes() {
+        return likes;
     }
 
-    public void setReplyTo(String replyTo) {
-        this.replyTo = replyTo;
+    public void setLikes(Set<CommentLike> likes) {
+        this.likes = likes;
+    }
+
+    @JsonIgnore
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "PARENT_COMMENT_ID")
+    public Comment getParentComment() {
+        return parentComment;
+    }
+
+    public void setParentComment(Comment parentComment) {
+        this.parentComment = parentComment;
     }
 
     @Column(name = "POST_BY")
@@ -58,27 +85,28 @@ public class Comment extends AbstractBlog implements Serializable {
     }
 
     @NotAudited
-    @OneToMany(
-            fetch = FetchType.LAZY,
-            mappedBy = "comment",
-            cascade = CascadeType.ALL
-    )
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "comment", cascade = CascadeType.ALL)
     @OrderBy("id DESC ")
     public Set<CommentAttachment> getAttachments() {
         return attachments;
-    }
-
-    public void addAttachment(CommentAttachment attachment) {
-        getAttachments().add(attachment);
     }
 
     public void setAttachments(Set<CommentAttachment> attachments) {
         this.attachments = attachments;
     }
 
+    public void addAttachment(CommentAttachment attachment) {
+        getAttachments().add(attachment);
+    }
+
     @Transient
-    public Set<Attachment> getAttachmentAbstract(){
+    public Set<Attachment> getAttachmentAbstract() {
         Set<Attachment> attach = new HashSet<Attachment>(this.attachments);
         return attach;
+    }
+
+    @Transient
+    protected Set<AbstractLike> getLikesAbstract() {
+        return new HashSet<AbstractLike>(this.likes);
     }
 }

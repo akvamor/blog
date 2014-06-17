@@ -20,19 +20,17 @@ import java.util.*;
 
 @MappedSuperclass
 @Audited
-abstract public class AbstractBlog implements Blog, Auditable<String, Long>, Serializable {
+public abstract class AbstractBlog implements Blog, Auditable<String, Long>, Serializable {
 
     protected Long id;
-    protected String subject;
-    protected String body;
     protected DateTime postDate;
     protected String createdBy;
     protected DateTime createdDate;
     protected String lastModifiedBy;
     protected DateTime lastModifiedDate;
-
-    protected int likes;
     protected int version;
+    protected Integer countLikes;
+    protected Integer countNotLikes;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -86,15 +84,6 @@ abstract public class AbstractBlog implements Blog, Auditable<String, Long>, Ser
         this.lastModifiedDate = lastModifiedDate;
     }
 
-    @Column(name = "LIKES")
-    public int getLikes() {
-        return likes;
-    }
-
-    public void setLikes(int likes) {
-        this.likes = likes;
-    }
-
     @Version
     @Column(name = "VERSION")
     public int getVersion() {
@@ -105,18 +94,6 @@ abstract public class AbstractBlog implements Blog, Auditable<String, Long>, Ser
         this.version = version;
     }
 
-    @JsonIgnore
-    @NotEmpty(message = "{validation.posting.body.NotEmpty.message}")
-    @Size(min = 10, max = 2000, message = "{validation.posting.body.Size.message}")
-    @Column(name = "BODY")
-    public String getBody() {
-        return this.body;
-    }
-
-    @Override
-    public void setBody(String body) {
-        this.body = body;
-    }
 
     @Column(name = "POST_DATE")
     @Type(type = "org.joda.time.contrib.hibernate.PersistentDateTime")
@@ -130,18 +107,7 @@ abstract public class AbstractBlog implements Blog, Auditable<String, Long>, Ser
         this.postDate = postDate;
     }
 
-    @Override
-    @Column(name = "SUBJECT")
-    @NotEmpty(message = "{validation.posting.subject.NotEmpty.message}}")
-    @Size(min = 10, max = 50, message = "{validation.posting.subject.Size.message}}")
-    public String getSubject() {
-        return this.subject;
-    }
 
-    @Override
-    public void setSubject(String subject) {
-        this.subject = subject;
-    }
 
     @Transient
     public String getPostDateString(String format){
@@ -162,7 +128,10 @@ abstract public class AbstractBlog implements Blog, Auditable<String, Long>, Ser
     }
 
     @Transient
-    abstract public Set<Attachment> getAttachmentAbstract();
+    abstract protected Set<Attachment> getAttachmentAbstract();
+
+    @Transient
+    abstract protected Set<AbstractLike> getLikesAbstract();
 
     @Transient
     public Set<Long> getImagesId(){
@@ -176,5 +145,38 @@ abstract public class AbstractBlog implements Blog, Auditable<String, Long>, Ser
         }
 
         return list;
+    }
+
+    @Transient
+    public Integer getCountLikes(){
+        Integer result = 0;
+        if (this.countLikes == null) {
+            for (AbstractLike abstractLike : this.getLikesAbstract()) {
+                if (abstractLike.getLike() > 0){
+                    result++;
+                }
+            }
+            this.countLikes = result;
+        } else {
+            result = this.countLikes;
+        }
+
+        return result;
+    }
+
+    @Transient
+    public Integer getCountNotLikes(){
+        Integer result = 0;
+        if (this.countNotLikes == null) {
+            for (AbstractLike abstractLike : this.getLikesAbstract()) {
+                if (abstractLike.getLike() < 0){
+                    result++;
+                }
+            }
+            this.countNotLikes = result;
+        } else {
+            result = this.countNotLikes;
+        }
+        return result;
     }
 }

@@ -5,6 +5,7 @@ import org.hibernate.envers.Audited;
 import org.hibernate.envers.NotAudited;
 import org.hibernate.validator.constraints.NotEmpty;
 import ua.org.project.domain.AbstractBlog;
+import ua.org.project.domain.AbstractLike;
 import ua.org.project.domain.Attachment;
 
 import javax.persistence.*;
@@ -26,8 +27,11 @@ public class Entry extends AbstractBlog implements Serializable {
 
     private String categoryId;
     private String locale;
+    private String subject;
+    private String body;
     private int impressions;
     private Set<EntryAttachment> attachments = new HashSet<EntryAttachment>();
+    private Set<EntryLike> likes = new HashSet<EntryLike>();
     private Set<Comment> comments = new HashSet<Comment>();
 
     public Entry() {
@@ -43,6 +47,31 @@ public class Entry extends AbstractBlog implements Serializable {
 
         return result.toString();
     }
+
+    @Column(name = "SUBJECT")
+    @NotEmpty(message = "{validation.posting.subject.NotEmpty.message}}")
+    @Size(min = 10, max = 50, message = "{validation.posting.subject.Size.message}}")
+    public String getSubject() {
+        return this.subject;
+    }
+
+    public void setSubject(String subject) {
+        this.subject = subject;
+    }
+
+    @JsonIgnore
+    @NotEmpty(message = "{validation.posting.body.NotEmpty.message}")
+    @Size(min = 10, message = "{validation.posting.body.Size.message}")
+    @Column(name = "BODY")
+    public String getBody() {
+        return this.body;
+    }
+
+    @Override
+    public void setBody(String body) {
+        this.body = body;
+    }
+
 
     @Column(name = "LOCALE")
     @NotEmpty(message = "{validation.posting.locale.NotEmpty.message}")
@@ -82,12 +111,6 @@ public class Entry extends AbstractBlog implements Serializable {
         return this.attachments;
     }
 
-    @Transient
-    public Set<Attachment> getAttachmentAbstract(){
-        Set<Attachment> attach = new HashSet<Attachment>(this.attachments);
-        return attach;
-    }
-
     public void setAttachments(Set<EntryAttachment> attachments) {
         this.attachments = attachments;
     }
@@ -99,6 +122,22 @@ public class Entry extends AbstractBlog implements Serializable {
         return this.comments;
     }
 
+    @JsonIgnore
+    @OneToMany(fetch = FetchType.EAGER, mappedBy = "entry", cascade = CascadeType.ALL)
+    public Set<EntryLike> getLikes() {
+        return likes;
+    }
+
+    public void setLikes(Set<EntryLike> likes) {
+        this.likes = likes;
+    }
+
+    @Transient
+    public Set<Attachment> getAttachmentAbstract(){
+        Set<Attachment> attach = new HashSet<Attachment>(this.attachments);
+        return attach;
+    }
+
     public void setComments(Set<Comment> comments) {
         this.comments = comments;
     }
@@ -106,6 +145,11 @@ public class Entry extends AbstractBlog implements Serializable {
     public void addComment(Comment comment) {
         comment.setEntry(this);
         getComments().add(comment);
+    }
+
+    @Transient
+    protected Set<AbstractLike> getLikesAbstract() {
+        return new HashSet<AbstractLike>(this.likes);
     }
 
     public void addAttachment(EntryAttachment attachment) {
