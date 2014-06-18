@@ -29,8 +29,8 @@ public abstract class AbstractBlog implements Blog, Auditable<String, Long>, Ser
     protected String lastModifiedBy;
     protected DateTime lastModifiedDate;
     protected int version;
-    protected Integer countLikes;
-    protected Integer countNotLikes;
+    protected Long countLikes;
+    protected Long countNotLikes;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -107,7 +107,23 @@ public abstract class AbstractBlog implements Blog, Auditable<String, Long>, Ser
         this.postDate = postDate;
     }
 
+    @Transient
+    public Long getCountLikes() {
+        return countLikes;
+    }
 
+    public void setCountLikes(Long countLikes) {
+        this.countLikes = countLikes;
+    }
+
+    @Transient
+    public Long getCountNotLikes() {
+        return countNotLikes;
+    }
+
+    public void setCountNotLikes(Long countNotLikes) {
+        this.countNotLikes = countNotLikes;
+    }
 
     @Transient
     public String getPostDateString(String format){
@@ -131,9 +147,6 @@ public abstract class AbstractBlog implements Blog, Auditable<String, Long>, Ser
     abstract protected Set<Attachment> getAttachmentAbstract();
 
     @Transient
-    abstract protected Set<AbstractLike> getLikesAbstract();
-
-    @Transient
     public Set<Long> getImagesId(){
         TreeSet<Long> list = new TreeSet<Long>();
 
@@ -147,36 +160,5 @@ public abstract class AbstractBlog implements Blog, Auditable<String, Long>, Ser
         return list;
     }
 
-    @Transient
-    public Integer getCountLikes(){
-        Integer result = 0;
-        if (this.countLikes == null) {
-            for (AbstractLike abstractLike : this.getLikesAbstract()) {
-                if (abstractLike.getLike() > 0){
-                    result++;
-                }
-            }
-            this.countLikes = result;
-        } else {
-            result = this.countLikes;
-        }
 
-        return result;
-    }
-
-    @Transient
-    public Integer getCountNotLikes(){
-        Integer result = 0;
-        if (this.countNotLikes == null) {
-            for (AbstractLike abstractLike : this.getLikesAbstract()) {
-                if (abstractLike.getLike() < 0){
-                    result++;
-                }
-            }
-            this.countNotLikes = result;
-        } else {
-            result = this.countNotLikes;
-        }
-        return result;
-    }
 }

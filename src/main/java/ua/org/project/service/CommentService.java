@@ -10,7 +10,7 @@ import java.util.List;
 public interface CommentService {
     public Comment findById(Long id);
     public List<Comment> findByEntryId(Long entryId);
+    public List<Comment> findByParentId(Long commentId);
     public Comment save(Comment comment);
     public void delete(Comment comment);
-    public List<String> findReplyToByEntryId(Long entryId);
 }

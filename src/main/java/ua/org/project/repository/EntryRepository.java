@@ -15,12 +15,17 @@ import java.util.List;
  * Created by Dmitry Petrov on 5/28/14.
  */
 public interface EntryRepository extends PagingAndSortingRepository<Entry, Long> {
-    public List<Entry> findByCategoryId(String categoryId);
 
-    @Query("select e from Entry e where e.subject like :subject and e.categoryId in :categoryId and e.locale like :locale and e.postDate between :fromPostDate and :toPostDate")
+    @Query("select e from Entry e where e.categoryId like :categoryId and e.locale like :locale ")
+    public Page<Entry> findByCategoryId(
+            @Param("categoryId")String categoryId,
+            @Param("locale") String locale,
+            Pageable pageable);
+
+    @Query("select e from Entry e where e.subject like :subject and e.categoryId like :categoryId and e.locale like :locale and e.postDate between :fromPostDate and :toPostDate")
     public Page<Entry> findEntryByCriteria(
             @Param("subject") String subject,
-            @Param("categoryId") Collection<String> categoryId,
+            @Param("categoryId") String categoryId,
             @Param("fromPostDate") DateTime fromPostDate,
             @Param("toPostDate") DateTime toPostDate,
             @Param("locale") String locale,

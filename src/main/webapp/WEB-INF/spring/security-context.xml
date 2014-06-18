@@ -14,8 +14,8 @@
 
 
     <security:http use-expressions="true">
-        <security:intercept-url pattern="/*" access="permitAll"/>
-        <security:intercept-url pattern='/index/*/comments/*' access='isAuthenticated()'/>
+        <security:intercept-url pattern="/images" access="permitAll"/>
+        <security:intercept-url pattern='/comment/*' access='isAuthenticated()'/>
         <security:form-login
                 login-page="/index"
                 authentication-failure-url="/security/loginfail"

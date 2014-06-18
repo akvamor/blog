@@ -10,8 +10,6 @@
 		http://www.springframework.org/schema/context
 		http://www.springframework.org/schema/context/spring-context-3.1.xsd">
 
-    <context:component-scan base-package="ua.org.project.web.blogapp.front.controller"/>
-
     <beans:import resource="servlet-context.xml"/>
 
     <beans:bean class="org.springframework.web.servlet.view.tiles2.TilesConfigurer" id="tilesConfigurer">
@@ -22,6 +20,22 @@
                 <beans:value>/WEB-INF/views/frontend/**/views.xml</beans:value>
             </beans:list>
         </beans:property>
+    </beans:bean>
+
+    <annotation-driven>
+        <message-converters>
+            <beans:bean class="org.springframework.http.converter.json.MappingJacksonHttpMessageConverter"/>
+            <beans:bean class="org.springframework.http.converter.xml.MarshallingHttpMessageConverter">
+                <beans:property name="marshaller" ref="castorMarshaller"/>
+                <beans:property name="unmarshaller" ref="castorMarshaller"/>
+            </beans:bean>
+        </message-converters>
+    </annotation-driven>
+
+    <context:component-scan base-package="ua.org.project.web.blogapp.front.controller"/>
+
+    <beans:bean id="castorMarshaller" class="org.springframework.oxm.castor.CastorMarshaller">
+        <beans:property name="mappingLocation" value="classpath:oxm-mapping.xml"/>
     </beans:bean>
 
 </beans:beans>

@@ -116,14 +116,14 @@ public class Entry extends AbstractBlog implements Serializable {
     }
 
     @JsonIgnore
-    @OneToMany(fetch = FetchType.EAGER, mappedBy = "entry", cascade = CascadeType.ALL)
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "entry", cascade = CascadeType.ALL)
     @OrderBy("createdDate DESC ")
     public Set<Comment> getComments() {
         return this.comments;
     }
 
     @JsonIgnore
-    @OneToMany(fetch = FetchType.EAGER, mappedBy = "entry", cascade = CascadeType.ALL)
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "entry", cascade = CascadeType.ALL)
     public Set<EntryLike> getLikes() {
         return likes;
     }
@@ -145,11 +145,6 @@ public class Entry extends AbstractBlog implements Serializable {
     public void addComment(Comment comment) {
         comment.setEntry(this);
         getComments().add(comment);
-    }
-
-    @Transient
-    protected Set<AbstractLike> getLikesAbstract() {
-        return new HashSet<AbstractLike>(this.likes);
     }
 
     public void addAttachment(EntryAttachment attachment) {

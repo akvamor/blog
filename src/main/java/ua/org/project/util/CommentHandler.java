@@ -16,12 +16,20 @@ public class CommentHandler extends GeneralizedFieldHandler {
 
     @Override
     public Object convertUponGet(Object value) {
+        System.out.println("----- convertUponGet -----");
+        if (value == null){
+            return null;
+        }
         Comment comment = (Comment) value;
         return comment.getId();
     }
 
     @Override
     public Object convertUponSet(Object value) {
+        System.out.println("----- convertUponSet -----");
+        if (value == null) {
+            return null;
+        }
         Long id = (Long) value;
         Comment comment = commentService.findById(id);
         return comment;

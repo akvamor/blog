@@ -9,13 +9,17 @@ import org.springframework.stereotype.Repository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ua.org.project.domain.SearchCriteria;
+import ua.org.project.domain.SearchCriteriaCategory;
 import ua.org.project.domain.impl.Entry;
+import ua.org.project.repository.EntryLikeRepository;
 import ua.org.project.repository.EntryRepository;
 import ua.org.project.service.EntryService;
 
-import java.util.Collection;
+import javax.persistence.EntityManager;
+import javax.persistence.EntityTransaction;
+import javax.persistence.PersistenceContext;
+import javax.persistence.TypedQuery;
 import java.util.List;
-import java.util.Locale;
 
 /**
  * Created by Dmitry Petrov on 5/28/14.
@@ -28,9 +32,17 @@ public class EntryServiceImpl implements EntryService {
     @Autowired
     private EntryRepository entryRepository;
 
+    @Autowired
+    private EntryLikeRepository entryLikeRepository;
+
+    @PersistenceContext
+    private EntityManager em;
+
     @Transactional(readOnly = true)
-    public List<Entry> findAll() {
-        return Lists.newArrayList(entryRepository.findAll());
+    public Page<Entry> findAll(Pageable pageable) {
+        Page<Entry> entries = entryRepository.findAll(pageable);
+        this.setLikes(entries.getContent());
+        return entries;
     }
 
     @Transactional(readOnly = true)
@@ -39,8 +51,11 @@ public class EntryServiceImpl implements EntryService {
     }
 
     @Transactional(readOnly = true)
-    public List<Entry> findByCategoryId(String categoryId) {
-        return entryRepository.findByCategoryId(categoryId);
+    public Page<Entry> findByCategoryId(SearchCriteriaCategory criteriaCategory, Pageable pageable) {
+        Page<Entry> entries = entryRepository.findByCategoryId(
+                criteriaCategory.getCategoryId(), criteriaCategory.getLocale(),pageable);
+        this.setLikes(entries.getContent());
+        return entries;
     }
 
     public Entry save(Entry entry) {
@@ -53,21 +68,34 @@ public class EntryServiceImpl implements EntryService {
 
     @Transactional(readOnly = true)
     public Page<Entry> findAllByPage(Pageable pageable) {
-        return entryRepository.findAll(pageable);
+        Page<Entry> entries = entryRepository.findAll(pageable);
+        this.setLikes(entries.getContent());
+        return entries;
     }
 
     @Transactional(readOnly = true)
     public Page<Entry> findEntryByCriteria(SearchCriteria searchCriteria, Pageable pageable) {
         String subject = searchCriteria.getSubject();
-        Collection<String> categoriesId = searchCriteria.getCategoriesId();
+        String categoriesId = searchCriteria.getCategoryId();
         DateTime fromPostDate = searchCriteria.getFromPostDate();
         DateTime toPostDate = searchCriteria.getToPostDate();
         String locale = searchCriteria.getLocale();
-        return entryRepository.findEntryByCriteria(subject, categoriesId, fromPostDate, toPostDate, locale, pageable);
+        Page<Entry> entries = entryRepository.findEntryByCriteria(subject, categoriesId, fromPostDate, toPostDate, locale, pageable);
+        this.setLikes(entries.getContent());
+        return entries;
     }
 
     @Transactional(readOnly = true)
     public Page<Entry> findEntryByLocale(String locale, Pageable pageable) {
-        return entryRepository.findEntryByLocale(locale, pageable);
+        Page<Entry> entries = entryRepository.findEntryByLocale(locale, pageable);
+        this.setLikes(entries.getContent());
+        return entries;
+    }
+
+    private void setLikes(List<Entry> entries) {
+        for (Entry entry : entries) {
+            entry.setCountLikes(entryLikeRepository.countAllLike(entry.getId()));
+            entry.setCountNotLikes(entryLikeRepository.countAllNotLike(entry.getId()));
+        }
     }
 }

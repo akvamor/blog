@@ -11,6 +11,9 @@
         http://www.springframework.org/schema/security
         http://www.springframework.org/schema/security/spring-security-3.2.xsd">
 
+    <!-- SECURITY -->
+    <security:global-method-security pre-post-annotations="enabled"/>
+
     <annotation-driven validator="validator">
         <argument-resolvers>
             <beans:bean class="org.springframework.security.web.bind.support.AuthenticationPrincipalArgumentResolver"></beans:bean>
@@ -30,8 +33,6 @@
             p:fallbackToSystemLocale="false"/>
 
     <resources mapping="/resources/**" location="/, classpath:/META-INF/web-resources" />
-
-    <security:global-method-security pre-post-annotations="enabled"/>
 
     <default-servlet-handler/>
 

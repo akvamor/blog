@@ -11,7 +11,6 @@ import javax.persistence.*;
 @Table(name = "ENTRY_LIKE")
 public class EntryLike extends AbstractLike {
     private Entry entry;
-
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ENTRY_ID")
     public Entry getEntry() {

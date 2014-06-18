@@ -42,6 +42,12 @@ public class CommentServiceImpl implements CommentService {
         return commentRepository.findByEntryId(entryId);
     }
 
+    @Transactional(readOnly = true)
+    public List<Comment> findByParentId(Long commentId) {
+
+        return null;
+    }
+
     public Comment save(Comment comment) {
         return commentRepository.save(comment);
     }
@@ -50,9 +56,4 @@ public class CommentServiceImpl implements CommentService {
         commentRepository.delete(comment);
     }
 
-    public List<String> findReplyToByEntryId(Long entryId) {
-        TypedQuery<String> query = em.createNamedQuery("Comment.findReplyToByEntryId", String.class);
-        query.setParameter("entryId", entryId);
-        return query.getResultList();
-    }
 }

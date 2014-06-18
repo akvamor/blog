@@ -2,10 +2,6 @@ package ua.org.project.domain;
 
 import org.joda.time.DateTime;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashSet;
-
 /**
  * Created by Dmitry Petrov on 5/28/14.
  */
@@ -13,7 +9,7 @@ public class SearchCriteria {
 
     private String subject = "%";
 
-    private Collection<String> categoriesId ;
+    private String categoryId;
 
     private DateTime fromPostDate = new DateTime(1900, 1, 1, 0, 0);;
 
@@ -29,12 +25,12 @@ public class SearchCriteria {
         this.subject = subject;
     }
 
-    public Collection<String> getCategoriesId() {
-        return categoriesId;
+    public String getCategoryId() {
+        return categoryId;
     }
 
-    public void setCategoriesId(Collection<String> categoriesId) {
-        this.categoriesId = categoriesId;
+    public void setCategoryId(String categoryId) {
+        this.categoryId = categoryId;
     }
 
     public DateTime getFromPostDate() {
@@ -65,7 +61,7 @@ public class SearchCriteria {
     public String toString() {
         return "SearchCriteria{" +
                 "subject='" + subject + '\'' +
-                ", categoryId='" + categoriesId + '\'' +
+                ", categoryId='" + categoryId + '\'' +
                 ", fromPostDate=" + fromPostDate +
                 ", toPostDate=" + toPostDate +
                 ", locale='" + locale + '\'' +

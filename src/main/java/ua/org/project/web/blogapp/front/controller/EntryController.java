@@ -1,7 +1,6 @@
 package ua.org.project.web.blogapp.front.controller;
 
 import com.google.common.collect.Lists;
-import org.apache.xpath.operations.Mod;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.slf4j.Logger;
@@ -23,15 +22,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-import ua.org.project.domain.AppUser;
 import ua.org.project.domain.Category;
 import ua.org.project.domain.SearchCriteria;
+import ua.org.project.domain.SearchCriteriaCategory;
 import ua.org.project.domain.impl.Entry;
-import ua.org.project.service.AppUserService;
 import ua.org.project.service.CategoryService;
 import ua.org.project.service.EntryService;
 import ua.org.project.web.blogapp.front.form.EntryGrid;
-import ua.org.project.web.blogapp.front.form.EntryShow;
 import ua.org.project.web.blogapp.front.form.MenuShow;
 import ua.org.project.web.blogapp.front.form.UploadItem;
 import ua.org.project.web.form.Message;
@@ -57,6 +54,7 @@ public class EntryController {
     int defaultCountRows = 4;
     int defaultStartPage = 1;
     String defaultDateFormat = "yyyy-MM-dd";
+    static List<Category> categories;
 
     @Autowired
     private MessageSource messageSource;
@@ -115,45 +113,19 @@ public class EntryController {
             }
         }
 
-        searchCriteria.setLocale("%" + locale.toString() + "%");
-
-        if (rows == null) {
-            rows = defaultCountRows;
-        }
-
-        if (page == null) {
-            page = defaultStartPage;
-        }
-
-        Sort sort = new Sort(Sort.Direction.DESC, defaultColumnSort);
-        PageRequest pageRequest = null;
-
-        if (sort == null) {
-            pageRequest = new PageRequest(page - 1, rows);
-        } else {
-            pageRequest = new PageRequest(page - 1, rows, sort);
-        }
-
+        PageRequest pageRequest = this.getPageRequest(rows, page);
         Page<Entry> entryPage;
-
-        ArrayList<Category> categories;
-        if (categoryId != null) {
-            Category currentCategory = categoryService.findById(categoryId);
-            categories = Lists.newArrayList(currentCategory.getSubCategories());
-            categories.add(currentCategory);
+        if (categoryId != null && isSearch) {
+            searchCriteria.setLocale("%" + locale.toString() + "%");
+            searchCriteria.setCategoryId(categoryId);
+            logger.info("Criteria: " + searchCriteria.toString());
+            entryPage = entryService.findEntryByCriteria(searchCriteria, pageRequest);
+        } else if(categoryId != null ){
+            entryPage = entryService.findByCategoryId(
+                    new SearchCriteriaCategory(categoryId, "%" + locale.toString() + "%"), pageRequest);
         } else {
-            categories = Lists.newArrayList(categoryService.findAll());
+            entryPage = entryService.findEntryByLocale("%" + locale.toString() + "%", pageRequest);
         }
-
-        ArrayList<String> categoriesName = new ArrayList<String>();
-        for (Category category : categories) {
-            categoriesName.add(category.getCategoryId());
-        }
-
-        searchCriteria.setCategoriesId(categoriesName);
-
-        logger.info("Criteria: " + searchCriteria.toString());
-        entryPage = entryService.findEntryByCriteria(searchCriteria, pageRequest);
 
         EntryGrid entryGrid = new EntryGrid();
         entryGrid.setCurrentPage(entryPage.getNumber() + 1);
@@ -347,12 +319,13 @@ public class EntryController {
     private MenuShow getMenu(String categoryId){
         logger.info("Get category id: " + categoryId);
         MenuShow menu = new MenuShow();
-        List<Category> categories = categoryService.findAll();
+        if (categories == null) {
+            categories = categoryService.findAll();
+        }
         Category currentCategory = null;
         if (categoryId != null) {
-
             currentCategory = categoryService.findById(categoryId);
-            if (currentCategory.getParentCategory() != null){
+            if (currentCategory!= null && currentCategory.getParentCategory() != null){
                 logger.info("Get parent category id: " + currentCategory.getParentCategory().getCategoryId());
                 menu.setParentCategory(currentCategory.getParentCategory().getCategoryId());
             }
@@ -363,5 +336,24 @@ public class EntryController {
         return menu;
     }
 
+    private PageRequest getPageRequest(Integer rows, Integer page){
+        Sort sort = new Sort(Sort.Direction.DESC, defaultColumnSort);
+        PageRequest pageRequest = null;
+
+        if (rows == null) {
+            rows = defaultCountRows;
+        }
+
+        if (page == null) {
+            page = defaultStartPage;
+        }
+
+        if (sort == null) {
+            pageRequest = new PageRequest(page - 1, rows);
+        } else {
+            pageRequest = new PageRequest(page - 1, rows, sort);
+        }
+        return pageRequest;
+    }
 
 }

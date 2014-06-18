@@ -226,37 +226,7 @@
 <c:if test="${not empty entry.comments}">
     <hr/>
     <h5>Comments</h5>
-    <blockquote class="blog-comments">
-        <c:forEach items="${entry.comments}" var="comment">
-            <ul class="list-inline blog-panel-likes">
-                <li class="item-blue">
-                    <strong>${comment.postBy}</strong>
-                </li>
-                <c:if test="${not empty comment.replyTo}">
-                    <li> to </li>
-                    <li class="item-green">
-                        <strong>${comment.replyTo}</strong>
-                    </li>
-                </c:if>
-
-                <li class="item-blue">
-                    <span><joda:format value="${comment.postDate}" pattern="${dateFormatPatternComments}"/></span>
-                </li>
-                <li class="item-blue pull-right">
-                    <span class="glyphicon glyphicon-thumbs-up"><jsp:text/></span>
-                    <span> ${comment.countLikes}</span>
-                </li>
-                <li class="item-blue pull-right">
-                    <span class="glyphicon glyphicon-thumbs-down"><jsp:text/></span>
-                    <span> ${comment.countNotLikes}</span>
-                </li>
-            </ul>
-            <p align="justify">
-                ${comment.body}
-            </p>
-            <hr/>
-        </c:forEach>
-    </blockquote>
+    <jsp:include page="comment.jspx"/>
 </c:if>
 
 <div id="dialog-audit" title="Entry Audit">

@@ -24,12 +24,23 @@ public class Comment extends AbstractBlog implements Serializable {
 
     private Entry entry;
     private String body;
-    private Comment parentComment;
     private String postBy;
-    private Set<CommentLike> likes = new HashSet<CommentLike>();
+    private Set<Comment> childComment = new HashSet<Comment>();
     private Set<CommentAttachment> attachments = new HashSet<CommentAttachment>();
 
     public Comment() {
+    }
+
+    @ManyToMany
+    @JoinTable(name = "comment_tree",
+        joinColumns = @JoinColumn(name="PARENT_ID"),
+        inverseJoinColumns = @JoinColumn(name = "CHILD_ID"))
+    public Set<Comment> getChildComment() {
+        return childComment;
+    }
+
+    public void setChildComment(Set<Comment> childComment) {
+        this.childComment = childComment;
     }
 
     @JsonIgnore
@@ -53,26 +64,6 @@ public class Comment extends AbstractBlog implements Serializable {
 
     public void setEntry(Entry entry) {
         this.entry = entry;
-    }
-
-    @OneToMany(fetch = FetchType.EAGER, mappedBy = "comment", cascade = CascadeType.ALL)
-    public Set<CommentLike> getLikes() {
-        return likes;
-    }
-
-    public void setLikes(Set<CommentLike> likes) {
-        this.likes = likes;
-    }
-
-    @JsonIgnore
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "PARENT_COMMENT_ID")
-    public Comment getParentComment() {
-        return parentComment;
-    }
-
-    public void setParentComment(Comment parentComment) {
-        this.parentComment = parentComment;
     }
 
     @Column(name = "POST_BY")
@@ -105,8 +96,4 @@ public class Comment extends AbstractBlog implements Serializable {
         return attach;
     }
 
-    @Transient
-    protected Set<AbstractLike> getLikesAbstract() {
-        return new HashSet<AbstractLike>(this.likes);
-    }
 }
