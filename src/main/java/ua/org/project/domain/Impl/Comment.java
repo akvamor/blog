@@ -26,12 +26,13 @@ public class Comment extends AbstractBlog implements Serializable {
     private String body;
     private String postBy;
     private Set<Comment> childComment = new HashSet<Comment>();
+    private Comment parentComment;
     private Set<CommentAttachment> attachments = new HashSet<CommentAttachment>();
 
     public Comment() {
     }
 
-    @ManyToMany
+    @OneToMany
     @JoinTable(name = "comment_tree",
         joinColumns = @JoinColumn(name="PARENT_ID"),
         inverseJoinColumns = @JoinColumn(name = "CHILD_ID"))
@@ -41,6 +42,18 @@ public class Comment extends AbstractBlog implements Serializable {
 
     public void setChildComment(Set<Comment> childComment) {
         this.childComment = childComment;
+    }
+
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinTable(name = "comment_tree",
+            joinColumns = @JoinColumn(name="CHILD_ID"),
+            inverseJoinColumns = @JoinColumn(name = "PARENT_ID"))
+    public Comment getParentComment() {
+        return parentComment;
+    }
+
+    public void setParentComment(Comment parentComment) {
+        this.parentComment = parentComment;
     }
 
     @JsonIgnore

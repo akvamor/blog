@@ -25,6 +25,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import ua.org.project.domain.Category;
 import ua.org.project.domain.SearchCriteria;
 import ua.org.project.domain.SearchCriteriaCategory;
+import ua.org.project.domain.impl.Comment;
 import ua.org.project.domain.impl.Entry;
 import ua.org.project.service.CategoryService;
 import ua.org.project.service.EntryService;
@@ -336,6 +337,12 @@ public class EntryController {
         return menu;
     }
 
+    /**
+     * Create PageRequest
+     * @param rows
+     * @param page
+     * @return
+     */
     private PageRequest getPageRequest(Integer rows, Integer page){
         Sort sort = new Sort(Sort.Direction.DESC, defaultColumnSort);
         PageRequest pageRequest = null;

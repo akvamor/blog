@@ -90,13 +90,6 @@ body {
 }
 
 /*
- * Override Bootstrap's default container.
- */
-
-
-
-
-/*
  * Masthead for nav
  */
 
@@ -253,6 +246,16 @@ body {
 
 
 
+/**
+* Comments
+*/
+.blog-comments {
+    margin: 20px 0;
+    padding: 20px;
+    border-left: 3px solid #eee;
+    background-color: #f4f8fa;
+    border-color: #5bc0de;
+}
 
 /**
 * Right menu

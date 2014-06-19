@@ -3,12 +3,13 @@ package ua.org.project.domain;
 import ua.org.project.domain.impl.Comment;
 
 import javax.persistence.*;
+import java.io.Serializable;
 
 /**
  * Created by Dmitry Petrov on 17.06.14.
  */
 @MappedSuperclass
-public class AbstractLike {
+public class AbstractLike implements Serializable {
 
     private Long id;
     private int like;

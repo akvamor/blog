@@ -1,4 +1,4 @@
-package ua.org.project.util;
+package ua.org.project.util.xml;
 
 import org.exolab.castor.mapping.GeneralizedFieldHandler;
 import org.springframework.beans.factory.annotation.Autowired;

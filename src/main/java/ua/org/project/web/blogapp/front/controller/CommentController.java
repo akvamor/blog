@@ -1,13 +1,16 @@
 package ua.org.project.web.blogapp.front.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import ua.org.project.domain.Sample;
 import ua.org.project.domain.impl.Comment;
+import ua.org.project.domain.json.CommentJson;
 import ua.org.project.service.CommentService;
+import ua.org.project.service.EntryService;
 
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.ConstraintViolation;
@@ -20,11 +23,17 @@ import java.util.*;
  */
 
 @Controller
-@RequestMapping("comment")
+@RequestMapping("/comment")
 public class CommentController {
 
     @Autowired
     private CommentService commentService;
+
+    @Autowired
+    private EntryService entryService;
+
+    @Autowired
+    private MessageSource messageSource;
 
     @Autowired
     private Validator validator;
@@ -36,16 +45,15 @@ public class CommentController {
         return comment;
     }
 
-    @RequestMapping(value = "list/{id}", method = RequestMethod.GET)
+    @RequestMapping(value = "/listByEntry/{id}", method = RequestMethod.GET)
     @ResponseBody
-    public List<Comment> list(
-            @PathVariable("id") Long id
-    ){
-        List<Comment> comments = commentService.findByEntryId(id);
-
-        return commentService.findByParentId(id);
+    public List<CommentJson> list(@PathVariable("id") Long id, Locale locale){
+        String format = messageSource.getMessage("date_format_pattern_comments", new Object[]{}, locale);
+        List<CommentJson> commentsJson = commentService.findTreeByEntryId(id, format);
+        return commentsJson;
     }
 
+    @PreAuthorize("isAuthenticated()")
     @RequestMapping(params = "sample", method = RequestMethod.GET)
     @ResponseBody
     public Sample createSample(){
@@ -53,6 +61,7 @@ public class CommentController {
         return sample;
     }
 
+    @PreAuthorize("isAuthenticated()")
     @RequestMapping(params = "form", method = RequestMethod.POST)
     @ResponseBody
     public  Map<String, ? extends Object> save(
@@ -68,6 +77,11 @@ public class CommentController {
         }
     }
 
+    /**
+     * Convert set of ConstraintViolation to Map of errors
+     * @param failures
+     * @return
+     */
     private Map<String, String> validationMessages(Set<ConstraintViolation<Comment>> failures){
         Map<String, String> failureMessages = new HashMap<String, String>();
         for (ConstraintViolation<Comment> failure : failures) {

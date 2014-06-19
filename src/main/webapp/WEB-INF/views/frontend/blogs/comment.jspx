@@ -1,43 +1,65 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-
-<blockquote id="comment" class="blog-comments"
-            xmlns:jsp="http://java.sun.com/JSP/Page"
-            xmlns:c="http://java.sun.com/jsp/jstl/core"
-            xmlns:spring="http://www.springframework.org/tags"
-            xmlns:form="http://www.springframework.org/tags/form"
-            xmlns:sec="http://www.springframework.org/security/tags"
-            xmlns:joda="http://www.joda.org/joda/time/tags"
-            version="2.0">
+<div id="comment"
+     xmlns:jsp="http://java.sun.com/JSP/Page"
+     xmlns:form="http://www.springframework.org/tags/form"
+     xmlns:spring="http://www.springframework.org/tags"
+     version="2.0">
     <jsp:directive.page contentType="text/html;charset=UTF-8"/>
     <jsp:output omit-xml-declaration="yes"/>
-    <c:forEach items="${entry.comments}" var="comment">
+    <spring:message code="comment-button-send" var="buttonSend"/>
+    <spring:url var="urlComment" value="/comment"/>
+    <hr/>
+    <h5>Comments</h5>
+
+    <div id="showComment" class="blog-comments" style="display: none">
         <ul class="list-inline blog-panel-likes">
             <li class="item-blue">
-                <strong>${comment.postBy}</strong>
+                <strong class="comment-post-by"></strong>
             </li>
-            <c:if test="${not empty comment.replyTo}">
-                <li> to </li>
-                <li class="item-green">
-                    <strong>${comment.replyTo}</strong>
-                </li>
-            </c:if>
-
+            <li class="comment-reply-to-label" style="display: none"> to </li>
+            <li class="item-green" style="display: none">
+                <strong class="comment-reply-to"><jsp:text/></strong>
+            </li>
             <li class="item-blue">
-                <span><joda:format value="${comment.postDate}" pattern="${dateFormatPatternComments}"/></span>
+                <span class="comment-post-date"><jsp:text/></span>
             </li>
             <li class="item-blue pull-right">
                 <span class="glyphicon glyphicon-thumbs-up"><jsp:text/></span>
-                <span> ${comment.countLikes}</span>
+                <span class="comment-count-likes"><jsp:text/></span>
             </li>
             <li class="item-blue pull-right">
                 <span class="glyphicon glyphicon-thumbs-down"><jsp:text/></span>
-                <span> ${comment.countNotLikes}</span>
+                <span class="comment-count-not-likes"><jsp:text/></span>
             </li>
         </ul>
-        <p align="justify">
-            ${comment.body}
-        </p>
-        <hr/>
-        <c:if test="${not empty comment.p}"
-    </c:forEach>
-</blockquote>
+        <p class="comment-body"><jsp:text/></p>
+        <div class="comment-child blog-comments"><jsp:text/></div>
+    </div>
+
+    <div id="editComment" class="blog-comments" style="display: none">
+       <!-- <form:form
+                modelAttribute="comment"
+                method="post"
+                cssClass="form"
+                role="form">
+            <form:hidden path="replyTo" cssClass="comment-reply-to"/>
+            <div class="alert alert-warning comment-body" style="display: none"><jsp:text/></div>
+            <form:textarea rows="10" path="body" cssClass="comment-body"/>
+            <button type="submit" class="btn btn-success pull-right"><span>${buttonSend}</span></button>
+        </form:form>   -->
+    </div>
+    <script type="text/javascript">
+        $(document).ready(function(){
+            var entryId = $("#entry-id").attr("value");
+
+            $.ajax({
+                url     : "${urlComment}/listByEntry/"+entryId,
+                type    : "GET",
+                dataType: "json"
+            }).done(function( data ){
+                console.log(data);
+            }).fail(function( jqXHR, textStatus){
+                console.log(textStatus);
+            })
+        })
+    </script>
+</div>

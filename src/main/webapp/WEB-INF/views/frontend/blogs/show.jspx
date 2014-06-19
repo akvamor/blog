@@ -84,7 +84,7 @@
     });
 </script>
 
-<h3>${entry.subject}</h3>
+<h3 id="entry-id" value="${entry.id}">${entry.subject}</h3>
 <hr/>
 
 <div class="blog-post">
@@ -224,8 +224,7 @@
 
 <!-- Display comments -->
 <c:if test="${not empty entry.comments}">
-    <hr/>
-    <h5>Comments</h5>
+
     <jsp:include page="comment.jspx"/>
 </c:if>
 

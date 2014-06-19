@@ -19,6 +19,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
 import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -47,7 +48,9 @@ public class EntryServiceImpl implements EntryService {
 
     @Transactional(readOnly = true)
     public Entry findById(Long id) {
-        return entryRepository.findOne(id);
+        Entry entry = entryRepository.findOne(id);
+        this.setLikes(Collections.singletonList(entry));
+        return entry;
     }
 
     @Transactional(readOnly = true)

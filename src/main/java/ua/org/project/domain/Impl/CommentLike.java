@@ -3,6 +3,7 @@ package ua.org.project.domain.impl;
 import ua.org.project.domain.AbstractLike;
 
 import javax.persistence.*;
+import java.io.Serializable;
 
 /**
  * Created by Dmitry Petrov on 17.06.14.
@@ -10,7 +11,7 @@ import javax.persistence.*;
 
 @Entity
 @Table(name = "COMMENT_LIKE")
-public class CommentLike extends AbstractLike {
+public class CommentLike extends AbstractLike implements Serializable{
     private Comment comment;
 
     @ManyToOne(fetch = FetchType.LAZY)

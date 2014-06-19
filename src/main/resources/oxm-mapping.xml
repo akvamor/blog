@@ -33,6 +33,6 @@
         </field>
     </class>
 
-    <field-handler name="dateHandler" class="ua.org.project.util.DateTimeFieldHandler"/>
+    <field-handler name="dateHandler" class="ua.org.project.util.xml.DateTimeFieldHandler"/>
 
 </mapping>
