@@ -126,10 +126,10 @@
 
             <!-- Controls -->
             <a class="left carousel-control" href="#carousel-generic" data-slide="prev">
-                <span class="glyphicon glyphicon-chevron-left"></span>
+                <span class="glyphicon glyphicon-chevron-left"><jsp:text/></span>
             </a>
             <a class="right carousel-control" href="#carousel-generic" data-slide="next">
-                <span class="glyphicon glyphicon-chevron-right"></span>
+                <span class="glyphicon glyphicon-chevron-right"><jsp:text/></span>
             </a>
         </div>
     </c:if>
@@ -183,7 +183,7 @@
 
     <!-- Control Panel -->
     <sec:authorize access="isAuthenticated()">
-        <div class="btn-group btn-group-justified">
+        <div class="btn-group ">
             <c:if test="${entry.createdBy == pageContext.request.userPrincipal.name}">
                 <div class="btn-group">
                     <a class="btn btn-xs  btn-info" href="${homeURL}/${entry.id}?form">Edit</a>
@@ -202,9 +202,6 @@
             </sec:authorize>
         </div>
     </sec:authorize>
-
-
-
 </div>
 
 <div id="entryAttachmentUpload" hidden="true">
@@ -224,12 +221,11 @@
 
 <!-- Display comments -->
 <c:if test="${not empty entry.comments}">
-
     <jsp:include page="comment.jspx"/>
 </c:if>
 
 <div id="dialog-audit" title="Entry Audit">
-    <table id="auditList"><tr><td/></tr></table>
+    <table id="auditList"><tr><td><jsp:text/></td></tr></table>
 </div>
 
 </div>

@@ -19,6 +19,8 @@ public class CommentJson implements Serializable {
     private String body;
     private String postDate;
     private String postBy;
+    private Long countLikes;
+    private Long countNotLikes;
     private List<CommentJson> children = new ArrayList<CommentJson>();
 
     public CommentJson(){}
@@ -38,6 +40,11 @@ public class CommentJson implements Serializable {
             DateTimeFormatter dateTimeFormatter = DateTimeFormat.forPattern(formatDate);
             postDate = dateTimeFormatter.print(comment.getPostDate());
         }
+
+        this.countLikes = comment.getCountLikes();
+        this.countNotLikes = comment.getCountNotLikes();
+
+        postBy = comment.getPostBy();
         for (Comment child : comment.getChildComment()) {
             children.add(new CommentJson(child, formatDate));
         }
@@ -79,6 +86,14 @@ public class CommentJson implements Serializable {
         return postDate;
     }
 
+    public String getPostBy() {
+        return postBy;
+    }
+
+    public void setPostBy(String postBy) {
+        this.postBy = postBy;
+    }
+
     public void setPostDate(String postDate) {
         this.postDate = postDate;
     }
@@ -89,5 +104,21 @@ public class CommentJson implements Serializable {
 
     public void setChildren(List<CommentJson> children) {
         this.children = children;
+    }
+
+    public Long getCountLikes() {
+        return countLikes;
+    }
+
+    public void setCountLikes(Long countLikes) {
+        this.countLikes = countLikes;
+    }
+
+    public Long getCountNotLikes() {
+        return countNotLikes;
+    }
+
+    public void setCountNotLikes(Long countNotLikes) {
+        this.countNotLikes = countNotLikes;
     }
 }

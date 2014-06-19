@@ -1,5 +1,7 @@
 package ua.org.project.web.blogapp.front.controller;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -26,6 +28,8 @@ import java.util.*;
 @RequestMapping("/comment")
 public class CommentController {
 
+    final Logger logger = LoggerFactory.getLogger(CommentController.class);
+
     @Autowired
     private CommentService commentService;
 
@@ -48,6 +52,7 @@ public class CommentController {
     @RequestMapping(value = "/listByEntry/{id}", method = RequestMethod.GET)
     @ResponseBody
     public List<CommentJson> list(@PathVariable("id") Long id, Locale locale){
+        logger.info("Get list of comment for entryId: " + id);
         String format = messageSource.getMessage("date_format_pattern_comments", new Object[]{}, locale);
         List<CommentJson> commentsJson = commentService.findTreeByEntryId(id, format);
         return commentsJson;

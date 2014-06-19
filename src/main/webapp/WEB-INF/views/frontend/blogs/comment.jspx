@@ -1,51 +1,61 @@
 <div id="comment"
      xmlns:jsp="http://java.sun.com/JSP/Page"
-     xmlns:form="http://www.springframework.org/tags/form"
      xmlns:spring="http://www.springframework.org/tags"
+     xmlns:sec="http://www.springframework.org/security/tags"
      version="2.0">
     <jsp:directive.page contentType="text/html;charset=UTF-8"/>
     <jsp:output omit-xml-declaration="yes"/>
     <spring:message code="comment-button-send" var="buttonSend"/>
     <spring:url var="urlComment" value="/comment"/>
+
     <hr/>
     <h5>Comments</h5>
+
+    <div id="container-of-comment"><jsp:text/></div>
 
     <div id="showComment" class="blog-comments" style="display: none">
         <ul class="list-inline blog-panel-likes">
             <li class="item-blue">
-                <strong class="comment-post-by"></strong>
+                <strong class="comment-post-by"><jsp:text/></strong>
             </li>
-            <li class="comment-reply-to-label" style="display: none"> to </li>
-            <li class="item-green" style="display: none">
+            <li class="comment-reply-to-label comment-reply-to-tag" style="display: none"> to </li>
+            <li class="item-green comment-reply-to-tag" style="display: none">
                 <strong class="comment-reply-to"><jsp:text/></strong>
             </li>
             <li class="item-blue">
                 <span class="comment-post-date"><jsp:text/></span>
             </li>
-            <li class="item-blue pull-right">
-                <span class="glyphicon glyphicon-thumbs-up"><jsp:text/></span>
-                <span class="comment-count-likes"><jsp:text/></span>
-            </li>
+            <sec:authorize access="isAuthenticated()">
+                <li class="commit-button" style="display: none">
+                    <button class="btn btn-default btn-xs">commit</button>
+                </li>
+            </sec:authorize>
             <li class="item-blue pull-right">
                 <span class="glyphicon glyphicon-thumbs-down"><jsp:text/></span>
                 <span class="comment-count-not-likes"><jsp:text/></span>
             </li>
+            <li class="item-blue pull-right">
+                <span class="glyphicon glyphicon-thumbs-up"><jsp:text/></span>
+                <span class="comment-count-likes"><jsp:text/></span>
+            </li>
         </ul>
         <p class="comment-body"><jsp:text/></p>
-        <div class="comment-child blog-comments"><jsp:text/></div>
+        <div class="comment-form"><jsp:text/></div>
+        <div class="comment-child" style="display: none"><jsp:text/></div>
     </div>
 
-    <div id="editComment" class="blog-comments" style="display: none">
-       <!-- <form:form
-                modelAttribute="comment"
-                method="post"
-                cssClass="form"
-                role="form">
-            <form:hidden path="replyTo" cssClass="comment-reply-to"/>
+    <div id="editComment" style="display: none" >
+        <form method="post" class="form" role="form">
+            <input type="hidden" name="replyTo" class="comment-reply-to"/>
+            <input type="hidden" name="postBy" class="comment-post-by" value="${pageContext.request.userPrincipal.name}"/>
             <div class="alert alert-warning comment-body" style="display: none"><jsp:text/></div>
-            <form:textarea rows="10" path="body" cssClass="comment-body"/>
-            <button type="submit" class="btn btn-success pull-right"><span>${buttonSend}</span></button>
-        </form:form>   -->
+            <div class="form-group">
+                <textarea name="body" rows="4" class="comment-body form-control"><jsp:text/></textarea>
+            </div>
+            <div class="form-group ">
+                <button class="subbmit-comment-button btn btn-info btn-group-justified btn-xs">${buttonSend}</button>
+            </div>
+        </form>
     </div>
     <script type="text/javascript">
         $(document).ready(function(){
@@ -56,10 +66,71 @@
                 type    : "GET",
                 dataType: "json"
             }).done(function( data ){
-                console.log(data);
+                pushCommentToHTML(data, $("#container-of-comment"));
             }).fail(function( jqXHR, textStatus){
                 console.log(textStatus);
             })
+
+            $(".blog-panel-likes").bind({
+                mouseover: function() {
+                    $(this).children(".commit-button").css("display", "inline");
+                },
+                mouseout: function() {
+                    $(this).children(".commit-button").css("display", "none");
+            }});
+
+            $(".commit-button .btn").bind({
+                click: function(){
+                    var id = $(this).attr("data-context");
+                    var context = $("#"+id).children(".comment-form").first();
+//                    console.log(context.has("form"));
+                    if (context.has("form").length &lt; 1){
+                        pushFormCommentToHtml(context, id);
+                    } else {
+                        context.children().first().slideToggle();
+                    }
+                }
+            })
+
+            $(".subbmit-comment-button").bind({
+                click: function(){
+                    console.log(this);
+                }
+            })
+
+            function pushCommentToHTML(data, tagForInjection){
+                data.forEach(function(comment){
+                    var htmlForComment = $("#showComment").clone(true);
+                    htmlForComment.attr("id","comment-" + comment.id);
+                    htmlForComment.find(".comment-post-by").text(comment.postBy);
+                    if (comment.replyTo != null){
+                        htmlForComment.find(".comment-reply-to-tag").css("display", "inline");
+                        htmlForComment.find(".comment-reply-to").text(comment.replyTo);
+                    }
+                    htmlForComment.find(".comment-post-date").text(comment.postDate);
+                    htmlForComment.find(".comment-count-likes").text(" " + comment.countLikes);
+                    htmlForComment.find(".comment-count-not-likes").text(" " + comment.countNotLikes);
+                    htmlForComment.find(".btn").attr("data-context", "comment-"+comment.id);
+                    htmlForComment.find(".comment-body").text(comment.body);
+                    if (comment.children.length > 0 ){
+                        var child = htmlForComment.find(".comment-child");
+                        child.show();
+                        pushCommentToHTML(comment.children, child);
+                    }
+                    htmlForComment.appendTo(tagForInjection);
+                    htmlForComment.show();
+                });
+            }
+
+            function pushFormCommentToHtml(tagForInjection, commentId){
+                var htmlForForm = $("#editComment").clone(true);
+                htmlForForm.removeAttr("id");
+                var parent = $("#"+commentId).children("ul");
+                htmlForForm.find(".replyTo").attr("value",parent.find(".comment-post-by").text());
+                htmlForForm.appendTo(tagForInjection);
+                htmlForForm.slideToggle("slow");
+            }
+
         })
     </script>
 </div>
