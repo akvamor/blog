@@ -5,10 +5,10 @@
      version="2.0">
     <jsp:directive.page contentType="text/html;charset=UTF-8"/>
     <jsp:output omit-xml-declaration="yes"/>
+
     <spring:message code="comment-button-send" var="buttonSend"/>
     <spring:url var="urlComment" value="/comment"/>
 
-    <hr/>
     <h5>Comments</h5>
 
     <div id="container-of-comment"><jsp:text/></div>

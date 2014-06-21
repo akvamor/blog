@@ -29,52 +29,52 @@ public class Comment extends AbstractBlog implements Serializable {
     private Comment parentComment;
     private Set<CommentAttachment> attachments = new HashSet<CommentAttachment>();
 
-    public Comment() {
-    }
+    public Comment() {           }
 
     @OneToMany
+    @NotAudited
     @JoinTable(name = "comment_tree",
         joinColumns = @JoinColumn(name="PARENT_ID"),
         inverseJoinColumns = @JoinColumn(name = "CHILD_ID"))
     public Set<Comment> getChildComment() {
         return childComment;
     }
-
     public void setChildComment(Set<Comment> childComment) {
         this.childComment = childComment;
     }
 
+
     @ManyToOne(fetch = FetchType.EAGER)
+    @NotAudited
     @JoinTable(name = "comment_tree",
             joinColumns = @JoinColumn(name="CHILD_ID"),
             inverseJoinColumns = @JoinColumn(name = "PARENT_ID"))
     public Comment getParentComment() {
         return parentComment;
     }
-
     public void setParentComment(Comment parentComment) {
         this.parentComment = parentComment;
     }
 
+
     @JsonIgnore
-    @NotEmpty(message = "{validation.posting.body.NotEmpty.message}")
+    @NotEmpty(message = "{validation.comment.body.NotEmpty.message}")
     @Size(min = 10, max = 2000, message = "{validation.posting.body.Size.message}")
     @Column(name = "BODY")
     public String getBody() {
         return this.body;
     }
-
-    @Override
     public void setBody(String body) {
         this.body = body;
     }
 
+
     @ManyToOne(fetch = FetchType.LAZY)
+    @NotAudited
     @JoinColumn(name = "ENTRY_ID")
     public Entry getEntry() {
         return entry;
     }
-
     public void setEntry(Entry entry) {
         this.entry = entry;
     }
@@ -83,10 +83,10 @@ public class Comment extends AbstractBlog implements Serializable {
     public String getPostBy() {
         return postBy;
     }
-
     public void setPostBy(String postBy) {
         this.postBy = postBy;
     }
+
 
     @NotAudited
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "comment", cascade = CascadeType.ALL)
@@ -94,15 +94,12 @@ public class Comment extends AbstractBlog implements Serializable {
     public Set<CommentAttachment> getAttachments() {
         return attachments;
     }
-
     public void setAttachments(Set<CommentAttachment> attachments) {
         this.attachments = attachments;
     }
-
     public void addAttachment(CommentAttachment attachment) {
         getAttachments().add(attachment);
     }
-
     @Transient
     public Set<Attachment> getAttachmentAbstract() {
         Set<Attachment> attach = new HashSet<Attachment>(this.attachments);

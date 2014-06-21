@@ -1,0 +1,29 @@
+<div id="entryAttachmentUpload" hidden="true"
+     xmlns:jsp="http://java.sun.com/JSP/Page"
+     xmlns:form="http://www.springframework.org/tags/form"
+     xmlns:spring="http://www.springframework.org/tags">
+    <jsp:directive.page contentType="text/html;charset=UTF-8"/>
+    <jsp:output omit-xml-declaration="yes"/>
+
+    <spring:message code="label_file_upload" var="labelFileUpload"/>
+
+
+    <form:form cssClass="form-horizontal" action="fileupload" modelAttribute="uploadItem" name="fileuploadForm" method="post" enctype="multipart/form-data">
+        <input name="blogId" type="hidden" value="${entry.id}"/>
+        <input name="uploadType" type="hidden" value="entry"/>
+        <div class="form-group">
+            <label class="col-sm-2 control-label" for="file">${labelFileUpload}:</label>
+            <div class="col-sm-10">
+                <input name="file" type="file" class="form-control"/>
+            </div>
+        </div>
+        <button type="submit" class="btn btn-primary btn-xs" style="width:100%;"><span class="glyphicon glyphicon-import">Upload</span></button>
+    </form:form>
+    <script type="text/javascript">
+         $(document).ready(function(){
+             $('#uploadEntryAttachment').click(function() {
+                 $('#entryAttachmentUpload').slideToggle("slow");
+             });
+         });
+    </script>
+</div>

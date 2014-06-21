@@ -10,8 +10,6 @@
 		http://www.springframework.org/schema/context
 		http://www.springframework.org/schema/context/spring-context-3.1.xsd">
 
-    <context:component-scan base-package="ua.org.project.web.blogapp.back.controller"/>
-
     <beans:import resource="servlet-context.xml"/>
 
     <beans:bean class="org.springframework.web.servlet.view.tiles2.TilesConfigurer" id="tilesConfigurer">
@@ -23,5 +21,13 @@
             </beans:list>
         </beans:property>
     </beans:bean>
+
+    <annotation-driven>
+        <message-converters>
+            <beans:bean class="org.springframework.http.converter.json.MappingJacksonHttpMessageConverter"/>
+        </message-converters>
+    </annotation-driven>
+
+    <context:component-scan base-package="ua.org.project.web.blogapp.back.controller"/>
 
 </beans:beans>

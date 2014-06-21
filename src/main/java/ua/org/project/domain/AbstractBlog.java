@@ -38,19 +38,19 @@ public abstract class AbstractBlog implements Blog, Auditable<String, Long>, Ser
     public Long getId() {
         return id;
     }
-
     public void setId(Long id) {
         this.id = id;
     }
+
 
     @Column(name = "CREATED_BY")
     public String getCreatedBy() {
         return createdBy;
     }
-
     public void setCreatedBy(String createdBy) {
         this.createdBy = createdBy;
     }
+
 
     @Column(name = "CREATED_DATE")
     @Type(type = "org.joda.time.contrib.hibernate.PersistentDateTime")
@@ -58,20 +58,20 @@ public abstract class AbstractBlog implements Blog, Auditable<String, Long>, Ser
     public DateTime getCreatedDate() {
         return createdDate;
     }
-
     public void setCreatedDate(DateTime createdDate) {
         this.createdDate = createdDate;
     }
+
 
     @Column(name = "LAST_MODIFIED_BY")
     @NotEmpty(message = "{validation.posting.last_modified_by.NotEmpty.message}")
     public String getLastModifiedBy() {
         return lastModifiedBy;
     }
-
     public void setLastModifiedBy(String lastModifiedBy) {
         this.lastModifiedBy = lastModifiedBy;
     }
+
 
     @Column(name = "LAST_MODIFIED_DATE")
     @Type(type = "org.joda.time.contrib.hibernate.PersistentDateTime")
@@ -79,17 +79,16 @@ public abstract class AbstractBlog implements Blog, Auditable<String, Long>, Ser
     public DateTime getLastModifiedDate() {
         return lastModifiedDate;
     }
-
     public void setLastModifiedDate(DateTime lastModifiedDate) {
         this.lastModifiedDate = lastModifiedDate;
     }
+
 
     @Version
     @Column(name = "VERSION")
     public int getVersion() {
         return version;
     }
-
     public void setVersion(int version) {
         this.version = version;
     }
@@ -101,29 +100,28 @@ public abstract class AbstractBlog implements Blog, Auditable<String, Long>, Ser
     public DateTime getPostDate() {
         return this.postDate;
     }
-
-    @Override
     public void setPostDate(DateTime postDate) {
         this.postDate = postDate;
     }
+
 
     @Transient
     public Long getCountLikes() {
         return countLikes;
     }
-
     public void setCountLikes(Long countLikes) {
         this.countLikes = countLikes;
     }
+
 
     @Transient
     public Long getCountNotLikes() {
         return countNotLikes;
     }
-
     public void setCountNotLikes(Long countNotLikes) {
         this.countNotLikes = countNotLikes;
     }
+
 
     @Transient
     public String getPostDateString(String format){
@@ -156,7 +154,6 @@ public abstract class AbstractBlog implements Blog, Auditable<String, Long>, Ser
                 list.add(attachment.getId());
             }
         }
-
         return list;
     }
 

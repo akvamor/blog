@@ -34,8 +34,7 @@ public class Entry extends AbstractBlog implements Serializable {
     private Set<EntryLike> likes = new HashSet<EntryLike>();
     private Set<Comment> comments = new HashSet<Comment>();
 
-    public Entry() {
-    }
+    public Entry() {     }
 
     @Transient
     public String getShortBody() {
@@ -44,7 +43,6 @@ public class Entry extends AbstractBlog implements Serializable {
         StringBuffer result = new StringBuffer(SHORT_BODY_LENGTH + 3);
         result.append(body.substring(0, SHORT_BODY_LENGTH));
         result.append(THREE_DOTS);
-
         return result.toString();
     }
 
@@ -54,10 +52,10 @@ public class Entry extends AbstractBlog implements Serializable {
     public String getSubject() {
         return this.subject;
     }
-
     public void setSubject(String subject) {
         this.subject = subject;
     }
+
 
     @JsonIgnore
     @NotEmpty(message = "{validation.posting.body.NotEmpty.message}")
@@ -66,8 +64,6 @@ public class Entry extends AbstractBlog implements Serializable {
     public String getBody() {
         return this.body;
     }
-
-    @Override
     public void setBody(String body) {
         this.body = body;
     }
@@ -79,29 +75,29 @@ public class Entry extends AbstractBlog implements Serializable {
     public String getLocale() {
         return locale;
     }
-
     public void setLocale(String locale) {
         this.locale = locale;
     }
 
+    @NotAudited
     @Column(name = "IMPRESSIONS")
     public int getImpressions() {
         return impressions;
     }
-
     public void setImpressions(int impressions) {
         this.impressions = impressions;
     }
+
 
     @NotEmpty
     @Column(name = "CATEGORY_ID")
     public String getCategoryId() {
         return this.categoryId;
     }
-
     public void setCategoryId(String categoryId) {
         this.categoryId = categoryId;
     }
+
 
     @JsonIgnore
     @NotAudited
@@ -110,27 +106,33 @@ public class Entry extends AbstractBlog implements Serializable {
     public Set<EntryAttachment> getAttachments() {
         return this.attachments;
     }
-
     public void setAttachments(Set<EntryAttachment> attachments) {
         this.attachments = attachments;
     }
 
+
     @JsonIgnore
+    @NotAudited
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "entry", cascade = CascadeType.ALL)
     @OrderBy("createdDate DESC ")
     public Set<Comment> getComments() {
         return this.comments;
     }
+    public void setComments(Set<Comment> comments) {
+        this.comments = comments;
+    }
+
 
     @JsonIgnore
+    @NotAudited
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "entry", cascade = CascadeType.ALL)
     public Set<EntryLike> getLikes() {
         return likes;
     }
-
     public void setLikes(Set<EntryLike> likes) {
         this.likes = likes;
     }
+
 
     @Transient
     public Set<Attachment> getAttachmentAbstract(){
@@ -138,9 +140,7 @@ public class Entry extends AbstractBlog implements Serializable {
         return attach;
     }
 
-    public void setComments(Set<Comment> comments) {
-        this.comments = comments;
-    }
+
 
     public void addComment(Comment comment) {
         comment.setEntry(this);

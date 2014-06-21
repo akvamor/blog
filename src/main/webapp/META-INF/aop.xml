@@ -1,0 +1,9 @@
+<aspectj>
+    <weaver>
+        <include within="ua.org.project.*"/>
+    </weaver>
+    <aspects>
+        <aspect name="org.springframework.beans.factory.aspectj.AnnotationBeanConfigurerAspect" />
+        <aspect name="org.springframework.transaction.aspectj.AnnotationTransactionAspect" />
+    </aspects>
+</aspectj>

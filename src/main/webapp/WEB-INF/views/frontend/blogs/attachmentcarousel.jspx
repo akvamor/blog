@@ -1,0 +1,58 @@
+<div id="carousel-generic" class="carousel slide" data-ride="carousel"
+     xmlns:c="http://java.sun.com/jsp/jstl/core"
+     xmlns:jsp="http://java.sun.com/JSP/Page"
+     xmlns:spring="http://www.springframework.org/tags">
+
+    <jsp:directive.page contentType="text/html;charset=UTF-8"/>
+    <jsp:output omit-xml-declaration="yes"/>
+
+    <spring:url value="/blogs/filedownload/images" var="imageUrl" />
+
+    <!-- Indicators -->
+    <ol class="carousel-indicators">
+        <c:set var="key" value="0"/>
+        <c:forEach items="${entry.getImagesId()}">
+            <c:if test="${key eq 0}">
+                <c:set value="active" var="active"/>
+            </c:if>
+            <c:if test="${key ne 0}">
+                <c:remove var="active"/>
+            </c:if>
+            <li data-target="#carousel-generic" class="${active}" data-slide-to="${key}"><jsp:text/></li>
+            <c:set var="key" value="${key+1}"/>
+        </c:forEach>
+        <c:remove var="key"/>
+    </ol>
+
+    <!-- Wrapper for slides -->
+    <div class="carousel-inner">
+        <c:forEach var="attachmentId" items="${entry.getImagesId()}">
+            <c:set var="key" value="${key+1}"/>
+            <c:if test="${key eq 1}">
+                <c:set value="active" var="active"/>
+            </c:if>
+            <c:if test="${key ne 1}">
+                <c:remove var="active"/>
+            </c:if>
+            <div class="item ${active}">
+                <img data-src="holder.js/900x500/auto/#777:#555/" src="${imageUrl}/entry/${attachmentId}" class="centre" alt="..."/>
+            </div>
+        </c:forEach>
+    </div>
+
+    <!-- Controls -->
+    <a class="left carousel-control" href="#carousel-generic" data-slide="prev">
+        <span class="glyphicon glyphicon-chevron-left"><jsp:text/></span>
+    </a>
+    <a class="right carousel-control" href="#carousel-generic" data-slide="next">
+        <span class="glyphicon glyphicon-chevron-right"><jsp:text/></span>
+    </a>
+
+    <script type="text/javascript">
+        $(document).ready(function(){
+            $('.carousel').carousel({
+                interval: 20000000
+            })
+        });
+    </script>
+</div>

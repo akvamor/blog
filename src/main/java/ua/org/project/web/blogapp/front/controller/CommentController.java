@@ -34,9 +34,6 @@ public class CommentController {
     private CommentService commentService;
 
     @Autowired
-    private EntryService entryService;
-
-    @Autowired
     private MessageSource messageSource;
 
     @Autowired

@@ -1,4 +1,4 @@
-package ua.org.project.web.blogapp.back.controller;
+package ua.org.project.web.blogapp.front.controller;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,7 +17,7 @@ import java.util.List;
 /**
  * Created by Dmitry Petrov on 5/31/14.
  */
-@RequestMapping("/back")
+@RequestMapping("/audit")
 @Controller
 public class AuditController {
 

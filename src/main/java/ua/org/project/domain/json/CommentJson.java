@@ -1,10 +1,12 @@
 package ua.org.project.domain.json;
 
+import org.hibernate.validator.constraints.NotEmpty;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 import ua.org.project.domain.impl.Comment;
 import ua.org.project.domain.impl.Entry;
 
+import javax.validation.constraints.Size;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -19,6 +21,7 @@ public class CommentJson implements Serializable {
     private String body;
     private String postDate;
     private String postBy;
+    private String lastModifiedBy;
     private Long countLikes;
     private Long countNotLikes;
     private List<CommentJson> children = new ArrayList<CommentJson>();
@@ -74,6 +77,8 @@ public class CommentJson implements Serializable {
         this.replyTo = replyTo;
     }
 
+    @NotEmpty
+    @Size(min = 10, max = 2000, message = "{validation.comment.body.Size.message}")
     public String getBody() {
         return body;
     }

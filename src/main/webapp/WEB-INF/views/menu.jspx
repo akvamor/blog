@@ -1,10 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<div class="bs-docs-sidebar hidden-print affix-top"
-     role="complementary"
+<div class="bs-docs-sidebar hidden-print affix-top" role="complementary"
      xmlns:jsp="http://java.sun.com/JSP/Page"
      xmlns:spring="http://www.springframework.org/tags"
      xmlns:sec="http://www.springframework.org/security/tags"
-     xmlns:fn="http://java.sun.com/jsp/jstl/functions"
      version="2.0" xmlns:c="http://java.sun.com/jsp/jstl/core">
 	<jsp:directive.page contentType="text/html;charset=UTF-8" />
 	<jsp:output omit-xml-declaration="yes" />
@@ -60,5 +58,22 @@
                 <li><a href="${homeUrl}?form">${labelBlogNew}</a></li>
             </ul>
         </sec:authorize>
+
+        <c:if test="${not empty entry.id}">
+            <sec:authorize access="isAuthenticated()">
+                <hr/>
+                <ul class="nav bs-docs-sidenav">
+                    <li>Current post</li>
+                    <li><a href="${homeURL}/${entry.id}/comments?form">Post a comment</a></li>
+                    <sec:authorize access="hasRole('ROLE_ADMIN')">
+                        <li><a href="javascript:void(0);" id="auditButton" data-source="${entry.id}">View Audit History</a></li>
+                    </sec:authorize>
+                    <c:if test="${entry.createdBy == pageContext.request.userPrincipal.name}">
+                        <li><a href="${homeURL}/${entry.id}?form">Edit</a></li>
+                        <li><a href="javascript:void(0);" id="uploadEntryAttachment">Upload Attachment</a></li>
+                    </c:if>
+                </ul>
+            </sec:authorize>
+        </c:if>
     </c:if>
 </div>

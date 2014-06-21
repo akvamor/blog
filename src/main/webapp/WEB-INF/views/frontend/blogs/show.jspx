@@ -2,231 +2,86 @@
 <div xmlns:jsp="http://java.sun.com/JSP/Page"
      xmlns:c="http://java.sun.com/jsp/jstl/core"
      xmlns:spring="http://www.springframework.org/tags"
-     xmlns:form="http://www.springframework.org/tags/form"
      xmlns:sec="http://www.springframework.org/security/tags"
      xmlns:joda="http://www.joda.org/joda/time/tags"
      version="2.0">
-<jsp:directive.page contentType="text/html;charset=UTF-8"/>
-<jsp:output omit-xml-declaration="yes"/>
+    <jsp:directive.page contentType="text/html;charset=UTF-8"/>
+    <jsp:output omit-xml-declaration="yes"/>
 
-<spring:message code="date_format_pattern" var="dateFormatPattern"/>
-<spring:message code="date_format_pattern_comments" var="dateFormatPatternComments"/>
+    <spring:message code="date_format_pattern" var="dateFormatPattern"/>
+    <spring:message code="date_format_pattern_comments" var="dateFormatPatternComments"/>
+    <spring:message code="label_attachment" var="attachmentLabel"/>
 
-<spring:message code="label_blog_posting_entries" var="labelBlogPostingEntries"/>
-<spring:message code="label_post_date" var="labelPostDate"/>
-<spring:message code="label_subject" var="labelSubject"/>
-<spring:message code="label_body" var="labelBody"/>
-<spring:message code="label_category" var="labelCategory"/>
-<spring:message code="label_sub_category" var="labelSubCategory"/>
-<spring:message code="label_post_by" var="labelPostBy"/>
-<spring:message code="label_from_post_date" var="labelFromPostDate"/>
-<spring:message code="label_to_post_date" var="labelToPostDate"/>
-<spring:message code="label_last_modified_date" var="labelLastModifiedDate"/>
-<spring:message code="label_last_modified_by" var="labelLastModifiedBy"/>
-<spring:message code="label_attachment" var="attachmentLabel"/>
-<spring:message code="label_file_upload" var="labelFileUpload"/>
-<spring:message code="label_file" var="labelFile"/>
+    <spring:url value="/blogs" var="homeURL"/>
 
-<spring:url value="/blogs" var="homeURL"/>
-<spring:url value="/blogs/filedownload/images" var="imageUrl" />
-
-<script type="text/javascript">
-    $(document).ready(function(){
-        $('.carousel').carousel({
-            interval: 20000000
-        })
-
-        $('#uploadEntryAttachment').click(function() {
-            $('#entryAttachmentUpload').show();
-        });
-
-        $('#dialog-audit').dialog({
-            autoOpen: false,
-            height: 600,
-            width: 900,
-            modal: true
-        });
-
-        $('.viewEntryAuditLink').click(function(event) {
-            //alert('Entry Id: ' + event.target.id);
-
-            $("#auditList").jqGrid({
-                url:'/audit/blog/' + event.target.id,
-                datatype: 'json',
-                mtype: 'GET',
-                colNames:['${labelLastModifiedDate}', '${labelLastModifiedBy}', '${labelPostDate}', '${labelSubject}', '${labelBody}', '${labelCategory}', '${labelSubCategory}', '${labelPostBy}'],
-                colModel :[
-                    {name:'lastModifiedDateString',   index:'lastModifiedDateString', width:120, align:'center', sortable:false},
-                    {name:'lastModifiedBy',           index:'lastModifiedBy', width:80, sortable:false},
-                    {name:'postDateString',           index:'postDate', width:80, align:'center', sortable:false},
-                    {name:'subject',                  index:'subject', width:100, sortable:false},
-                    {name:'shortBody',                index:'shortBody', width:200, sortable:false},
-                    {name:'categoryId',               index:'categoryId', width:80, align:'center', sortable:false},
-                    {name:'subCategoryId',            index:'subCategoryId', width:80, align:'center', sortable:false},
-                    {name:'createdBy',                index:'createdBy', width:80, sortable:false}
-                ],
-                jsonReader : {
-                    root:"entryData",
-                    page: "currentPage",
-                    total: "totalPages",
-                    records: "totalRecords",
-                    repeatitems: false,
-                    id: "id"
-                },
-                viewrecords: true,
-                gridview: true,
-                height: 500,
-                caption: 'Entry Audit History'
-            });
-
-            $('#dialog-audit').dialog('open');
-        });
-    });
-</script>
-
-<h3 id="entry-id" value="${entry.id}">${entry.subject}</h3>
-<hr/>
-
-<div class="blog-post">
-
-    <!-- Carusel -->
-    <c:if test="${not empty entry.attachments and not empty entry.getImagesId()}">
-        <div id="carousel-generic" class="carousel slide" data-ride="carousel">
-            <!-- Indicators -->
-            <ol class="carousel-indicators">
-                <c:set var="key" value="0"/>
-                <c:forEach items="${entry.getImagesId()}">
-                    <c:if test="${key eq 0}">
-                        <c:set value="active" var="active"/>
-                    </c:if>
-                    <c:if test="${key ne 0}">
-                        <c:remove var="active"/>
-                    </c:if>
-                    <li data-target="#carousel-generic" class="${active}" data-slide-to="${key}"><jsp:text/></li>
-                    <c:set var="key" value="${key+1}"/>
-                </c:forEach>
-                <c:remove var="key"/>
-            </ol>
-
-            <!-- Wrapper for slides -->
-            <div class="carousel-inner">
-                <c:forEach var="attachmentId" items="${entry.getImagesId()}">
-                    <c:set var="key" value="${key+1}"/>
-                    <c:if test="${key eq 1}">
-                        <c:set value="active" var="active"/>
-                    </c:if>
-                    <c:if test="${key ne 1}">
-                        <c:remove var="active"/>
-                    </c:if>
-                    <div class="item ${active}">
-                        <img data-src="holder.js/900x500/auto/#777:#555/" src="${imageUrl}/entry/${attachmentId}" class="centre" alt="..."/>
-                    </div>
-                </c:forEach>
-            </div>
-
-            <!-- Controls -->
-            <a class="left carousel-control" href="#carousel-generic" data-slide="prev">
-                <span class="glyphicon glyphicon-chevron-left"><jsp:text/></span>
-            </a>
-            <a class="right carousel-control" href="#carousel-generic" data-slide="next">
-                <span class="glyphicon glyphicon-chevron-right"><jsp:text/></span>
-            </a>
-        </div>
-    </c:if>
-
-    <c:if test="${not empty message}">
-        <div class="alert alert-${message.type}">${message.message}</div>
-    </c:if>
-
-    ${entry.body}
-
-    <c:if test="${not empty entry.attachments}">
-        <hr/>
-        <div class="panel panel-success">
-            <div class="panel-heading">${attachmentLabel}</div>
-            <table class="table">
-            <c:forEach items="${entry.attachments}" var="attachment">
-                <tr>
-                    <td><a href="${homeURL}/filedownload/entry/${attachment.id}" target="_blank"><span class="glyphicon glyphicon-file"><jsp:text/></span></a></td>
-                    <td>${attachment.fileName}</td>
-                </tr>
-            </c:forEach>
-            </table>
-        </div>
-    </c:if>
-
-    <!-- Number of comments & likes & impression -->
+    <h3 id="entry-id" value="${entry.id}">${entry.subject}</h3>
     <hr/>
-    <ul class="list-inline blog-panel-likes">
-        <li class="item-blue">
-            <span><joda:format value="${entry.postDate}" pattern="${dateFormatPattern}" /></span>
-        </li>
-        <li class="item-blue">
-            <span>${entry.createdBy}</span>
-        </li>
-        <li class="item-blue pull-right">
-            <span class="glyphicon glyphicon-comment"><jsp:text/></span>
-            <span>
-                <c:if test="${not empty entry.comments}"> ${entry.comments.size()}</c:if>
-                <c:if test="${empty entry.comments}"> 0</c:if>
-            </span>
-        </li>
-        <li class="item-blue pull-right">
-            <span class="glyphicon glyphicon-thumbs-up"><jsp:text/></span>
-            <span> ${entry.countLikes}</span>
-        </li>
-        <li class="item-red pull-right">
-            <span class="glyphicon glyphicon-fire"><jsp:text/></span>
-            <span> ${entry.impressions}</span>
-        </li>
-    </ul>
 
-    <!-- Control Panel -->
-    <sec:authorize access="isAuthenticated()">
-        <div class="btn-group ">
-            <c:if test="${entry.createdBy == pageContext.request.userPrincipal.name}">
-                <div class="btn-group">
-                    <a class="btn btn-xs  btn-info" href="${homeURL}/${entry.id}?form">Edit</a>
-                </div>
-                <div class="btn-group">
-                    <a class="btn btn-xs  btn-info" href="javascript:void(0);" id="uploadEntryAttachment">Upload Attachment</a>
-                </div>
-            </c:if>
-            <div class="btn-group">
-                <a class="btn btn-xs  btn-info" href="${homeURL}/${entry.id}/comments?form">Post a comment</a>
+    <div class="blog-post">
+
+        <!-- Carusel -->
+        <c:if test="${not empty entry.attachments and not empty entry.getImagesId()}">
+            <jsp:include page="attachmentcarousel.jspx" />
+        </c:if>
+
+        <c:if test="${not empty message}">
+            <div class="alert alert-${message.type}">${message.message}</div>
+        </c:if>
+
+        ${entry.body}
+
+        <c:if test="${not empty entry.attachments}">
+            <hr/>
+            <div class="panel panel-success">
+                <div class="panel-heading">${attachmentLabel}</div>
+                <table class="table">
+                <c:forEach items="${entry.attachments}" var="attachment">
+                    <tr>
+                        <td><a href="${homeURL}/filedownload/entry/${attachment.id}" target="_blank"><span class="glyphicon glyphicon-file"><jsp:text/></span></a></td>
+                        <td>${attachment.fileName}</td>
+                    </tr>
+                </c:forEach>
+                </table>
             </div>
-            <sec:authorize access="hasRole('ROLE_ADMIN')">
-                <div class="btn-group">
-                    <a href="javascript:void(0);" id="${entry.id}" class="btn btn-xs btn-info">View Audit History</a>
-                </div>
-            </sec:authorize>
-        </div>
+        </c:if>
+
+        <!-- Number of comments & likes & impression -->
+        <ul class="list-inline blog-panel-likes">
+            <li class="item-blue">
+                <span><joda:format value="${entry.postDate}" pattern="${dateFormatPattern}" /></span>
+            </li>
+            <li class="item-blue">
+                <span>${entry.createdBy}</span>
+            </li>
+            <li class="item-blue pull-right">
+                <span class="glyphicon glyphicon-comment"><jsp:text/></span>
+                <span>
+                    <c:if test="${not empty entry.comments}"> ${entry.comments.size()}</c:if>
+                    <c:if test="${empty entry.comments}"> 0</c:if>
+                </span>
+            </li>
+            <li class="item-blue pull-right">
+                <span class="glyphicon glyphicon-thumbs-up"><jsp:text/></span>
+                <span> ${entry.countLikes}</span>
+            </li>
+            <li class="item-red pull-right">
+                <span class="glyphicon glyphicon-fire"><jsp:text/></span>
+                <span> ${entry.impressions}</span>
+            </li>
+        </ul>
+    </div>
+
+    <jsp:include page="addattachment.jspx"/>
+
+    <!-- Display comments -->
+    <c:if test="${not empty entry.comments}">
+        <jsp:include page="comment.jspx"/>
+    </c:if>
+
+
+    <sec:authorize access="hasRole('ROLE_ADMIN')">
+        <jsp:include page="audit.jspx"/>
     </sec:authorize>
-</div>
-
-<div id="entryAttachmentUpload" hidden="true">
-    <hr/>
-    <form:form cssClass="form-horizontal" action="fileupload" modelAttribute="uploadItem" name="fileuploadForm" method="post" enctype="multipart/form-data">
-        <input name="blogId" type="hidden" value="${entry.id}"/>
-        <input name="uploadType" type="hidden" value="entry"/>
-        <div class="form-group">
-            <label class="col-sm-2 control-label" for="file">${labelFileUpload}:</label>
-            <div class="col-sm-10">
-                <input name="file" type="file" class="form-control"/>
-            </div>
-        </div>
-        <button type="submit" class="btn btn-primary btn-xs" style="width:100%;"><span class="glyphicon glyphicon-import">Upload</span></button>
-    </form:form>
-</div>
-
-<!-- Display comments -->
-<c:if test="${not empty entry.comments}">
-    <jsp:include page="comment.jspx"/>
-</c:if>
-
-<div id="dialog-audit" title="Entry Audit">
-    <table id="auditList"><tr><td><jsp:text/></td></tr></table>
-</div>
 
 </div>
 
