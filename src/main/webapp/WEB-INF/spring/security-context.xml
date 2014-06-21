@@ -12,11 +12,17 @@
         <security:http-basic />
     </security:http>
 
+    <security:http pattern="/admin/**" create-session="stateless">
+        <security:intercept-url pattern="/**" access="ROLE_ADMIN"/>
+        <security:http-basic/>
+    </security:http>
+
 
     <security:http use-expressions="true">
-        <security:intercept-url pattern="/images" access="permitAll"/>
         <security:intercept-url pattern='/*' access='permitAll' />
+        <security:intercept-url pattern="/images" access="permitAll"/>
         <security:intercept-url pattern='/comment/*' access='isAuthenticated()'/>
+
         <!--<security:intercept-url pattern="/back/*" access="ROLE_ADMIN"/>-->
         <security:form-login
                 login-page="/index"

@@ -15,7 +15,7 @@
     <spring:message code="label_uk_UA" var="labelUkUa"/>
     <spring:message code="label_ru_RU" var="labelRuRU"/>
     <spring:message code="label_current_lang" var="labelCurrentLang"/>
-    <spring:url value="/index" var="homeUrl"/>
+    <spring:url value="/index" var="blogUrl"/>
 
     <spring:message code="auth_label_logout" var="labelLogout"/>
     <spring:message code="auth_button_sign_in" var="labelSignIn"/>
@@ -32,11 +32,11 @@
             <span class="icon-bar"><jsp:text></jsp:text></span>
             <span class="icon-bar"><jsp:text></jsp:text></span>
         </button>
-        <a class="navbar-brand" href="${homeUrl}">Analytics-It.com</a>
+        <a class="navbar-brand" href="${blogUrl}">Analytics-It.com</a>
     </div>
     <div class="collapse navbar-collapse">
         <ul class="nav blog-nav navbar-nav">
-            <li class="blog-nav-item active"><a href="${homeUrl}">${menuHome}</a></li>
+            <li class="blog-nav-item active"><a href="${blogUrl}">${menuHome}</a></li>
             <li class="blog-nav-item"><a href="#">${menuContact}</a></li>
             <li class="blog-nav-item"><a href="#">${menuAbout}</a></li>
         </ul>
@@ -45,9 +45,9 @@
                 <li class="dropdown">
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown"><span class="glyphicon glyphicon-globe"><jsp:text/></span> ${labelCurrentLang}<span class="caret"><jsp:text/></span></a>
                     <ul class="dropdown-menu">
-                        <li><a href="${homeUrl}?lang=en_US">${labelEnUs}</a></li>
-                        <li><a href="${homeUrl}?lang=uk_UA">${labelUkUa}</a></li>
-                        <li><a href="${homeUrl}?lang=ru_RU">${labelRuRU}</a></li>
+                        <li><a href="${blogUrl}?lang=en_US">${labelEnUs}</a></li>
+                        <li><a href="${blogUrl}?lang=uk_UA">${labelUkUa}</a></li>
+                        <li><a href="${blogUrl}?lang=ru_RU">${labelRuRU}</a></li>
                     </ul>
                 </li>
             </ul>
@@ -71,9 +71,9 @@
                 <li class="dropdown">
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown"><span class="glyphicon glyphicon-globe"><jsp:text/></span> ${labelCurrentLang}<span class="caret"><jsp:text/></span></a>
                     <ul class="dropdown-menu">
-                        <li><a href="${homeUrl}?lang=en_US">${labelEnUs}</a></li>
-                        <li><a href="${homeUrl}?lang=uk_UA">${labelUkUa}</a></li>
-                        <li><a href="${homeUrl}?lang=ru_RU">${labelRuRU}</a></li>
+                        <li><a href="${blogUrl}?lang=en_US">${labelEnUs}</a></li>
+                        <li><a href="${blogUrl}?lang=uk_UA">${labelUkUa}</a></li>
+                        <li><a href="${blogUrl}?lang=ru_RU">${labelRuRU}</a></li>
                     </ul>
                 </li>
             </ul>

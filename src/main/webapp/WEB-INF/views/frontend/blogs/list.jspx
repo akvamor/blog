@@ -12,10 +12,10 @@
      version="2.0">
     <spring:message code="blog_detail" var="blogDetail"/>
     <spring:message code="date_format_pattern" var="dateFormatPattern"/>
-    <spring:url value="/blogs" var="homeUrl"/>
+    <spring:url value="/blogs" var="blogUrl"/>
 
 
-    <c:url var="previousURLParams" value="${homeUrl}">
+    <c:url var="previousURLParams" value="${blogUrl}">
         <c:forEach var="URLParam" items="${param}">
             <c:if test="${URLParam.key != 'page'}">
                 <c:param name="${URLParam.key}" value="${URLParam.value}"/>
@@ -69,7 +69,7 @@
                     </li>
                 </ul>
 
-                <p><a class="btn btn-warning btn-xs" style="width: 30%" href="${homeUrl}/${item.id}" role="button">${blogDetail}</a></p>
+                <p><a class="btn btn-warning btn-xs" style="width: 30%" href="${blogUrl}/${item.id}" role="button">${blogDetail}</a></p>
             </div><!--/span-->
         </c:forEach>
 

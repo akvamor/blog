@@ -18,7 +18,7 @@
     <spring:message code="label_last_modified_by" var="labelLastModifiedBy"/>
     <spring:url value="/audit/blog/" var="auditURL"/>
 
-    <div id="dialog-audit" title="Entry Audit">
+    <div id="dialog-audit" class="clearfix" title="Entry Audit">
         <table id="auditList"><tr><td><jsp:text/></td></tr></table>
     </div>
 
@@ -36,18 +36,18 @@
                 var id = $(this).attr("data-source");
 
                 $("#auditList").jqGrid({
-                    url:'${auditURL}' + id,
+                    url     : '${auditURL}' + id,
                     datatype: 'json',
-                    mtype: 'GET',
-                    colNames:['${labelLastModifiedDate}', '${labelLastModifiedBy}', '${labelPostDate}', '${labelSubject}', '${labelBody}', '${labelCategory}', '${labelPostBy}'],
-                    colModel :[
-                        {name:'lastModifiedDateString',   index:'lastModifiedDateString', width:120, align:'center', sortable:false},
-                        {name:'lastModifiedBy',           index:'lastModifiedBy', width:80, sortable:false},
-                        {name:'postDateString',           index:'postDate', width:80, align:'center', sortable:false},
-                        {name:'subject',                  index:'subject', width:100, sortable:false},
-                        {name:'shortBody',                index:'shortBody', width:200, sortable:false},
-                        {name:'categoryId',               index:'categoryId', width:80, align:'center', sortable:false},
-                        {name:'createdBy',                index:'createdBy', width:80, sortable:false}
+                    mtype   : 'GET',
+                    colNames: ['${labelLastModifiedDate}', '${labelLastModifiedBy}', '${labelPostDate}', '${labelSubject}', '${labelBody}', '${labelCategory}', '${labelPostBy}'],
+                    colModel: [
+                        {name:'lastModifiedDateString',   index:'lastModifiedDateString',   width:120,  align:'center', sortable:false},
+                        {name:'lastModifiedBy',           index:'lastModifiedBy',           width:80,   sortable:false},
+                        {name:'postDateString',           index:'postDate',                 width:80,   align:'center', sortable:false},
+                        {name:'subject',                  index:'subject',                  width:100,  sortable:false},
+                        {name:'shortBody',                index:'shortBody',                width:280,  sortable:false},
+                        {name:'categoryId',               index:'categoryId',               width:80,   align:'center', sortable:false},
+                        {name:'createdBy',                index:'createdBy',                width:80,   sortable:false}
                     ],
                     jsonReader : {
                         root        : "entryData",

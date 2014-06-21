@@ -6,7 +6,7 @@
      version="2.0" xmlns:c="http://java.sun.com/jsp/jstl/core">
 	<jsp:directive.page contentType="text/html;charset=UTF-8" />
 	<jsp:output omit-xml-declaration="yes" />
-    <spring:url value="/blogs" var="homeUrl"/>
+    <spring:url value="/blogs" var="blogUrl"/>
     <spring:message code="label_blog_new" var="labelBlogNew"/>
 
     <c:if test="${not empty menu}">
@@ -26,7 +26,7 @@
 
                 <c:if test="${empty category.parentCategory}">
                     <li class="${active}">
-                        <a href="${homeUrl}?categoryId=${category.categoryId}">${category.categoryId}</a>
+                        <a href="${blogUrl}?categoryId=${category.categoryId}">${category.categoryId}</a>
                         <c:set var="subCategories" value="${category.getSubCategories()}"/>
                         <c:if test="${not empty subCategories}">
                             <ul class="nav">
@@ -42,7 +42,7 @@
                                     </c:choose>
 
                                     <li class="${subActive}">
-                                        <a href="${homeUrl}?categoryId=${subCategory.categoryId}">${subCategory.categoryId}</a>
+                                        <a href="${blogUrl}?categoryId=${subCategory.categoryId}">${subCategory.categoryId}</a>
                                     </li>
                                 </c:forEach>
                             </ul>
@@ -55,7 +55,7 @@
             <hr/>
             <ul class="nav bs-docs-sidenav">
                 <li>Control Panel</li>
-                <li><a href="${homeUrl}?form">${labelBlogNew}</a></li>
+                <li><a href="${blogUrl}?form">${labelBlogNew}</a></li>
             </ul>
         </sec:authorize>
 
@@ -64,12 +64,12 @@
                 <hr/>
                 <ul class="nav bs-docs-sidenav">
                     <li>Current post</li>
-                    <li><a href="${homeURL}/${entry.id}/comments?form">Post a comment</a></li>
+                    <li><a href="${blogUrl}/${entry.id}/comments?form">Post a comment</a></li>
                     <sec:authorize access="hasRole('ROLE_ADMIN')">
                         <li><a href="javascript:void(0);" id="auditButton" data-source="${entry.id}">View Audit History</a></li>
                     </sec:authorize>
                     <c:if test="${entry.createdBy == pageContext.request.userPrincipal.name}">
-                        <li><a href="${homeURL}/${entry.id}?form">Edit</a></li>
+                        <li><a href="${blogUrl}/${entry.id}?form">Edit</a></li>
                         <li><a href="javascript:void(0);" id="uploadEntryAttachment">Upload Attachment</a></li>
                     </c:if>
                 </ul>

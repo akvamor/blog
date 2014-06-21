@@ -17,16 +17,16 @@ import java.util.List;
 /**
  * Created by Dmitry Petrov on 5/31/14.
  */
-@RequestMapping("/back")
+@RequestMapping("/")
 @Controller
-public class AuditController {
+public class UserController {
 
-    private static final Logger logger = LoggerFactory.getLogger(AuditController.class);
+    private static final Logger logger = LoggerFactory.getLogger(UserController.class);
 
     @Autowired
     private EntryAuditService entryAuditService;
 
-    @RequestMapping(value = "/blog/{id}", method = RequestMethod.GET)
+    @RequestMapping(value = "/{id}", method = RequestMethod.GET)
     @ResponseBody
     public EntryGrid listEntryAudit(@PathVariable("id") Long id){
         logger.info("Ged Audit Records for Entry with id: {}", id);
@@ -40,4 +40,5 @@ public class AuditController {
 
         return entryGrid;
     }
+
 }

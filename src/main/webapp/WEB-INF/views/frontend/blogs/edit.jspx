@@ -85,26 +85,45 @@ To change this template use File | Settings | File Templates.
                 <div class="col-sm-10">
                     <form:textarea rows="100" path="body" id="postBody" cssClass="form-control"/>
                     <script type="text/javascript">
-                        $('#postBody').ckeditor({
-                            language: '${language}',
-                            toolbarGroups : [
-                                { name: 'clipboard',   groups: [ 'clipboard', 'undo' ] },
-                                { name: 'editing',     groups: [ 'find', 'selection', 'spellchecker' ] },
-                                { name: 'forms' },
-                                '/',
-                                { name: 'basicstyles', groups: [ 'basicstyles', 'cleanup' ] },
-                                { name: 'paragraph',   groups: [ 'list', 'indent', 'blocks', 'align', 'bidi' ] },
-                                { name: 'links' },
-                                { name: 'insert' },
-                                '/',
-                                { name: 'styles' },
-                                { name: 'colors' },
-                                { name: 'tools' },
-                                { name: 'others' }
-                            ],
-                            autoGrow_minHeight : 338,
-                            uiColor: '#CCCCCC'
-                        })
+                       $(document).ready(function(){
+//                           $('#postBody').ckeditor({
+//                               language: '${language}',
+//                               toolbarGroups : [
+//                                   { name: 'clipboard',   groups: [ 'clipboard', 'undo' ] },
+//                                   { name: 'basicstyles', groups: [ 'basicstyles', 'cleanup' ] },
+//                                   { name: 'paragraph',   groups: [ 'list', 'indent', 'blocks', 'align', 'bidi', 'codesnipped' ] },
+//                                   { name: 'codesnipped' },
+//                                   { name: 'styles' },
+//                                   { name: 'colors' },
+//                                   { name: 'tools' },
+//                                   { name: 'links' }
+//                               ],
+//                               autoGrow_minHeight : 338,
+//                               uiColor: '#CCCCCC'
+//                           })
+                           ( function() {
+                               CKEDITOR.disableAutoInline = true;
+
+                               var config = {
+                                   extraPlugins: 'codesnippet',
+                                   toolbar: [
+                                       [ 'Source' ], [ 'Undo', 'Redo' ], [ 'Bold', 'Italic', 'Underline' ], [ 'CodeSnippet' ]
+                                   ],
+                                   codeSnippet_theme: 'monokai_sublime',
+                                   height: 400
+                               };
+
+                               CKEDITOR.replace( 'postBody', config );
+
+                               CKEDITOR.inline( 'editable', CKEDITOR.tools.extend( {}, config, {
+                                   extraPlugins: 'codesnippet'
+                               }, true ) );
+
+                               if (CKEDITOR.env.ie) {
+                                   if (CKEDITOR.env.version == 8) CKEDITOR.document.getById('ie8-warning').addClass('warning');
+                               }
+                           }() );
+                       })
                     </script>
                 </div>
             </div>
