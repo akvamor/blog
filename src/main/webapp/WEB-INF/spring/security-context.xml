@@ -7,8 +7,10 @@
        http://www.springframework.org/schema/security
        http://www.springframework.org/schema/security/spring-security.xsd">
 
-    <security:http pattern="/restful/**" create-session="stateless">
-        <security:intercept-url pattern='/**' access='ROLE_REMOTE' />
+
+
+    <security:http pattern="/restful/**" create-session="stateless" use-expressions="true">
+        <security:intercept-url pattern='/**' access='permitAll' />
         <security:http-basic />
     </security:http>
 
@@ -17,11 +19,10 @@
         <security:http-basic/>
     </security:http>
 
-
     <security:http use-expressions="true">
         <security:intercept-url pattern='/*' access='permitAll' />
         <security:intercept-url pattern="/images" access="permitAll"/>
-        <security:intercept-url pattern='/comment/*' access='isAuthenticated()'/>
+        <security:intercept-url pattern='/comment/*' access='permitAll'/>
 
         <!--<security:intercept-url pattern="/back/*" access="ROLE_ADMIN"/>-->
         <security:form-login

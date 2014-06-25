@@ -140,13 +140,6 @@ public class Entry extends AbstractBlog implements Serializable {
         return attach;
     }
 
-
-
-    public void addComment(Comment comment) {
-        comment.setEntry(this);
-        getComments().add(comment);
-    }
-
     public void addAttachment(EntryAttachment attachment) {
         getAttachments().add(attachment);
     }

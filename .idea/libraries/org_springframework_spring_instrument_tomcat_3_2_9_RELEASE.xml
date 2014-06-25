@@ -1,0 +1,14 @@
+<component name="libraryTable">
+  <library name="org.springframework:spring-instrument-tomcat:3.2.9.RELEASE" type="repository">
+    <properties maven-id="org.springframework:spring-instrument-tomcat:3.2.9.RELEASE" />
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/lib/spring-instrument-tomcat-3.2.9.RELEASE.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/catalina-6.0.16.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/servlet-api-6.0.16.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/juli-6.0.16.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/annotations-api-6.0.16.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

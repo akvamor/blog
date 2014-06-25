@@ -64,7 +64,7 @@
                 <hr/>
                 <ul class="nav bs-docs-sidenav">
                     <li>Current post</li>
-                    <li><a href="${blogUrl}/${entry.id}/comments?form">Post a comment</a></li>
+                    <li><a id="btnPostComment" href="javascript:void(0);" data-source="${entry.id}">Post a comment</a></li>
                     <sec:authorize access="hasRole('ROLE_ADMIN')">
                         <li><a href="javascript:void(0);" id="auditButton" data-source="${entry.id}">View Audit History</a></li>
                     </sec:authorize>

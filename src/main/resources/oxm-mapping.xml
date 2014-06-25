@@ -1,38 +1,13 @@
-<?xml version="1.0"?>
 <mapping>
-    <class name="ua.org.project.domain.impl.Comment">
-        <field name="id" type="long">
-            <bind-xml name="id" node="element"/>
-        </field>
-        <field name="body" type="string">
-            <bind-xml name="body" node="element"/>
-        </field>
-        <field name="postDate" type="string" handler="dateHandler">
-            <bind-xml name="postDate" node="element"/>
-        </field>
-        <field name="postBy" type="string">
-            <bind-xml name="postBy" node="element"/>
-        </field>
-        <field name="createdDate" type="string" handler="dateHandler">
-            <bind-xml name="createdDate" node="element"/>
-        </field>
-        <field name="createdBy" type="string">
-            <bind-xml name="createdBy" node="element"/>
-        </field>
-        <field name="lastModifiedDate" type="string" handler="dateHandler">
-            <bind-xml name="lastModifiedDate" node="element"/>
-        </field>
-        <field name="version" type="integer">
-            <bind-xml name="version" node="element"/>
-        </field>
-    </class>
 
-    <class name="ua.org.project.domain.Sample">
+    <field-handler name="dateHandler" class="ua.org.project.util.xml.DateTimeFieldHandler">
+        <param name="date-format" value="yyyy-MM-dd"/>
+    </field-handler>
+
+    <class name="ua.org.project.domain.Sample" identity="name">
         <field name="name" type="string">
             <bind-xml name="name" node="element"/>
         </field>
     </class>
-
-    <field-handler name="dateHandler" class="ua.org.project.util.xml.DateTimeFieldHandler"/>
 
 </mapping>

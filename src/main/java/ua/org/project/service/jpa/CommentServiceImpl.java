@@ -7,8 +7,7 @@ import org.springframework.stereotype.Repository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ua.org.project.domain.impl.Comment;
-import ua.org.project.domain.impl.Entry;
-import ua.org.project.domain.json.CommentJson;
+import ua.org.project.domain.rest.CommentRest;
 import ua.org.project.repository.CommentLikeRepository;
 import ua.org.project.repository.CommentRepository;
 import ua.org.project.service.CommentService;
@@ -64,29 +63,29 @@ public class CommentServiceImpl implements CommentService {
     }
 
     @Transactional(readOnly = true)
-    public List<CommentJson> findTreeByEntryId(Long entryId, String formatDate) {
+    public List<CommentRest> getCommentRestTree(Long entryId, String formatDate) {
         logger.info("Get Tree of comments by entryId: " + entryId + ", formatDate: " + formatDate);
-        List<Comment> comments = commentRepository.findByEntryId(entryId);
+        List<Comment> comments = commentRepository.findByEntryIdAndParent(entryId);
         this.setLikes(comments);
-        List<CommentJson> parentList = new ArrayList<CommentJson>();
+        List<CommentRest> parentList = new ArrayList<CommentRest>();
         for (Comment comment : comments) {
             if (comment.getParentComment() == null){
-                CommentJson commentJson = new CommentJson(comment, formatDate);
-                this.setChildren(comment.getChildComment(), commentJson, formatDate);
-                parentList.add(commentJson);
+                CommentRest commentRest = new CommentRest(comment, formatDate);
+                this.setChildren(comment.getChildComment(), commentRest, formatDate);
+                parentList.add(commentRest);
             }
         }
         return parentList;
     }
 
-    private void setChildren(Set<Comment> comments, CommentJson commentsJson, String formatDate){
+    private void setChildren(Set<Comment> comments, CommentRest commentsJson, String formatDate){
         this.setLikes(comments);
-        List<CommentJson> children = new ArrayList<CommentJson>();
+        List<CommentRest> children = new ArrayList<CommentRest>();
         for (Comment comment : comments) {
-            CommentJson commentJson = new CommentJson(comment, formatDate);
-            children.add(commentJson);
+            CommentRest commentRest = new CommentRest(comment, formatDate);
+            children.add(commentRest);
             if (comment.getChildComment() != null){
-                this.setChildren(comment.getChildComment(), commentJson, formatDate);
+                this.setChildren(comment.getChildComment(), commentRest, formatDate);
             }
         }
         commentsJson.setChildren(children);

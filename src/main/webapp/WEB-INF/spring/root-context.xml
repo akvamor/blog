@@ -8,14 +8,14 @@
 
     <context:property-placeholder location="classpath:app.properties"/>
 
+    <import resource="security-context.xml"/>
+
     <import resource="classpath:datasource-tx-jpa.xml"/>
 
     <!-- ASPECT -->
     <aop:aspectj-autoproxy/>
     <context:load-time-weaver/>
 
-    <!-- SECURITY -->
-    <import resource="security-context.xml"/>
-
     <context:component-scan base-package="ua.org.project.service.jpa"/>
+
 </beans>

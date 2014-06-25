@@ -73,13 +73,12 @@
     </listener>
 
     <!-- SPRING MVC Dispatcher Servlet -->
-                <!-- FRONT END -->
     <servlet>
         <servlet-name>front-app-dispatcher</servlet-name>
         <servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
         <init-param>
             <param-name>contextConfigLocation</param-name>
-            <param-value>/WEB-INF/spring/blogapp-servlet/front-context.xml</param-value>
+            <param-value>/WEB-INF/spring/blogapp-servlet/web-context.xml</param-value>
         </init-param>
         <load-on-startup>1</load-on-startup>
         <multipart-config>
@@ -89,37 +88,6 @@
     <servlet-mapping>
         <servlet-name>front-app-dispatcher</servlet-name>
         <url-pattern>/</url-pattern>
-    </servlet-mapping>
-
-    <servlet>
-        <servlet-name>back-app-dispatcher</servlet-name>
-        <servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
-        <init-param>
-            <param-name>contextConfigLocation</param-name>
-            <param-value>/WEB-INF/spring/blogapp-servlet/back-context.xml</param-value>
-        </init-param>
-        <load-on-startup>1</load-on-startup>
-        <multipart-config>
-            <max-file-size>5000000</max-file-size>
-        </multipart-config>
-    </servlet>
-    <servlet-mapping>
-        <servlet-name>back-app-dispatcher</servlet-name>
-        <url-pattern>/admin</url-pattern>
-    </servlet-mapping>
-                <!-- RESTFUL -->
-    <servlet>
-        <servlet-name>restful-dispatcher</servlet-name>
-        <servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
-        <init-param>
-            <param-name>contextConfigLocation</param-name>
-            <param-value>/WEB-INF/spring/restful-servlet/servlet-context.xml</param-value>
-        </init-param>
-        <load-on-startup>1</load-on-startup>
-    </servlet>
-    <servlet-mapping>
-        <servlet-name>restful-dispatcher</servlet-name>
-        <url-pattern>/restful</url-pattern>
     </servlet-mapping>
 
 </web-app>

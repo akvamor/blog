@@ -56,7 +56,6 @@ public class Comment extends AbstractBlog implements Serializable {
         this.parentComment = parentComment;
     }
 
-
     @JsonIgnore
     @NotEmpty(message = "{validation.comment.body.NotEmpty.message}")
     @Size(min = 10, max = 2000, message = "{validation.posting.body.Size.message}")
