@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
+import ua.org.project.domain.impl.Comment;
 import ua.org.project.domain.rest.CommentRest;
 import ua.org.project.service.CommentService;
 
@@ -26,14 +27,10 @@ public class CommentRestController {
     @Autowired
     private MessageSource messageSource;
 
-
-    @RequestMapping(value = "/listByEntry/{id}", method = RequestMethod.GET)
+    @RequestMapping(value = "/list/{id}", method = RequestMethod.GET)
     @ResponseBody
-    public List<CommentRest> list(@PathVariable("id") Long id, Locale locale){
-        logger.info("Get list of comment for entryId: " + id);
-        String format = messageSource.getMessage("date_format_pattern_comments", new Object[]{}, locale);
-        List<CommentRest> comments = commentService.getCommentRestTree(id, format);
-        return comments;
+    public List<Comment> listTree(@PathVariable("id") Long id) {
+        return commentService.findByEntryIdInTree(id);
     }
 
 }

@@ -11,7 +11,7 @@ import java.util.List;
 public interface CommentService {
     public Comment findById(Long id);
     public List<Comment> findByEntryId(Long entryId);
-    public List<CommentRest> getCommentRestTree(Long entryId, String format);
+    public List<Comment> findByEntryIdInTree(Long entryId);
     public Comment save(Comment comment);
     public void delete(Comment comment);
 }

@@ -4,10 +4,6 @@
         <param name="date-format" value="yyyy-MM-dd"/>
     </field-handler>
 
-    <class name="ua.org.project.domain.Sample" identity="name">
-        <field name="name" type="string">
-            <bind-xml name="name" node="element"/>
-        </field>
-    </class>
+
 
 </mapping>

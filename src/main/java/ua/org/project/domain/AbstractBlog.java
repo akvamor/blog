@@ -1,16 +1,14 @@
 package ua.org.project.domain;
 
-import org.codehaus.jackson.annotate.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.hibernate.annotations.Type;
 import org.hibernate.envers.Audited;
 import org.hibernate.validator.constraints.NotEmpty;
 import org.joda.time.DateTime;
 import org.springframework.data.domain.Auditable;
 import org.springframework.format.annotation.DateTimeFormat;
-import ua.org.project.domain.impl.EntryAttachment;
 
 import javax.persistence.*;
-import javax.validation.constraints.Size;
 import java.io.Serializable;
 import java.util.*;
 
@@ -72,7 +70,6 @@ public abstract class AbstractBlog implements Blog, Auditable<String, Long>, Ser
         this.lastModifiedBy = lastModifiedBy;
     }
 
-
     @Column(name = "LAST_MODIFIED_DATE")
     @Type(type = "org.joda.time.contrib.hibernate.PersistentDateTime")
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
@@ -133,6 +130,7 @@ public abstract class AbstractBlog implements Blog, Auditable<String, Long>, Ser
         return org.joda.time.format.DateTimeFormat.forPattern(format + " HH:mm:ss").print(this.lastModifiedDate);
     }
 
+    @JsonIgnore
     @Transient
     public final boolean isNew() {
         if (id == null)
@@ -141,9 +139,11 @@ public abstract class AbstractBlog implements Blog, Auditable<String, Long>, Ser
             return false;
     }
 
+    @JsonIgnore
     @Transient
     abstract protected Set<Attachment> getAttachmentAbstract();
 
+    @JsonIgnore
     @Transient
     public Set<Long> getImagesId(){
         TreeSet<Long> list = new TreeSet<Long>();

@@ -51,6 +51,13 @@ public class CommentServiceImpl implements CommentService {
         return comments;
     }
 
+    @Override
+    public List<Comment> findByEntryIdInTree(Long entryId) {
+        List<Comment> comments = commentRepository.findByEntryIdAndParent(entryId);
+        this.setLikes(comments);
+        return comments;
+    }
+
     public Comment save(Comment comment) {
         if (comment.isNew()){
             //Todo add save to COMMENT_TREE
@@ -62,40 +69,15 @@ public class CommentServiceImpl implements CommentService {
         commentRepository.delete(comment);
     }
 
-    @Transactional(readOnly = true)
-    public List<CommentRest> getCommentRestTree(Long entryId, String formatDate) {
-        logger.info("Get Tree of comments by entryId: " + entryId + ", formatDate: " + formatDate);
-        List<Comment> comments = commentRepository.findByEntryIdAndParent(entryId);
-        this.setLikes(comments);
-        List<CommentRest> parentList = new ArrayList<CommentRest>();
-        for (Comment comment : comments) {
-            if (comment.getParentComment() == null){
-                CommentRest commentRest = new CommentRest(comment, formatDate);
-                this.setChildren(comment.getChildComment(), commentRest, formatDate);
-                parentList.add(commentRest);
-            }
-        }
-        return parentList;
-    }
-
-    private void setChildren(Set<Comment> comments, CommentRest commentsJson, String formatDate){
-        this.setLikes(comments);
-        List<CommentRest> children = new ArrayList<CommentRest>();
-        for (Comment comment : comments) {
-            CommentRest commentRest = new CommentRest(comment, formatDate);
-            children.add(commentRest);
-            if (comment.getChildComment() != null){
-                this.setChildren(comment.getChildComment(), commentRest, formatDate);
-            }
-        }
-        commentsJson.setChildren(children);
-    }
-
     private void setLikes(Collection<Comment> comments) {
         for (Comment comment : comments) {
             comment.setCountLikes(commentLikeRepository.countAllLike(comment.getId()));
             comment.setCountNotLikes(commentLikeRepository.countAllNotLike(comment.getId()));
+            if (comment.getChildComment() != null){
+                this.setLikes(comment.getChildComment());
+            }
         }
+
     }
 
 }

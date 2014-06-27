@@ -1,6 +1,6 @@
 package ua.org.project.domain.impl;
 
-import org.codehaus.jackson.annotate.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.hibernate.envers.Audited;
 import org.hibernate.envers.NotAudited;
 import org.hibernate.validator.constraints.NotEmpty;
@@ -44,6 +44,7 @@ public class Comment extends AbstractBlog implements Serializable {
     }
 
 
+    @JsonIgnore
     @ManyToOne(fetch = FetchType.EAGER)
     @NotAudited
     @JoinTable(name = "comment_tree",
@@ -56,7 +57,7 @@ public class Comment extends AbstractBlog implements Serializable {
         this.parentComment = parentComment;
     }
 
-    @JsonIgnore
+
     @NotEmpty(message = "{validation.comment.body.NotEmpty.message}")
     @Size(min = 10, max = 2000, message = "{validation.posting.body.Size.message}")
     @Column(name = "BODY")
@@ -68,6 +69,7 @@ public class Comment extends AbstractBlog implements Serializable {
     }
 
 
+    @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY)
     @NotAudited
     @JoinColumn(name = "ENTRY_ID")
@@ -78,6 +80,7 @@ public class Comment extends AbstractBlog implements Serializable {
         this.entry = entry;
     }
 
+
     @Column(name = "POST_BY")
     public String getPostBy() {
         return postBy;
@@ -86,7 +89,7 @@ public class Comment extends AbstractBlog implements Serializable {
         this.postBy = postBy;
     }
 
-
+    @JsonIgnore
     @NotAudited
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "comment", cascade = CascadeType.ALL)
     @OrderBy("id DESC ")

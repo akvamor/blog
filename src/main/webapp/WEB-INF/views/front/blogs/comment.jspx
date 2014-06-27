@@ -66,7 +66,7 @@
             })
 
             $.ajax({
-                url     : "${urlComment}/listByEntry/"+entryId,
+                url     : "${urlComment}/list/"+entryId,
                 type    : "GET",
                 dataType: "json"
             }).done(function( data ){
@@ -116,10 +116,10 @@
                     htmlForComment.find(".comment-count-not-likes").text(" " + comment.countNotLikes);
                     htmlForComment.find(".btn").attr("data-context", "comment-"+comment.id);
                     htmlForComment.find(".comment-body").text(comment.body);
-                    if (comment.children.length > 0 ){
+                    if (comment.childComment.length > 0 ){
                         var child = htmlForComment.find(".comment-child");
                         child.show();
-                        pushCommentToHTML(comment.children, child);
+                        pushCommentToHTML(comment.childComment, child);
                     }
                     htmlForComment.appendTo(tagForInjection);
                     htmlForComment.show();

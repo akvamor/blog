@@ -17,18 +17,27 @@
     <!-- SECURITY -->
     <security:global-method-security pre-post-annotations="enabled"/>
 
+
     <annotation-driven validator="validator">
         <argument-resolvers>
             <beans:bean class="org.springframework.security.web.bind.support.AuthenticationPrincipalArgumentResolver"></beans:bean>
         </argument-resolvers>
         <message-converters>
-            <beans:bean class="org.springframework.http.converter.json.MappingJacksonHttpMessageConverter"/>
-            <beans:bean class="org.springframework.http.converter.xml.MarshallingHttpMessageConverter">
+            <beans:bean class="org.springframework.http.converter.json.MappingJackson2HttpMessageConverter">
+                <beans:property name="objectMapper" ref="customJodaMapper"/>
+            </beans:bean>
+            <!--<beans:bean class="org.springframework.http.converter.xml.MarshallingHttpMessageConverter">
                 <beans:property name="marshaller" ref="castorMarshaller"/>
                 <beans:property name="unmarshaller" ref="castorMarshaller"/>
-            </beans:bean>
+            </beans:bean>-->
         </message-converters>
     </annotation-driven>
+
+    <!--<beans:bean id="castorMarshaller" class="org.springframework.oxm.castor.CastorMarshaller">
+        <beans:property name="mappingLocation" value="classpath:oxm-mapping.xml"/>
+    </beans:bean>-->
+
+    <context:component-scan base-package="ua.org.project.util.json"/>
 
     <beans:bean id="validator" class="org.springframework.validation.beanvalidation.LocalValidatorFactoryBean">
         <beans:property name="validationMessageSource" ref="messageSource"/>
@@ -77,9 +86,5 @@
 
     <context:component-scan base-package="ua.org.project.web.controller"/>
     <context:component-scan base-package="ua.org.project.rest.controller"/>
-
-    <beans:bean id="castorMarshaller" class="org.springframework.oxm.castor.CastorMarshaller">
-        <beans:property name="mappingLocation" value="classpath:oxm-mapping.xml"/>
-    </beans:bean>
 
 </beans:beans>
