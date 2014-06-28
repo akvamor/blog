@@ -9,7 +9,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import ua.org.project.domain.Sample;
 import ua.org.project.domain.impl.Comment;
-import ua.org.project.domain.rest.CommentRest;
 import ua.org.project.service.CommentService;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.ConstraintViolation;

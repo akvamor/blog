@@ -46,6 +46,7 @@ public class JodaDateTimeDeserializer extends JsonDeserializer<DateTime> {
             DateTimeFormatter dateTimeFormatter = DateTimeFormat.forPattern(dateFormatPattern);
             dateTime = dateTimeFormatter.parseDateTime(jp.getText());
         }
+        System.out.println("Date convert: " + dateTime.toString(dateFormatPattern));
         return dateTime;
     }
 

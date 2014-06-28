@@ -16,7 +16,7 @@
     <spring:message code="label_to_post_date" var="labelToPostDate"/>
     <spring:message code="label_last_modified_date" var="labelLastModifiedDate"/>
     <spring:message code="label_last_modified_by" var="labelLastModifiedBy"/>
-    <spring:url value="/audit/blog/" var="auditURL"/>
+    <spring:url value="/admin/audit/blog/" var="auditURL"/>
 
     <div id="dialog-audit" class="clearfix" title="Entry Audit">
         <table id="auditList"><tr><td><jsp:text/></td></tr></table>

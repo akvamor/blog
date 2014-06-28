@@ -16,7 +16,7 @@
     <div id="showComment" class="blog-comments" style="display: none">
         <ul class="list-inline blog-panel-likes">
             <li class="item-blue">
-                <strong class="comment-post-by"><jsp:text/></strong>
+                <strong class="comment-created-by"><jsp:text/></strong>
             </li>
             <li class="comment-reply-to-label comment-reply-to-tag" style="display: none"> to </li>
             <li class="item-green comment-reply-to-tag" style="display: none">
@@ -45,26 +45,28 @@
     </div>
 
     <div id="editComment" style="display: none" >
-        <form method="post" class="form" role="form">
-            <input type="hidden" name="replyTo" class="comment-reply-to"/>
-            <input type="hidden" name="postBy" class="comment-post-by" value="${pageContext.request.userPrincipal.name}"/>
+        <form action="${urlComment}?form&amp;entryId=${entry.id}" class="form" role="form">
+            <input type="hidden" name="createdBy"/>
+            <input type="hidden" name="createdDate"/>
+            <input type="hidden" name="lastModifiedBy"/>
+            <input type="hidden" name="lastModifiedDate"/>
+            <input type="hidden" name="postBy"/>
+            <input type="hidden" name="postDate"/>
+            <input type="hidden" name="version"/>
             <div class="alert alert-warning comment-body" style="display: none"><jsp:text/></div>
             <div class="form-group">
                 <textarea name="body" rows="4" class="comment-body form-control"><jsp:text/></textarea>
             </div>
             <div class="form-group ">
-                <button class="subbmit-comment-button btn btn-info btn-group-justified btn-xs">${buttonSend}</button>
+                <button class="btn btn-info btn-group-justified btn-xs">${buttonSend}</button>
             </div>
         </form>
     </div>
     <script type="text/javascript">
         $(document).ready(function(){
+
+            //load all comments
             var entryId = $("#entry-id").attr("value");
-
-            $("#btnPostComment").click(function(){
-                pushFormCommentToHtml($("#container-of-comment"), null);
-            })
-
             $.ajax({
                 url     : "${urlComment}/list/"+entryId,
                 type    : "GET",
@@ -75,6 +77,7 @@
                 console.log(textStatus);
             })
 
+            //Show and Hide Button comment
             $(".blog-panel-likes").bind({
                 mouseover: function() {
                     $(this).children(".commit-button").css("display", "inline");
@@ -83,33 +86,41 @@
                     $(this).children(".commit-button").css("display", "none");
             }});
 
+            //Create form for new comment with parent comment
             $(".commit-button .btn").bind({
                 click: function(){
-                    var id = $(this).attr("data-context");
-                    var context = $("#"+id).children(".comment-form").first();
-//                    console.log(context.has("form"));
+                    var parentId = $(this).attr("data-context");
+                    var context = $("#"+parentId).children(".comment-form").first();
                     if (context.has("form").length &lt; 1){
-                        pushFormCommentToHtml(context, id);
+                        $.ajax({
+                            url     : "${urlComment}/new?form",
+                            type    : "GET",
+                            dataType: "json"
+                        }).done(function(data){
+                            pushFormCommentToHtml(context, data, parentId);
+                        }).fail(function( jqXHR, textStatus){
+                            console.log(textStatus);
+                        })
                     } else {
                         context.children().first().slideToggle();
                     }
                 }
             })
 
-            $(".subbmit-comment-button").bind({
-                click: function(){
-                    console.log(this);
-                }
+            //Post new comment without parent comment
+            $("#btnPostComment").click(function(){
+                pushFormCommentToHtml($("#container-of-comment"), null);
             })
 
             function pushCommentToHTML(data, tagForInjection){
                 data.forEach(function(comment){
                     var htmlForComment = $("#showComment").clone(true);
                     htmlForComment.attr("id","comment-" + comment.id);
-                    htmlForComment.find(".comment-post-by").text(comment.postBy);
-                    if (comment.replyTo != null){
+                    htmlForComment.attr("data-source", comment.id);
+                    htmlForComment.find(".comment-created-by").text(comment.createdBy);
+                    if (comment.parentUser != null){
                         htmlForComment.find(".comment-reply-to-tag").css("display", "inline");
-                        htmlForComment.find(".comment-reply-to").text(comment.replyTo);
+                        htmlForComment.find(".comment-reply-to").text(comment.parentUser);
                     }
                     htmlForComment.find(".comment-post-date").text(comment.postDate);
                     htmlForComment.find(".comment-count-likes").text(" " + comment.countLikes);
@@ -122,20 +133,70 @@
                         pushCommentToHTML(comment.childComment, child);
                     }
                     htmlForComment.appendTo(tagForInjection);
-                    htmlForComment.show();
+                    htmlForComment.slideToggle("slow");
                 });
             }
 
-            function pushFormCommentToHtml(tagForInjection, commentId){
-                var htmlForForm = $("#editComment").clone(true);
-                htmlForForm.removeAttr("id");
-                var parent = $("#"+commentId).children("ul");
-                htmlForForm.find(".replyTo").attr("value",parent.find(".comment-post-by").text());
-                htmlForForm.appendTo(tagForInjection);
-                htmlForForm.slideToggle("slow");
-                htmlForForm.find("textarea").focus();
+            function pushFormCommentToHtml($tagForInjection, $comment, $commentParentId){
+                var $htmlForForm = $("#editComment").clone(true);
+                $htmlForForm.removeAttr("id");
+                var $parent = $("#"+$commentParentId);
+                var $form = $htmlForForm.find("form");
+                var $action = $form.attr("action");
+                if ($commentParentId != null){
+                    $action = $action+'&amp;parentId='+$parent.attr("data-source");
+                    $form.attr("action", $action);
+                }
+
+                $htmlForForm.find("[name='createdBy']").val($comment.createdBy);
+                $htmlForForm.find("[name='createdDate']").val($comment.createdDate);
+                $htmlForForm.find("[name='lastModifiedBy']").val($comment.lastModifiedBy);
+                $htmlForForm.find("[name='lastModifiedDate']").val($comment.lastModifiedDate);
+                $htmlForForm.find("[name='version']").val($comment.version);
+
+                $htmlForForm.appendTo($tagForInjection);
+                $htmlForForm.slideToggle("slow");
+                $htmlForForm.find("textarea").focus();
             }
 
+            //Send form
+            $(document).on("submit", ".comment-form form", function( event ){
+                //Stop default sending
+                event.preventDefault();
+                event.stopPropagation();
+
+                var $form = $(this);
+                $form.find(".alert").hide("slow");
+                var $action = $form.attr("action");
+                var $posting = $.post($action, $form.serialize());
+
+                $posting.done(function( data ){
+                    var $blog = $form.parents(".blog-comments");
+                    var $tagBlog;
+                    if ($blog.length){
+                        $tagBlog = $($blog.get(0)).children(".comment-child");
+                    } else {
+                        $tagBlog = $("#container-of-comment");
+                    }
+                    $form.slideToggle("slow", function(){
+                        $(this).remove();
+                    });
+                    $tagBlog.slideToggle("slow", function(){
+                        pushCommentToHTML([data.comment], $tagBlog);
+                    });
+                }).fail(function( jqXHR, textStatus){
+                    var msg = "";
+                    var data = jqXHR.responseJSON;
+                    for(var prop in data){
+                        if (data.hasOwnProperty(prop)){
+                            msg += data[prop] + "\n";
+                        }
+                    }
+                    $form.find(".alert").text(msg);
+                    $form.find(".alert").slideToggle("slow");
+                    console.log(textStatus);
+                })
+            })
         })
     </script>
 </div>

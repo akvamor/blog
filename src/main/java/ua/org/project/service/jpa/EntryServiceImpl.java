@@ -5,6 +5,8 @@ import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Repository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -62,6 +64,15 @@ public class EntryServiceImpl implements EntryService {
     }
 
     public Entry save(Entry entry) {
+        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        String username ;
+        if (principal instanceof UserDetails) {
+            username = ((UserDetails)principal).getUsername();
+        } else {
+            username = principal.toString();
+        }
+        entry.setLastModifiedBy(username);
+        entry.setLastModifiedDate(new DateTime());
         return entryRepository.save(entry);
     }
 

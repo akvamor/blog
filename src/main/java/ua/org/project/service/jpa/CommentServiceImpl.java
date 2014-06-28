@@ -1,13 +1,15 @@
 package ua.org.project.service.jpa;
 
+import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Repository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ua.org.project.domain.impl.Comment;
-import ua.org.project.domain.rest.CommentRest;
 import ua.org.project.repository.CommentLikeRepository;
 import ua.org.project.repository.CommentRepository;
 import ua.org.project.service.CommentService;
@@ -59,9 +61,15 @@ public class CommentServiceImpl implements CommentService {
     }
 
     public Comment save(Comment comment) {
-        if (comment.isNew()){
-            //Todo add save to COMMENT_TREE
+        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        String username ;
+        if (principal instanceof UserDetails) {
+            username = ((UserDetails)principal).getUsername();
+        } else {
+            username = principal.toString();
         }
+        comment.setLastModifiedBy(username);
+        comment.setLastModifiedDate(new DateTime());
         return commentRepository.save(comment);
     }
 

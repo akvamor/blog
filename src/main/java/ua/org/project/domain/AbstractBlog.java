@@ -62,7 +62,6 @@ public abstract class AbstractBlog implements Blog, Auditable<String, Long>, Ser
 
 
     @Column(name = "LAST_MODIFIED_BY")
-    @NotEmpty(message = "{validation.posting.last_modified_by.NotEmpty.message}")
     public String getLastModifiedBy() {
         return lastModifiedBy;
     }

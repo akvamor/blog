@@ -48,7 +48,7 @@ public class JodaDateTimeSerializer extends JsonSerializer<DateTime> {
             dateTimeString = dateTimeFormatter.print(value);
         }
 
-        jgen.writeNumber("\"" + dateTimeString + "\"");
+        jgen.writeString(dateTimeString);
     }
 
 

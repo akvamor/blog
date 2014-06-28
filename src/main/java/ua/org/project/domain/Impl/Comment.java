@@ -27,6 +27,7 @@ public class Comment extends AbstractBlog implements Serializable {
     private String postBy;
     private Set<Comment> childComment = new HashSet<Comment>();
     private Comment parentComment;
+    private String parentUser;
     private Set<CommentAttachment> attachments = new HashSet<CommentAttachment>();
 
     public Comment() {           }
@@ -54,12 +55,20 @@ public class Comment extends AbstractBlog implements Serializable {
         return parentComment;
     }
     public void setParentComment(Comment parentComment) {
+        if (parentComment != null)
+            this.parentUser = parentComment.getCreatedBy();
         this.parentComment = parentComment;
     }
-
+    @Transient
+    public String getParentUser() {
+        return parentUser;
+    }
+    public void setParentUser(String parentUser) {
+        this.parentUser = parentUser;
+    }
 
     @NotEmpty(message = "{validation.comment.body.NotEmpty.message}")
-    @Size(min = 10, max = 2000, message = "{validation.posting.body.Size.message}")
+    @Size(min = 2, max = 2000, message = "{validation.posting.body.Size.message}")
     @Column(name = "BODY")
     public String getBody() {
         return this.body;
@@ -71,7 +80,6 @@ public class Comment extends AbstractBlog implements Serializable {
 
     @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY)
-    @NotAudited
     @JoinColumn(name = "ENTRY_ID")
     public Entry getEntry() {
         return entry;
