@@ -109,7 +109,15 @@
 
             //Post new comment without parent comment
             $("#btnPostComment").click(function(){
-                pushFormCommentToHtml($("#container-of-comment"), null);
+                $.ajax({
+                    url     : "${urlComment}/new?form",
+                    type    : "GET",
+                    dataType: "json"
+                }).done(function(data){
+                    pushFormCommentToHtml($("#container-of-comment"), data, null);
+                }).fail(function( jqXHR, textStatus){
+                    console.log(textStatus);
+                })
             })
 
             function pushCommentToHTML(data, tagForInjection){
@@ -129,11 +137,11 @@
                     htmlForComment.find(".comment-body").text(comment.body);
                     if (comment.childComment.length > 0 ){
                         var child = htmlForComment.find(".comment-child");
-                        child.show();
+                        child.show("slow");
                         pushCommentToHTML(comment.childComment, child);
                     }
                     htmlForComment.appendTo(tagForInjection);
-                    htmlForComment.slideToggle("slow");
+                    htmlForComment.show("slow");
                 });
             }
 
@@ -146,6 +154,8 @@
                 if ($commentParentId != null){
                     $action = $action+'&amp;parentId='+$parent.attr("data-source");
                     $form.attr("action", $action);
+                } else {
+
                 }
 
                 $htmlForForm.find("[name='createdBy']").val($comment.createdBy);
@@ -155,12 +165,12 @@
                 $htmlForForm.find("[name='version']").val($comment.version);
 
                 $htmlForForm.appendTo($tagForInjection);
-                $htmlForForm.slideToggle("slow");
+                $htmlForForm.show("slow");
                 $htmlForForm.find("textarea").focus();
             }
 
             //Send form
-            $(document).on("submit", ".comment-form form", function( event ){
+            $(document).on("submit", "#container-of-comment form", function( event ){
                 //Stop default sending
                 event.preventDefault();
                 event.stopPropagation();
@@ -178,10 +188,10 @@
                     } else {
                         $tagBlog = $("#container-of-comment");
                     }
-                    $form.slideToggle("slow", function(){
+                    $form.hide("slow", function(){
                         $(this).remove();
                     });
-                    $tagBlog.slideToggle("slow", function(){
+                    $tagBlog.show("slow", function(){
                         pushCommentToHTML([data.comment], $tagBlog);
                     });
                 }).fail(function( jqXHR, textStatus){
@@ -193,7 +203,7 @@
                         }
                     }
                     $form.find(".alert").text(msg);
-                    $form.find(".alert").slideToggle("slow");
+                    $form.find(".alert").show("slow");
                     console.log(textStatus);
                 })
             })
