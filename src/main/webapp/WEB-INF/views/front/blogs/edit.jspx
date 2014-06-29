@@ -115,10 +115,6 @@ To change this template use File | Settings | File Templates.
 
                                CKEDITOR.replace( 'postBody', config );
 
-                               CKEDITOR.inline( 'editable', CKEDITOR.tools.extend( {}, config, {
-                                   extraPlugins: 'codesnippet'
-                               }, true ) );
-
                                if (CKEDITOR.env.ie) {
                                    if (CKEDITOR.env.version == 8) CKEDITOR.document.getById('ie8-warning').addClass('warning');
                                }

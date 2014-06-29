@@ -23,6 +23,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import ua.org.project.domain.Category;
+import ua.org.project.domain.Impression;
 import ua.org.project.domain.SearchCriteria;
 import ua.org.project.domain.SearchCriteriaCategory;
 import ua.org.project.domain.impl.Entry;
@@ -154,8 +155,7 @@ public class EntryController {
         Set<ConstraintViolation<Entry>> violations = validator.validate(entry);
 
         if (violations.isEmpty()) {
-            entry.setImpressions(entry.getImpressions() + 1);
-            entryService.save(entry);
+            entryService.increaseImpression(entry);
         } else {
             logger.error("Invalid post Id: {}. Invalid data, count of errors: " + violations.size(), id);
             for (ConstraintViolation<Entry> violation : violations) {
@@ -224,7 +224,9 @@ public class EntryController {
                 "success",
                 messageSource.getMessage("message_entry_save_success", new Object[]{}, locale)));
 
-        entryService.save(entry);
+        entry.addImpression(new Impression());
+        entry = entryService.save(entry);
+
         return "redirect:/blogs/" + UrlUtil.encodeUrlPathSegment(entry.getId().toString(), httpServletRequest);
     }
 

@@ -1,6 +1,5 @@
 package ua.org.project.service.jpa;
 
-import com.google.common.collect.Lists;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -10,17 +9,17 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Repository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import ua.org.project.domain.Impression;
 import ua.org.project.domain.SearchCriteria;
 import ua.org.project.domain.SearchCriteriaCategory;
 import ua.org.project.domain.impl.Entry;
 import ua.org.project.repository.EntryLikeRepository;
 import ua.org.project.repository.EntryRepository;
+import ua.org.project.repository.ImpressionRepository;
 import ua.org.project.service.EntryService;
 
 import javax.persistence.EntityManager;
-import javax.persistence.EntityTransaction;
 import javax.persistence.PersistenceContext;
-import javax.persistence.TypedQuery;
 import java.util.Collections;
 import java.util.List;
 
@@ -34,6 +33,9 @@ public class EntryServiceImpl implements EntryService {
 
     @Autowired
     private EntryRepository entryRepository;
+
+    @Autowired
+    private ImpressionRepository impressionRepository;
 
     @Autowired
     private EntryLikeRepository entryLikeRepository;
@@ -73,7 +75,13 @@ public class EntryServiceImpl implements EntryService {
         }
         entry.setLastModifiedBy(username);
         entry.setLastModifiedDate(new DateTime());
-        return entryRepository.save(entry);
+        entry = entryRepository.save(entry);
+        return entry;
+    }
+
+    public void increaseImpression(Entry entry){
+        Impression impression = entry.getImpressions();
+        impression.setQuantity(impression.getQuantity() + 1);
     }
 
     public void delete(Entry entry) {

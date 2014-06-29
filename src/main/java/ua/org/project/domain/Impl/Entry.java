@@ -7,6 +7,7 @@ import org.hibernate.validator.constraints.NotEmpty;
 import ua.org.project.domain.AbstractBlog;
 import ua.org.project.domain.AbstractLike;
 import ua.org.project.domain.Attachment;
+import ua.org.project.domain.Impression;
 
 import javax.persistence.*;
 import javax.validation.constraints.Size;
@@ -29,7 +30,7 @@ public class Entry extends AbstractBlog implements Serializable {
     private String locale;
     private String subject;
     private String body;
-    private int impressions;
+    private Impression impressions;
     private Set<EntryAttachment> attachments = new HashSet<EntryAttachment>();
     private Set<EntryLike> likes = new HashSet<EntryLike>();
     private Set<Comment> comments = new HashSet<Comment>();
@@ -79,12 +80,13 @@ public class Entry extends AbstractBlog implements Serializable {
         this.locale = locale;
     }
 
+
     @NotAudited
-    @Column(name = "IMPRESSIONS")
-    public int getImpressions() {
+    @OneToOne(fetch = FetchType.EAGER, mappedBy = "entry", cascade = CascadeType.ALL)
+    public Impression getImpressions() {
         return impressions;
     }
-    public void setImpressions(int impressions) {
+    public void setImpressions(Impression impressions) {
         this.impressions = impressions;
     }
 
@@ -143,6 +145,10 @@ public class Entry extends AbstractBlog implements Serializable {
     public void addComment(Comment comment){
         comments.add(comment);
         comment.setEntry(this);
+    }
+    public void addImpression(Impression impression){
+        this.setImpressions(impression);
+        impression.setEntry(this);
     }
     public void addAttachment(EntryAttachment attachment) {
         getAttachments().add(attachment);

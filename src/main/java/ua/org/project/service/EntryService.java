@@ -21,4 +21,5 @@ public interface EntryService {
     public Page<Entry> findAllByPage(Pageable pageable);
     public Page<Entry> findEntryByCriteria(SearchCriteria searchCriteria, Pageable pageable);
     public Page<Entry> findEntryByLocale(String locale, Pageable pageable);
+    public void increaseImpression(Entry entry);
 }

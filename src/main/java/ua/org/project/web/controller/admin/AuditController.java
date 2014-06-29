@@ -27,7 +27,6 @@ public class AuditController {
     @Autowired
     private EntryAuditService entryAuditService;
 
-    @PreAuthorize("ROLE_ADMIN")
     @RequestMapping(value = "/blog/{id}", method = RequestMethod.GET)
     @ResponseBody
     public EntryGrid listEntryAudit(@PathVariable("id") Long id){

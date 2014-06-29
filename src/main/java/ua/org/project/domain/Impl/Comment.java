@@ -32,7 +32,7 @@ public class Comment extends AbstractBlog implements Serializable {
 
     public Comment() {           }
 
-    @OneToMany
+    @OneToMany(fetch = FetchType.EAGER)
     @NotAudited
     @JoinTable(name = "comment_tree",
         joinColumns = @JoinColumn(name="PARENT_ID"),

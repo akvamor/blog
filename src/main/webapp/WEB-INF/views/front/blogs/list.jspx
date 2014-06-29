@@ -65,7 +65,7 @@
                     </li>
                     <li class="item-red pull-right">
                         <span class="glyphicon glyphicon-fire"><jsp:text/></span>
-                        <span> ${item.impressions}</span>
+                        <span> ${item.impressions.quantity}</span>
                     </li>
                 </ul>
 

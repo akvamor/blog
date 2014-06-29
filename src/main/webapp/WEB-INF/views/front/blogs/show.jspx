@@ -66,7 +66,7 @@
             </li>
             <li class="item-red pull-right">
                 <span class="glyphicon glyphicon-fire"><jsp:text/></span>
-                <span> ${entry.impressions}</span>
+                <span> ${entry.impressions.quantity}</span>
             </li>
         </ul>
     </div>
@@ -74,10 +74,7 @@
     <jsp:include page="addattachment.jspx"/>
 
     <!-- Display comments -->
-    <c:if test="${not empty entry.comments}">
-        <jsp:include page="comment.jspx"/>
-    </c:if>
-
+    <jsp:include page="comment.jspx"/>
 
     <sec:authorize access="hasRole('ROLE_ADMIN')">
         <jsp:include page="audit.jspx"/>
