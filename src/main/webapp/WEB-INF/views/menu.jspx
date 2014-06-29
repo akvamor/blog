@@ -55,7 +55,15 @@
             <hr/>
             <ul class="nav bs-docs-sidenav">
                 <li>Control Panel</li>
+                <c:if test="${not empty param.categoryId}">
+                    <c:set value="&amp;categoryId=${param.categoryId}" var="categoryId"/>
+                </c:if>
+
+                <li class="${activeFind}"><a href="${blogUrl}?find=1">All posts</a></li>
+
+                <li class="${activeFindCategory}"><a href="${blogUrl}?find=1${categoryId}">All posts in category</a></li>
                 <li><a href="${blogUrl}?form">${labelBlogNew}</a></li>
+
             </ul>
         </sec:authorize>
 

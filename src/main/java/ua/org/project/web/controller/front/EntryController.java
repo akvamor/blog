@@ -7,6 +7,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -17,15 +18,11 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import ua.org.project.domain.Category;
 import ua.org.project.domain.Impression;
 import ua.org.project.domain.SearchCriteria;
-import ua.org.project.domain.SearchCriteriaCategory;
 import ua.org.project.domain.impl.Entry;
 import ua.org.project.service.CategoryService;
 import ua.org.project.service.EntryService;
@@ -41,12 +38,14 @@ import javax.validation.Validator;
 import javax.validation.ConstraintViolation;
 import java.util.*;
 
-/************************************************
+/**
+ * *********************************************
  * Created by Dmitry Petrov on 5/29/14.
- *
+ * <p/>
  * This controller is responsible for posts
- ***********************************************/
-@RequestMapping(value={"/", "/index", "/blogs"})
+ * *********************************************
+ */
+@RequestMapping(value = {"/", "/index", "/blogs"})
 @Controller
 public class EntryController {
 
@@ -69,8 +68,10 @@ public class EntryController {
     @Autowired
     private Validator validator;
 
-    /************************************************
+    /**
+     * *********************************************
      * Show list of Posts by criteria and without.
+     *
      * @param uiModel
      * @param locale
      * @param page
@@ -80,54 +81,65 @@ public class EntryController {
      * @param categoryId
      * @param fromPostDateString
      * @param toPostDateString
-     * @return
-     ************************************************/
+     * @return **********************************************
+     */
     @RequestMapping(method = RequestMethod.GET)
     public String list(
             Model uiModel,
             Locale locale,
-            @RequestParam(value = "page",       required = false) Integer page,
-            @RequestParam(value = "rows",       required = false) Integer rows,
-            @RequestParam(value = "_search",    required = false) boolean isSearch,
-            @RequestParam(value = "subject",    required = false) String subject,
+            @RequestParam(value = "page", required = false) Integer page,
+            @RequestParam(value = "rows", required = false) Integer rows,
+            @RequestParam(value = "_search", required = false) boolean isSearch,
+            @RequestParam(value = "subject", required = false) String subject,
             @RequestParam(value = "categoryId", required = false) String categoryId,
-            @RequestParam(value = "fromPostDate",required = false) String fromPostDateString,
+            @RequestParam(value = "showUnPosted", required = false) boolean showUnPosted,
+            @RequestParam(value = "showDeleted", required = false) boolean showDeleted,
+            @RequestParam(value = "find", required = false) boolean findAll,
+            @RequestParam(value = "fromPostDate", required = false) String fromPostDateString,
             @RequestParam(value = "toPostDate", required = false) String toPostDateString) {
 
-        SearchCriteria searchCriteria = new SearchCriteria();
-        if (isSearch) {
-            String dateFormat = this.getLocaleDateFormat(locale);
+        PageRequest pageRequest = this.getPageRequest(rows, page);
+        String dateFormat = this.getLocaleDateFormat(locale);
+        Page<Entry> entryPage;
+
+        if (findAll) {
+            if (categoryId != null) {
+                entryPage = entryService.findAllByCategory(categoryId, pageRequest);
+            } else {
+                entryPage = entryService.findAllByPage(pageRequest);
+            }
+        } else {
+            SearchCriteria searchCriteria = new SearchCriteria();
+            searchCriteria.setDeleted(showDeleted);
+            searchCriteria.setShowUnPosted(showUnPosted);
+            searchCriteria.setCategoryId(categoryId);
+            searchCriteria.setLocale("%" + locale + "%");
 
             if (fromPostDateString != null) {
                 DateTime fromPostDate = DateTimeFormat.forPattern(dateFormat).parseDateTime(fromPostDateString);
                 searchCriteria.setFromPostDate(fromPostDate);
             }
-
             if (toPostDateString != null) {
                 DateTime toPostDate = DateTimeFormat.forPattern(dateFormat).parseDateTime(toPostDateString);
                 searchCriteria.setToPostDate(toPostDate);
+            } else {
+                DateTime dateTime = new DateTime();
+                dateTime = dateTime.plusDays(1);
+                searchCriteria.setToPostDate(dateTime);
             }
-
-            if (subject != null) {
-                subject = "%" + subject + "%";
-                searchCriteria.setSubject(subject);
+            if (isSearch) {
+                searchCriteria.setSearch(isSearch);
+                if (subject != null) {
+                    subject = "%" + subject + "%";
+                    searchCriteria.setSubject(subject);
+                }
+                if (categoryId != null){
+                    searchCriteria.setCategoryId("%" + categoryId + "%");
+                }
             }
-        }
-
-        PageRequest pageRequest = this.getPageRequest(rows, page);
-        Page<Entry> entryPage;
-        if (categoryId != null && isSearch) {
-            searchCriteria.setLocale("%" + locale.toString() + "%");
-            searchCriteria.setCategoryId(categoryId);
-            logger.info("Criteria: " + searchCriteria.toString());
+            logger.info("Search criteria: " + searchCriteria.toString());
             entryPage = entryService.findEntryByCriteria(searchCriteria, pageRequest);
-        } else if(categoryId != null ){
-            entryPage = entryService.findByCategoryId(
-                    new SearchCriteriaCategory(categoryId, "%" + locale.toString() + "%"), pageRequest);
-        } else {
-            entryPage = entryService.findEntryByLocale("%" + locale.toString() + "%", pageRequest);
         }
-
         EntryGrid entryGrid = new EntryGrid();
         entryGrid.setCurrentPage(entryPage.getNumber() + 1);
         entryGrid.setTotalPages(entryPage.getTotalPages());
@@ -140,16 +152,18 @@ public class EntryController {
         return "blogs/list";
     }
 
-    /************************************************
+    /**
+     * *********************************************
      * Show post Details
+     *
      * @param id
      * @param uiModel
-     * @return
-     ************************************************/
+     * @return **********************************************
+     */
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
     public String show(
             @PathVariable("id") Long id,
-            Model uiModel){
+            Model uiModel) {
 
         Entry entry = entryService.findById(id);
         Set<ConstraintViolation<Entry>> violations = validator.validate(entry);
@@ -161,7 +175,7 @@ public class EntryController {
             for (ConstraintViolation<Entry> violation : violations) {
                 logger.error("Path: " + violation.getPropertyPath()
                         + ", message template:" + violation.getMessageTemplate()
-                        + ", message: "+ violation.getMessage());
+                        + ", message: " + violation.getMessage());
             }
         }
 
@@ -176,14 +190,16 @@ public class EntryController {
         return "blogs/show";
     }
 
-    /************************************************
+    /**
+     * *********************************************
      * Form for creating new post
+     *
      * @param uiModel
-     * @return
-     ************************************************/
+     * @return **********************************************
+     */
     @PreAuthorize("isAuthenticated()")
     @RequestMapping(params = "form", method = RequestMethod.GET)
-    public String createForm(Model uiModel, @AuthenticationPrincipal User user){
+    public String createForm(Model uiModel, @AuthenticationPrincipal User user) {
         Entry entry = new Entry();
         uiModel.addAttribute("entry", entry);
         uiModel.addAttribute("currentDate", new DateTime());
@@ -191,17 +207,19 @@ public class EntryController {
         return "blogs/create";
     }
 
-    /************************************************
+    /**
+     * *********************************************
      * Process of saving new post
+     *
      * @param entry
      * @param bindingResult
      * @param uiModel
      * @param httpServletRequest
      * @param redirectAttributes
      * @param locale
-     * @return
-     ************************************************/
-    @RequestMapping(params="form", method = RequestMethod.POST)
+     * @return **********************************************
+     */
+    @RequestMapping(params = "form", method = RequestMethod.POST)
     public String create(
             @Valid Entry entry,
             BindingResult bindingResult,
@@ -211,6 +229,7 @@ public class EntryController {
             Locale locale
     ) {
         logger.info("Create post: " + entry.getId());
+        logger.info("Entry: " + entry.toString());
         if (bindingResult.hasErrors()) {
             uiModel.addAttribute("message", new Message(
                     "danger",
@@ -230,12 +249,14 @@ public class EntryController {
         return "redirect:/blogs/" + UrlUtil.encodeUrlPathSegment(entry.getId().toString(), httpServletRequest);
     }
 
-    /************************************************
+    /**
+     * *********************************************
      * Form for updating post
+     *
      * @param id
      * @param uiModel
-     * @return
-     ************************************************/
+     * @return **********************************************
+     */
     @PreAuthorize("isAuthenticated()")
     @RequestMapping(value = "/{id}", params = "form", method = RequestMethod.GET)
     public String updateForm(
@@ -245,11 +266,11 @@ public class EntryController {
             RedirectAttributes redirectAttributes,
             @AuthenticationPrincipal User user,
             Locale locale
-    ){
+    ) {
         logger.info("Get update form: " + user.toString());
         Entry entry = entryService.findById(id);
 
-        if (!entry.getCreatedBy().equals(user.getUsername())){
+        if (!entry.getCreatedBy().equals(user.getUsername())) {
             redirectAttributes.addFlashAttribute("message", new Message(
                     "warning",
                     messageSource.getMessage("message_entry_access_fail", new Object[]{}, locale)));
@@ -261,16 +282,18 @@ public class EntryController {
         return "blogs/update";
     }
 
-    /***********************************************
+    /**
+     * ********************************************
      * Process for saving post
+     *
      * @param entry
      * @param bindingResult
      * @param uiModel
      * @param httpServletRequest
      * @param redirectAttributes
      * @param locale
-     * @return
-     ***********************************************/
+     * @return *********************************************
+     */
     @RequestMapping(value = "/{id}", params = "form", method = RequestMethod.POST)
     public String update(
             @Valid Entry entry,
@@ -279,7 +302,7 @@ public class EntryController {
             HttpServletRequest httpServletRequest,
             RedirectAttributes redirectAttributes,
             @AuthenticationPrincipal User user,
-            Locale locale){
+            Locale locale) {
 
         logger.info("Updating post id: " + entry.getId());
         if (bindingResult.hasErrors()) {
@@ -300,25 +323,44 @@ public class EntryController {
         return "redirect:/blogs/" + UrlUtil.encodeUrlPathSegment(entry.getId().toString(), httpServletRequest);
     }
 
-    /************************************************
+    @ExceptionHandler(Exception.class)
+    public String handleMyException(Exception exception, HttpServletRequest httpServletRequest) {
+        String message = messageSource.getMessage("page_not_available", new Object[]{}, LocaleContextHolder.getLocale());
+        return "redirect:/errorMessage/?error=" + UrlUtil.encodeUrlPathSegment(message, httpServletRequest);
+    }
+
+    @RequestMapping(value = "/errorMessage", method = RequestMethod.GET)
+    public String handleMyExceptionOnRedirect(
+            @RequestParam("error") String error,
+            Model uiModel) {
+        uiModel.addAttribute("message", new Message("danger", error));
+        return "blogs/list";
+    }
+
+    /**
+     * *********************************************
      * Return date format by Locale
+     *
      * @param locale
-     * @return
-     ************************************************/
-    private String getLocaleDateFormat(Locale locale){
+     * @return **********************************************
+     */
+    private String getLocaleDateFormat(Locale locale) {
         String dateFormat = messageSource.getMessage("date_format_pattern", new Object[]{}, locale);
-        if (dateFormat == null){
+        if (dateFormat == null) {
             dateFormat = defaultDateFormat;
         }
         return dateFormat;
     }
 
-    /************************************************
+    /**
+     * *********************************************
      * Return Right Menu
+     *
      * @param categoryId
      * @return MenuShow
-     ************************************************/
-    private MenuShow getMenu(String categoryId){
+     * **********************************************
+     */
+    private MenuShow getMenu(String categoryId) {
         logger.info("Get category id: " + categoryId);
         MenuShow menu = new MenuShow();
         if (categories == null) {
@@ -327,7 +369,7 @@ public class EntryController {
         Category currentCategory = null;
         if (categoryId != null) {
             currentCategory = categoryService.findById(categoryId);
-            if (currentCategory!= null && currentCategory.getParentCategory() != null){
+            if (currentCategory != null && currentCategory.getParentCategory() != null) {
                 logger.info("Get parent category id: " + currentCategory.getParentCategory().getCategoryId());
                 menu.setParentCategory(currentCategory.getParentCategory().getCategoryId());
             }
@@ -340,11 +382,12 @@ public class EntryController {
 
     /**
      * Create PageRequest
+     *
      * @param rows
      * @param page
      * @return
      */
-    private PageRequest getPageRequest(Integer rows, Integer page){
+    private PageRequest getPageRequest(Integer rows, Integer page) {
         Sort sort = new Sort(Sort.Direction.DESC, defaultColumnSort);
         PageRequest pageRequest = null;
 

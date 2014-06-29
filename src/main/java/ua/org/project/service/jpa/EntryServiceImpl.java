@@ -11,7 +11,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ua.org.project.domain.Impression;
 import ua.org.project.domain.SearchCriteria;
-import ua.org.project.domain.SearchCriteriaCategory;
 import ua.org.project.domain.impl.Entry;
 import ua.org.project.repository.EntryLikeRepository;
 import ua.org.project.repository.EntryRepository;
@@ -35,9 +34,6 @@ public class EntryServiceImpl implements EntryService {
     private EntryRepository entryRepository;
 
     @Autowired
-    private ImpressionRepository impressionRepository;
-
-    @Autowired
     private EntryLikeRepository entryLikeRepository;
 
     @PersistenceContext
@@ -55,14 +51,6 @@ public class EntryServiceImpl implements EntryService {
         Entry entry = entryRepository.findOne(id);
         this.setLikes(Collections.singletonList(entry));
         return entry;
-    }
-
-    @Transactional(readOnly = true)
-    public Page<Entry> findByCategoryId(SearchCriteriaCategory criteriaCategory, Pageable pageable) {
-        Page<Entry> entries = entryRepository.findByCategoryId(
-                criteriaCategory.getCategoryId(), criteriaCategory.getLocale(),pageable);
-        this.setLikes(entries.getContent());
-        return entries;
     }
 
     public Entry save(Entry entry) {
@@ -96,20 +84,31 @@ public class EntryServiceImpl implements EntryService {
     }
 
     @Transactional(readOnly = true)
-    public Page<Entry> findEntryByCriteria(SearchCriteria searchCriteria, Pageable pageable) {
-        String subject = searchCriteria.getSubject();
-        String categoriesId = searchCriteria.getCategoryId();
-        DateTime fromPostDate = searchCriteria.getFromPostDate();
-        DateTime toPostDate = searchCriteria.getToPostDate();
-        String locale = searchCriteria.getLocale();
-        Page<Entry> entries = entryRepository.findEntryByCriteria(subject, categoriesId, fromPostDate, toPostDate, locale, pageable);
+    public Page<Entry> findAllByCategory(String category, Pageable pageable) {
+        Page<Entry> entries = entryRepository.findAllByCategory(category, pageable);
         this.setLikes(entries.getContent());
         return entries;
     }
 
     @Transactional(readOnly = true)
-    public Page<Entry> findEntryByLocale(String locale, Pageable pageable) {
-        Page<Entry> entries = entryRepository.findEntryByLocale(locale, pageable);
+    public Page<Entry> findEntryByCriteria(SearchCriteria searchCriteria, Pageable pageable) {
+        String subject = searchCriteria.getSubject();
+        String categoryId = searchCriteria.getCategoryId();
+        DateTime fromPostDate = searchCriteria.getFromPostDate();
+        DateTime toPostDate = searchCriteria.getToPostDate();
+        String locale = searchCriteria.getLocale();
+
+        Page<Entry> entries;
+        if (searchCriteria.isSearch()){
+            entries = entryRepository.searchEntryByCriteria(subject, categoryId, fromPostDate, toPostDate, locale, searchCriteria.isDeleted(), pageable);
+        } else if (categoryId != null && locale != null && fromPostDate != null && toPostDate!= null){
+            entries = entryRepository.findEntryByCategoryAndLocaleAndPostDate(categoryId, locale, fromPostDate, toPostDate, searchCriteria.isDeleted(), pageable);
+        } else if (categoryId != null && locale != null && searchCriteria.isShowUnPosted()){
+            entries = entryRepository.findEntryByCategoryAndLocale(categoryId, locale, searchCriteria.isDeleted(), pageable);
+        } else {
+            entries = entryRepository.findEntryByLocaleAndPostDate(locale, fromPostDate, toPostDate, searchCriteria.isDeleted(), pageable);
+        }
+
         this.setLikes(entries.getContent());
         return entries;
     }

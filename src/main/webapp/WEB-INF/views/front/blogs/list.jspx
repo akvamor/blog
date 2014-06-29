@@ -39,6 +39,7 @@
         <div class="alert alert-${message.type}">${message.message}</div>
     </c:if>
 
+    <c:if test="${not empty entries}">
     <div class="row">
         <c:forEach var="item" items="${entries.entryData}">
             <div class="col-6 col-sm-6 col-lg-6">
@@ -47,7 +48,12 @@
 
                 <ul class="list-inline blog-panel-likes">
                     <li class="item-blue">
-                        <span><joda:format value="${item.postDate}" pattern="${dateFormatPattern}" /></span>
+                        <c:if test="${not empty item.postDate}">
+                            <span><joda:format value="${item.postDate}" pattern="${dateFormatPattern}" /></span>
+                        </c:if>
+                        <c:if test="${empty item.postDate}">
+                            <span class="item-red">not published</span>
+                        </c:if>
                     </li>
                     <li class="item-blue">
                         <span>${item.createdBy}</span>
@@ -72,7 +78,6 @@
                 <p><a class="btn btn-warning btn-xs" style="width: 30%" href="${blogUrl}/${item.id}" role="button">${blogDetail}</a></p>
             </div><!--/span-->
         </c:forEach>
-
     </div>
 
     <ul class="pager">
@@ -87,5 +92,5 @@
         <li class="previous ${previousCss}"><a href="${previousPage}"><span class="glyphicon glyphicon-arrow-left"/></a></li>
         <li class="next ${nextCss}"><a href="${nextPage}"><span class="glyphicon glyphicon-arrow-right"/></a></li>
     </ul>
-
+    </c:if>
 </div>

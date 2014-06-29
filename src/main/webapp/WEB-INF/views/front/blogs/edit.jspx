@@ -10,20 +10,22 @@ To change this template use File | Settings | File Templates.
      xmlns:c="http://java.sun.com/jsp/jstl/core"
      xmlns:spring="http://www.springframework.org/tags"
      xmlns:form="http://www.springframework.org/tags/form"
+     xmlns:sec="http://www.springframework.org/security/tags"
      version="2.0">
     <jsp:directive.page contentType="text/html;charset=UTF-8"/>
     <jsp:output omit-xml-declaration="yes"/>
 
-    <spring:url value="/blogs" var="homeURL"/>
-    <spring:message code="label_blog_new" var="labelBlogNew"/>
-    <spring:message code="label_blog_update" var="labelBlogUpdate"/>
+    <spring:url value="/blogs"                  var="homeURL"/>
+    <spring:message code="label_blog_new"       var="labelBlogNew"/>
+    <spring:message code="label_blog_update"    var="labelBlogUpdate"/>
+    <spring:message code="label_subject"        var="labelSubject"/>
+    <spring:message code="label_category"       var="labelCategory"/>
+    <spring:message code="label_body"           var="labelBody"/>
+    <spring:message code="button_save"          var="buttonSave"/>
+    <spring:message code="label_current_lang"   var="language"/>
+    <spring:message code="label_locale"         var="labelLocale"/>
+    <spring:message code="label_post_date"      var="labelPostDate"/>
     <spring:eval expression="entry.id == null ? labelBlogNew:labelBlogUpdate" var="postTitle"/>
-    <spring:message code="label_subject" var="labelSubject"/>
-    <spring:message code="label_category" var="labelCategory"/>
-    <spring:message code="label_body" var="labelBody"/>
-    <spring:message code="button_save" var="buttonSave"/>
-    <spring:message code="label_current_lang" var="language"/>
-    <spring:message code="label_locale" var="labelLocale"/>
 
     <h3>${postTitle}</h3>
 
@@ -54,6 +56,19 @@ To change this template use File | Settings | File Templates.
                     <form:input path="locale" cssClass="form-control"/>
                 </div>
             </div>
+
+            <sec:authorize access="hasRole('ROLE_ADMIN')">
+                <form:errors path="postDate" element="div" cssClass="alert alert-warning"/>
+                <div class="form-group">
+                    <form:label cssClass="col-sm-2 control-label" path="postDate">${labelPostDate}:</form:label>
+                    <div class="col-sm-10">
+                        <form:input path="postDate" id="postDate" cssClass="form-control"/>
+                    </div>
+                </div>
+            </sec:authorize>
+            <sec:authorize access="hasRole('ROLE_USER')">
+                <form:hidden path="postDate" />
+            </sec:authorize>
 
             <form:errors path="categoryId" element="div" cssClass="alert alert-warning"/>
             <div class="form-group">
@@ -86,6 +101,11 @@ To change this template use File | Settings | File Templates.
                     <form:textarea rows="100" path="body" id="postBody" cssClass="form-control"/>
                     <script type="text/javascript">
                        $(document).ready(function(){
+
+                           $("#postDate").datepicker({
+                               dateFormat: "yy-mm-dd",
+                               changeYear: true
+                           })
 //                           $('#postBody').ckeditor({
 //                               language: '${language}',
 //                               toolbarGroups : [
@@ -101,24 +121,24 @@ To change this template use File | Settings | File Templates.
 //                               autoGrow_minHeight : 338,
 //                               uiColor: '#CCCCCC'
 //                           })
-                           ( function() {
-                               CKEDITOR.disableAutoInline = true;
 
-                               var config = {
-                                   extraPlugins: 'codesnippet',
-                                   toolbar: [
-                                       [ 'Source' ], [ 'Undo', 'Redo' ], [ 'Bold', 'Italic', 'Underline' ], [ 'CodeSnippet' ]
-                                   ],
-                                   codeSnippet_theme: 'monokai_sublime',
-                                   height: 400
-                               };
+                           CKEDITOR.disableAutoInline = true;
 
-                               CKEDITOR.replace( 'postBody', config );
+                           var config = {
+                               extraPlugins: 'codesnippet',
+                               toolbar: [
+                                   [ 'Source' ], [ 'Undo', 'Redo' ], [ 'Bold', 'Italic', 'Underline' ], [ 'CodeSnippet' ]
+                               ],
+                               codeSnippet_theme: 'monokai_sublime',
+                               height: 400
+                           };
 
-                               if (CKEDITOR.env.ie) {
-                                   if (CKEDITOR.env.version == 8) CKEDITOR.document.getById('ie8-warning').addClass('warning');
-                               }
-                           }() );
+                           CKEDITOR.replace( 'postBody', config );
+
+                           if (CKEDITOR.env.ie) {
+                               if (CKEDITOR.env.version == 8) CKEDITOR.document.getById('ie8-warning').addClass('warning');
+                           }
+
                        })
                     </script>
                 </div>
@@ -134,8 +154,6 @@ To change this template use File | Settings | File Templates.
                 <form:hidden path="createdBy" value="${pageContext.request.userPrincipal.name}"/>
                 <form:hidden path="createdDate" value="${currentDate}"/>
             </c:if>
-
-            <form:hidden path="postDate" />
             <form:hidden path="version"/>
 
             <button type="submit" class="btn btn-success pull-right">

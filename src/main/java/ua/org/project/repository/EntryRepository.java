@@ -16,23 +16,43 @@ import java.util.List;
  */
 public interface EntryRepository extends PagingAndSortingRepository<Entry, Long> {
 
-    @Query("select e from Entry e where e.categoryId like :categoryId and e.locale like :locale ")
-    public Page<Entry> findByCategoryId(
+    @Query("select e from Entry e where e.categoryId = :categoryId and e.locale like :locale and e.postDate between :fromPostDate and :toPostDate and e.isDeleted = :isDeleted")
+    public Page<Entry> findEntryByCategoryAndLocaleAndPostDate(
             @Param("categoryId")String categoryId,
             @Param("locale") String locale,
+            @Param("fromPostDate") DateTime fromPostDate,
+            @Param("toPostDate") DateTime toPostDate,
+            @Param("isDeleted") Boolean isDeleted,
             Pageable pageable);
 
-    @Query("select e from Entry e where e.subject like :subject and e.categoryId like :categoryId and e.locale like :locale and e.postDate between :fromPostDate and :toPostDate")
-    public Page<Entry> findEntryByCriteria(
+    @Query("select e from Entry e where e.categoryId = :categoryId and e.locale like :locale and e.isDeleted = :isDeleted")
+    public Page<Entry> findEntryByCategoryAndLocale(
+            @Param("categoryId")String categoryId,
+            @Param("locale") String locale,
+            @Param("isDeleted") Boolean isDeleted,
+            Pageable pageable);
+
+    @Query("select e from Entry e where e.locale like :locale and e.postDate between :fromPostDate and :toPostDate and e.isDeleted = :isDeleted")
+    public Page<Entry> findEntryByLocaleAndPostDate(
+            @Param("locale") String locale,
+            @Param("fromPostDate") DateTime fromPostDate,
+            @Param("toPostDate") DateTime toPostDate,
+            @Param("isDeleted") Boolean isDeleted,
+            Pageable pageable);
+
+    @Query("select e from Entry e where e.subject like :subject and e.categoryId like :categoryId and e.locale like :locale and e.postDate between :fromPostDate and :toPostDate and e.isDeleted = :isDeleted")
+    public Page<Entry> searchEntryByCriteria(
             @Param("subject") String subject,
             @Param("categoryId") String categoryId,
             @Param("fromPostDate") DateTime fromPostDate,
             @Param("toPostDate") DateTime toPostDate,
             @Param("locale") String locale,
+            @Param("isDeleted") Boolean isDeleted,
             Pageable pageable);
 
-    @Query("select e from Entry e where e.locale like :locale")
-    public Page<Entry> findEntryByLocale(
-            @Param("locale") String locale,
+    @Query("select e from Entry e where e.categoryId = :categoryId")
+    public Page<Entry> findAllByCategory(
+            @Param("categoryId") String categoryId,
             Pageable pageable);
+
 }

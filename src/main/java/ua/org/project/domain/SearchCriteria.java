@@ -11,11 +11,33 @@ public class SearchCriteria {
 
     private String categoryId;
 
-    private DateTime fromPostDate = new DateTime(1900, 1, 1, 0, 0);;
+    private DateTime fromPostDate = new DateTime(1900, 1, 1, 0, 0);
 
-    private DateTime toPostDate = new DateTime(2200, 12, 31, 23, 59);;
+    private DateTime toPostDate = new DateTime(2200, 12, 31, 23, 59);
 
     private String locale = "%en-EN%";
+
+    private boolean isDeleted = false;
+
+    private boolean isSearch = false;
+
+    private boolean showUnPosted = false;
+
+    public boolean isSearch() {
+        return isSearch;
+    }
+
+    public void setSearch(boolean isSearch) {
+        this.isSearch = isSearch;
+    }
+
+    public boolean isDeleted() {
+        return isDeleted;
+    }
+
+    public void setDeleted(boolean isDeleted) {
+        this.isDeleted = isDeleted;
+    }
 
     public String getSubject() {
         return subject;
@@ -57,6 +79,14 @@ public class SearchCriteria {
         this.locale = locale;
     }
 
+    public boolean isShowUnPosted() {
+        return showUnPosted;
+    }
+
+    public void setShowUnPosted(boolean showUnPosted) {
+        this.showUnPosted = showUnPosted;
+    }
+
     @Override
     public String toString() {
         return "SearchCriteria{" +
@@ -65,6 +95,9 @@ public class SearchCriteria {
                 ", fromPostDate=" + fromPostDate +
                 ", toPostDate=" + toPostDate +
                 ", locale='" + locale + '\'' +
+                ", isDeleted=" + isDeleted +
+                ", isSearch=" + isSearch +
+                ", showUnPosted=" + showUnPosted +
                 '}';
     }
 }

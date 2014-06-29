@@ -29,6 +29,7 @@ public abstract class AbstractBlog implements Blog, Auditable<String, Long>, Ser
     protected int version;
     protected Long countLikes;
     protected Long countNotLikes;
+    protected boolean isDeleted = false;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -92,7 +93,7 @@ public abstract class AbstractBlog implements Blog, Auditable<String, Long>, Ser
 
     @Column(name = "POST_DATE")
     @Type(type = "org.joda.time.contrib.hibernate.PersistentDateTime")
-    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
+    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
     public DateTime getPostDate() {
         return this.postDate;
     }
@@ -156,5 +157,12 @@ public abstract class AbstractBlog implements Blog, Auditable<String, Long>, Ser
         return list;
     }
 
+    @Column(name = "IS_DELETED")
+    public boolean getIsDeleted(){
+        return isDeleted;
+    }
 
+    public void setIsDeleted(boolean isDeleted) {
+        this.isDeleted = isDeleted;
+    }
 }
