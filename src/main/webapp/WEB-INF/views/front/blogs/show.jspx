@@ -11,8 +11,14 @@
     <spring:message code="date_format_pattern" var="dateFormatPattern"/>
     <spring:message code="date_format_pattern_comments" var="dateFormatPatternComments"/>
     <spring:message code="label_attachment" var="attachmentLabel"/>
+    <spring:message code="message_not_posted" var="notPosted"/>
+    <spring:message code="message_was_removed" var="wasRemoved"/>
 
     <spring:url value="/blogs" var="homeURL"/>
+
+    <c:if test="${not empty message}">
+        <div class="alert alert-${message.type}">${message.message}</div>
+    </c:if>
 
     <h3 id="entry-id" value="${entry.id}">${entry.subject}</h3>
     <hr/>
@@ -24,10 +30,6 @@
             <jsp:include page="attachmentcarousel.jspx" />
         </c:if>
 
-        <c:if test="${not empty message}">
-            <div class="alert alert-${message.type}">${message.message}</div>
-        </c:if>
-
         ${entry.body}
 
         <c:if test="${not empty entry.attachments}">
@@ -37,7 +39,10 @@
                 <table class="table">
                 <c:forEach items="${entry.attachments}" var="attachment">
                     <tr>
-                        <td><a href="${homeURL}/filedownload/entry/${attachment.id}" target="_blank"><span class="glyphicon glyphicon-file"><jsp:text/></span></a></td>
+                        <td style="width:30px"><a href="${homeURL}/filedownload/entry/${attachment.id}" target="_blank"><span class="glyphicon glyphicon-file"><jsp:text/></span></a></td>
+                        <sec:authorize access="hasRole('ROLE_ADMIN')">
+                            <td style="width:30px"><a href="${homeURL}/attachment/remove/${attachment.id}"><span class="glyphicon glyphicon-remove"><jsp:text/></span></a></td>
+                        </sec:authorize>
                         <td>${attachment.fileName}</td>
                     </tr>
                 </c:forEach>
@@ -47,8 +52,16 @@
 
         <!-- Number of comments & likes & impression -->
         <ul class="list-inline blog-panel-likes">
+            <c:if test="${entry.isDeleted == true}">
+                <span class="item-red">${wasRemoved}</span>
+            </c:if>
             <li class="item-blue">
-                <span><joda:format value="${entry.postDate}" pattern="${dateFormatPattern}" /></span>
+                <c:if test="${not empty entry.postDate}">
+                    <span><joda:format value="${entry.postDate}" pattern="${dateFormatPattern}" /></span>
+                </c:if>
+                <c:if test="${empty entry.postDate}">
+                    <span class="item-red">${notPosted}</span>
+                </c:if>
             </li>
             <li class="item-blue">
                 <span>${entry.createdBy}</span>

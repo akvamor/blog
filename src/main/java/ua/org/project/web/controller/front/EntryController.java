@@ -24,7 +24,9 @@ import ua.org.project.domain.Category;
 import ua.org.project.domain.Impression;
 import ua.org.project.domain.SearchCriteria;
 import ua.org.project.domain.impl.Entry;
+import ua.org.project.domain.impl.EntryAttachment;
 import ua.org.project.service.CategoryService;
+import ua.org.project.service.EntryAttachmentService;
 import ua.org.project.service.EntryService;
 import ua.org.project.web.form.EntryGrid;
 import ua.org.project.web.form.MenuShow;
@@ -64,6 +66,9 @@ public class EntryController {
 
     @Autowired
     private CategoryService categoryService;
+
+    @Autowired
+    private EntryAttachmentService entryAttachmentService;
 
     @Autowired
     private Validator validator;
@@ -153,6 +158,18 @@ public class EntryController {
     }
 
     /**
+     * First post must
+     * @param uiModel
+     * @return
+     */
+    @RequestMapping(value = "contact", method = RequestMethod.GET)
+    public String showContact(Model uiModel){
+        Entry entry = entryService.findById(1l);
+        uiModel.addAttribute("entry", entry);
+        return "blogs/show";
+    }
+
+    /**
      * *********************************************
      * Show post Details
      *
@@ -197,7 +214,7 @@ public class EntryController {
      * @param uiModel
      * @return **********************************************
      */
-    @PreAuthorize("isAuthenticated()")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @RequestMapping(params = "form", method = RequestMethod.GET)
     public String createForm(Model uiModel, @AuthenticationPrincipal User user) {
         Entry entry = new Entry();
@@ -219,6 +236,7 @@ public class EntryController {
      * @param locale
      * @return **********************************************
      */
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @RequestMapping(params = "form", method = RequestMethod.POST)
     public String create(
             @Valid Entry entry,
@@ -257,7 +275,7 @@ public class EntryController {
      * @param uiModel
      * @return **********************************************
      */
-    @PreAuthorize("isAuthenticated()")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @RequestMapping(value = "/{id}", params = "form", method = RequestMethod.GET)
     public String updateForm(
             @PathVariable("id") Long id,
@@ -283,7 +301,7 @@ public class EntryController {
     }
 
     /**
-     * ********************************************
+     * *****************************************************
      * Process for saving post
      *
      * @param entry
@@ -294,6 +312,7 @@ public class EntryController {
      * @param locale
      * @return *********************************************
      */
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @RequestMapping(value = "/{id}", params = "form", method = RequestMethod.POST)
     public String update(
             @Valid Entry entry,
@@ -323,18 +342,87 @@ public class EntryController {
         return "redirect:/blogs/" + UrlUtil.encodeUrlPathSegment(entry.getId().toString(), httpServletRequest);
     }
 
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @RequestMapping(value = "remove/{id}", method = RequestMethod.GET)
+    public String remove(
+            @PathVariable("id") Long id,
+            RedirectAttributes redirectAttributes,
+            Locale locale
+    ) {
+        logger.info("Deleting post id: " + id);
+        Entry entry = entryService.findById(id);
+        if (entry == null){
+            redirectAttributes.addFlashAttribute("message", new Message(
+                    "danger",
+                    messageSource.getMessage("message_entry_removed_fail", new Object[]{}, locale)));
+        } else {
+            entry.setIsDeleted(true);
+            entryService.save(entry);
+            redirectAttributes.addFlashAttribute("message", new Message(
+                    "success",
+                    messageSource.getMessage("message_entry_removed_success", new Object[]{}, locale)));
+        }
+        return "redirect:blogs/" + id.toString();
+    }
+
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @RequestMapping(value = "unremove/{id}")
+    public String unremove(
+            @PathVariable("id") Long id,
+            RedirectAttributes redirectAttributes,
+            Locale locale
+    ) {
+        Entry entry = entryService.findById(id);
+        if (entry == null){
+            redirectAttributes.addFlashAttribute("message", new Message(
+                    "danger",
+                    messageSource.getMessage("message_entry_unremoved_fail", new Object[]{}, locale)));
+        } else {
+            entry.setIsDeleted(false);
+            entryService.save(entry);
+            redirectAttributes.addFlashAttribute("message", new Message(
+                    "success",
+                    messageSource.getMessage("message_entry_unremoved_success", new Object[]{}, locale)));
+        }
+        return "redirect:blogs/" + id.toString();
+    }
+
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @RequestMapping(value = "attachment/remove/{id}", method = RequestMethod.GET)
+    public String removeAttachment(
+            @PathVariable("id") Long id,
+            RedirectAttributes redirectAttributes,
+            Locale locale
+    ) {
+        EntryAttachment entryAttachment = entryAttachmentService.findById(id);
+        Entry entry = null;
+        if (entryAttachment == null){
+            redirectAttributes.addFlashAttribute("message", new Message(
+                    "danger",
+                    messageSource.getMessage("message_entry_attachment_removed_fail", new Object[]{}, locale)));
+        } else {
+            entry = entryAttachment.getEntry();
+            entryAttachmentService.delete(entryAttachment);
+            redirectAttributes.addFlashAttribute("message", new Message(
+                    "success",
+                    messageSource.getMessage("message_entry_attachment_removed_success", new Object[]{}, locale)));
+        }
+        return "redirect:/blogs/" + entry.getId().toString();
+    }
+
     @ExceptionHandler(Exception.class)
     public String handleMyException(Exception exception, HttpServletRequest httpServletRequest) {
-        String message = messageSource.getMessage("page_not_available", new Object[]{}, LocaleContextHolder.getLocale());
-        return "redirect:/errorMessage/?error=" + UrlUtil.encodeUrlPathSegment(message, httpServletRequest);
+        return "redirect:/errorMessage/?error=" + UrlUtil.encodeUrlPathSegment("404", httpServletRequest);
     }
 
     @RequestMapping(value = "/errorMessage", method = RequestMethod.GET)
     public String handleMyExceptionOnRedirect(
             @RequestParam("error") String error,
-            Model uiModel) {
-        uiModel.addAttribute("message", new Message("danger", error));
-        return "blogs/list";
+            RedirectAttributes redirectAttributes,
+            Locale locale
+            ) {
+        redirectAttributes.addFlashAttribute("message", new Message("danger", messageSource.getMessage(error, new Object[]{}, locale)));
+        return "redirect:/blogs";
     }
 
     /**

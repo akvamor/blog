@@ -45,9 +45,9 @@
                 <li class="dropdown">
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown"><span class="glyphicon glyphicon-globe"><jsp:text/></span> ${labelCurrentLang}<span class="caret"><jsp:text/></span></a>
                     <ul class="dropdown-menu">
-                        <li><a href="${blogUrl}?lang=en_US">${labelEnUs}</a></li>
-                        <li><a href="${blogUrl}?lang=uk_UA">${labelUkUa}</a></li>
-                        <li><a href="${blogUrl}?lang=ru_RU">${labelRuRU}</a></li>
+                        <li><a href="${pageContext.request.contextPath}?lang=en_US">${labelEnUs}</a></li>
+                        <li><a href="${pageContext.request.contextPath}?lang=uk_UA">${labelUkUa}</a></li>
+                        <li><a href="${pageContext.request.contextPath}?lang=ru_RU">${labelRuRU}</a></li>
                     </ul>
                 </li>
             </ul>

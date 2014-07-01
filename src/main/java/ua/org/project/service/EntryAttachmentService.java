@@ -7,4 +7,5 @@ import ua.org.project.domain.impl.EntryAttachment;
  */
 public interface EntryAttachmentService {
     public EntryAttachment findById(Long id);
+    public void delete(EntryAttachment entryAttachment);
 }

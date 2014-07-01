@@ -12,6 +12,8 @@
      version="2.0">
     <spring:message code="blog_detail" var="blogDetail"/>
     <spring:message code="date_format_pattern" var="dateFormatPattern"/>
+    <spring:message code="message_not_posted" var="notPosted"/>
+    <spring:message code="message_was_removed" var="wasRemoved"/>
     <spring:url value="/blogs" var="blogUrl"/>
 
 
@@ -47,12 +49,15 @@
                 ${item.shortBody}
 
                 <ul class="list-inline blog-panel-likes">
+                    <c:if test="${item.isDeleted == true}">
+                        <span class="item-red">${wasRemoved}</span>
+                    </c:if>
                     <li class="item-blue">
                         <c:if test="${not empty item.postDate}">
                             <span><joda:format value="${item.postDate}" pattern="${dateFormatPattern}" /></span>
                         </c:if>
                         <c:if test="${empty item.postDate}">
-                            <span class="item-red">not published</span>
+                            <span class="item-red">${notPosted}</span>
                         </c:if>
                     </li>
                     <li class="item-blue">

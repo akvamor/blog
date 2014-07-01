@@ -7,10 +7,27 @@
 	<jsp:directive.page contentType="text/html;charset=UTF-8" />
 	<jsp:output omit-xml-declaration="yes" />
     <spring:url value="/blogs" var="blogUrl"/>
+    <spring:message code="title_categories" var="titleCategory"/>
+    <spring:message code="title_control_panel" var="titleControlPanel"/>
     <spring:message code="label_blog_new" var="labelBlogNew"/>
+    <spring:message code="label_button_all_post" var="labelAllPost"/>
+    <spring:message code="label_button_all_post_category" var="labelAllPostCategory"/>
+    <spring:message code="title_current_post" var="titleCurrentPost"/>
+    <spring:message code="label_button_current_edit_post" var="labelCurrentEditPost"/>
+    <spring:message code="label_button_current_attachment_file" var="labelCurrentAttachmentFile"/>
+    <spring:message code="label_button_current_post_comment" var="labelCurrentPostComment"/>
+    <spring:message code="label_button_current_view_audit_history" var="labelCurrentAuditHistory"/>
+    <spring:message code="label_button_current_delete_post" var="labelCurrentRemove"/>
+    <spring:message code="title_confirm_current_remove" var="titleConfirmCurrentRemove"/>
+    <spring:message code="text_confirm_current_remove" var="textConfirmCurrentRemove"/>
+    <spring:message code="label_button_current_unremove" var="labelCurrentUnRemove"/>
+
+    <spring:message code="remove" var="remove"/>
+    <spring:message code="cancel" var="cancel"/>
 
     <c:if test="${not empty menu}">
         <ul class="nav bs-docs-sidenav">
+            <li>${titleCategory}</li>
             <c:forEach items="${menu.categories}" var="category">
                 <c:choose>
                     <c:when test="${menu.currentCategory.equals(category.categoryId)}">
@@ -54,16 +71,23 @@
         <sec:authorize access="hasRole('ROLE_ADMIN')">
             <hr/>
             <ul class="nav bs-docs-sidenav">
-                <li>Control Panel</li>
+                <li>${titleControlPanel}</li>
+                <li><a href="${blogUrl}?form">${labelBlogNew}</a></li>
                 <c:if test="${not empty param.categoryId}">
                     <c:set value="&amp;categoryId=${param.categoryId}" var="categoryId"/>
                 </c:if>
-
-                <li class="${activeFind}"><a href="${blogUrl}?find=1">All posts</a></li>
-
-                <li class="${activeFindCategory}"><a href="${blogUrl}?find=1${categoryId}">All posts in category</a></li>
-                <li><a href="${blogUrl}?form">${labelBlogNew}</a></li>
-
+                <c:if test="${not empty param.find}">
+                    <c:if test="${empty param.categoryId}">
+                        <c:set var="activeFind" value="active"/>
+                    </c:if>
+                    <c:if test="${not empty param.categoryId}">
+                        <c:set var="activeFindCategory" value="active"/>
+                    </c:if>
+                </c:if>
+                <li class="${activeFind}"><a href="${blogUrl}?find=1">${labelAllPost}</a></li>
+                <c:if test="${not empty param.categoryId}">
+                    <li class="${activeFindCategory}"><a href="${blogUrl}?find=1${categoryId}">${labelAllPostCategory}</a></li>
+                </c:if>
             </ul>
         </sec:authorize>
 
@@ -71,17 +95,48 @@
             <sec:authorize access="isAuthenticated()">
                 <hr/>
                 <ul class="nav bs-docs-sidenav">
-                    <li>Current post</li>
-                    <li><a id="btnPostComment" href="javascript:void(0);" data-source="${entry.id}">Post a comment</a></li>
-                    <sec:authorize access="hasRole('ROLE_ADMIN')">
-                        <li><a href="javascript:void(0);" id="auditButton" data-source="${entry.id}">View Audit History</a></li>
-                    </sec:authorize>
+                    <li>${titleCurrentPost}</li>
+                    <li><a id="btnPostComment" href="javascript:void(0);" data-source="${entry.id}">${labelCurrentPostComment}</a></li>
                     <c:if test="${entry.createdBy == pageContext.request.userPrincipal.name}">
-                        <li><a href="${blogUrl}/${entry.id}?form">Edit</a></li>
-                        <li><a href="javascript:void(0);" id="uploadEntryAttachment">Upload Attachment</a></li>
+                        <li><a href="${blogUrl}/${entry.id}?form">${labelCurrentEditPost}</a></li>
+                        <li><a href="javascript:void(0);" id="uploadEntryAttachment">${labelCurrentAttachmentFile}</a></li>
                     </c:if>
+                    <sec:authorize access="hasRole('ROLE_ADMIN')">
+                        <c:if test="${entry.isDeleted == false}">
+                            <li><a href="javascript:void(0);" id="removeButton" >${labelCurrentRemove}</a></li>
+                        </c:if>
+                        <c:if test="${entry.isDeleted == true}">
+                            <li><a href="${blogUrl}/unremove/${entry.id}">${labelCurrentUnRemove}</a></li>
+                        </c:if>
+                        <li><a href="javascript:void(0);" id="auditButton" data-source="${entry.id}">${labelCurrentAuditHistory}</a></li>
+                    </sec:authorize>
                 </ul>
             </sec:authorize>
         </c:if>
+
+        <sec:authorize access="hasRole('ROLE_ADMIN')">
+            <c:if test="${entry.isDeleted == false}">
+                <div id="confirm-remove-entry" title="${titleConfirmCurrentRemove}">
+                    <p>${textConfirmCurrentRemove}</p>
+                    <ul class="list-inline">
+                        <li><a class="btn btn-success" href="${blogUrl}/remove/${entry.id}" >${remove}</a></li>
+                        <li><a class="btn btn-danger"  href="javascript:void(0);" id="cancelRemove" >${cancel}</a></li>
+                    </ul>
+                </div>
+                <script type="text/javascript">
+                    $(document).ready(function(){
+                        $( "#confirm-remove-entry" ).dialog({ autoOpen: false });
+
+                        $("#removeButton").click(function(){
+                            $("#confirm-remove-entry").dialog("open");
+                        })
+
+                        $("#cancelRemove").click(function(){
+                            $("#confirm-remove-entry").dialog("close");
+                        })
+                    })
+                </script>
+            </c:if>
+        </sec:authorize>
     </c:if>
 </div>

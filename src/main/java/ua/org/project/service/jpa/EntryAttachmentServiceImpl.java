@@ -26,5 +26,10 @@ public class EntryAttachmentServiceImpl implements EntryAttachmentService {
         return attachmentRepository.findOne(id);
     }
 
+    @Override
+    public void delete(EntryAttachment entryAttachment) {
+        attachmentRepository.delete(entryAttachment);
+    }
+
 }
 

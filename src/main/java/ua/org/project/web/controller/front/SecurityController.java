@@ -29,7 +29,7 @@ public class SecurityController {
         uiModel.addAttribute(
                 "message",
                 new Message(
-                        "error",
+                        "danger",
                         messageSource.getMessage(
                                 "message_login_fail",
                                 new Object[]{},

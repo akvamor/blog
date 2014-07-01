@@ -1,2 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<p>Data Access Failure</p>
+<p xmlns:spring="http://www.springframework.org/tags">
+    <spring:message code="message_page_not_accessible" var="accessFailMessage"/>
+    ${accessFailMessage}
+</p>
+
+

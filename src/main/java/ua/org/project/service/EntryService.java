@@ -15,7 +15,6 @@ public interface EntryService {
     public Page<Entry> findAll(Pageable pageable);
     public Entry findById(Long id);
     public Entry save(Entry entry);
-    public void delete(Entry entry);
     public Page<Entry> findAllByPage(Pageable pageable);
     public Page<Entry> findAllByCategory(String category, Pageable pageable);
     public Page<Entry> findEntryByCriteria(SearchCriteria searchCriteria, Pageable pageable);

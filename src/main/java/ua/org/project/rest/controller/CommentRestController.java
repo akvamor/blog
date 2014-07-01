@@ -54,7 +54,7 @@ public class CommentRestController {
     }
 
     @PreAuthorize("isAuthenticated()")
-    @RequestMapping(params = "form",value = "/new", method = RequestMethod.GET)
+    @RequestMapping(params = "form", value = "/new", method = RequestMethod.GET)
     @ResponseBody
     public Comment createForm(@AuthenticationPrincipal User user){
         Comment comment = new Comment();

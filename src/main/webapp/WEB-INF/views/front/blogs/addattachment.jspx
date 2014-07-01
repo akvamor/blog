@@ -6,7 +6,7 @@
     <jsp:output omit-xml-declaration="yes"/>
 
     <spring:message code="label_file_upload" var="labelFileUpload"/>
-
+    <spring:message code="label_file_button" var="upload"/>
 
     <form:form cssClass="form-horizontal" action="fileupload" modelAttribute="uploadItem" name="fileuploadForm" method="post" enctype="multipart/form-data">
         <input name="blogId" type="hidden" value="${entry.id}"/>
@@ -17,7 +17,7 @@
                 <input name="file" type="file" class="form-control"/>
             </div>
         </div>
-        <button type="submit" class="btn btn-primary btn-xs" style="width:100%;"><span class="glyphicon glyphicon-import">Upload</span></button>
+        <button type="submit" class="btn btn-primary btn-xs" style="width:100%;"><span class="glyphicon glyphicon-import">${upload}</span></button>
     </form:form>
     <script type="text/javascript">
          $(document).ready(function(){

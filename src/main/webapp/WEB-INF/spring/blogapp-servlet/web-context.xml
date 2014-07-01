@@ -45,6 +45,7 @@
 
     <beans:bean id="messageSource" class="org.springframework.context.support.ReloadableResourceBundleMessageSource"
             p:basenames="WEB-INF/i18n/messages,WEB-INF/i18n/application"
+            p:defaultEncoding="UTF-8"
             p:fallbackToSystemLocale="false"/>
 
     <resources mapping="/resources/**" location="/, classpath:/META-INF/web-resources" />
@@ -52,11 +53,10 @@
     <default-servlet-handler/>
 
     <!-- selects a static view for rendering without the need for an explicit controller -->
-    <view-controller path="/" view-name="index"/>
     <view-controller path="/uncaughtException" view-name="dataAccessFailure"/>
     <view-controller path="/resourceNotFound" view-name="resourceNotFound"/>
     <view-controller path="/dataAccessFailure" view-name="uncaughtException"/>
-    <beans:bean class="org.springframework.web.servlet.handler.SimpleMappingExceptionResolver" p:defaultErrorView="uncaughtException">
+   <beans:bean class="org.springframework.web.servlet.handler.SimpleMappingExceptionResolver" p:defaultErrorView="uncaughtException">
         <beans:property name="exceptionMappings">
             <beans:props>
                 <beans:prop key=".DataAccessException">dataAccessFailure</beans:prop>

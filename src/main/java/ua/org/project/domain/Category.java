@@ -56,10 +56,7 @@ public class Category implements Serializable{
     }
 
     @JsonIgnore
-    @OneToMany(
-            fetch = FetchType.EAGER,
-            mappedBy = "parentCategory"
-    )
+    @OneToMany(fetch = FetchType.EAGER, mappedBy = "parentCategory" )
     @OrderBy("categoryId ASC ")
     public Set<Category> getSubCategories() {
         return subCategories;

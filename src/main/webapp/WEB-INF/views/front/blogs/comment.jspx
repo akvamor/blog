@@ -7,9 +7,10 @@
     <jsp:output omit-xml-declaration="yes"/>
 
     <spring:message code="comment-button-send" var="buttonSend"/>
-    <spring:url var="urlComment" value="/restful/comment"/>
+    <spring:message code="title_comments" var="titleComments"/>
+    <spring:url var="urlComment" value="/comment"/>
 
-    <h5>Comments</h5>
+    <h5>${titleComments}</h5>
 
     <div id="container-of-comment"><jsp:text/></div>
 
@@ -27,7 +28,7 @@
             </li>
             <sec:authorize access="isAuthenticated()">
                 <li class="commit-button" style="display: none">
-                    <button class="btn btn-default btn-xs">commit</button>
+                    <button class="btn btn-default btn-xs">${buttonSend}</button>
                 </li>
             </sec:authorize>
             <li class="item-blue pull-right">

@@ -75,6 +75,8 @@
     <jpa:auditing auditor-aware-ref="auditorAwareBean"/>
     <bean id="auditorAwareBean" class="ua.org.project.auditor.AuditorAwareBean"/>
 
+
+    <!-- There is a query in repository which h2 is not supported -->
 	<beans profile="test">
 	    <jdbc:embedded-database id="dataSource" type="H2">
 	        <jdbc:script location="classpath:sql/schema.sql"/>

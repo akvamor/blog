@@ -12,6 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 import ua.org.project.domain.Impression;
 import ua.org.project.domain.SearchCriteria;
 import ua.org.project.domain.impl.Entry;
+import ua.org.project.repository.CategoryRepository;
 import ua.org.project.repository.EntryLikeRepository;
 import ua.org.project.repository.EntryRepository;
 import ua.org.project.repository.ImpressionRepository;
@@ -32,6 +33,9 @@ public class EntryServiceImpl implements EntryService {
 
     @Autowired
     private EntryRepository entryRepository;
+
+    @Autowired
+    private CategoryRepository categoryRepository;
 
     @Autowired
     private EntryLikeRepository entryLikeRepository;
@@ -70,10 +74,6 @@ public class EntryServiceImpl implements EntryService {
     public void increaseImpression(Entry entry){
         Impression impression = entry.getImpressions();
         impression.setQuantity(impression.getQuantity() + 1);
-    }
-
-    public void delete(Entry entry) {
-        entryRepository.delete(entry);
     }
 
     @Transactional(readOnly = true)
