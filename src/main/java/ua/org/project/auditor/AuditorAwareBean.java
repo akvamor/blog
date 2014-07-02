@@ -12,10 +12,11 @@ public class AuditorAwareBean implements AuditorAware<String> {
     public String getCurrentAuditor() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String currentUser = null;
-        if (authentication != null)
+        if (authentication != null) {
             currentUser = authentication.getName();
-        else
+        } else {
             currentUser = "batch";
+        }
         return currentUser;
     }
 }

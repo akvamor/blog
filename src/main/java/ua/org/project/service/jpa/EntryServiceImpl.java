@@ -15,13 +15,13 @@ import ua.org.project.domain.impl.Entry;
 import ua.org.project.repository.CategoryRepository;
 import ua.org.project.repository.EntryLikeRepository;
 import ua.org.project.repository.EntryRepository;
-import ua.org.project.repository.ImpressionRepository;
 import ua.org.project.service.EntryService;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Created by Dmitry Petrov on 5/28/14.
@@ -35,13 +35,7 @@ public class EntryServiceImpl implements EntryService {
     private EntryRepository entryRepository;
 
     @Autowired
-    private CategoryRepository categoryRepository;
-
-    @Autowired
     private EntryLikeRepository entryLikeRepository;
-
-    @PersistenceContext
-    private EntityManager em;
 
     @Transactional(readOnly = true)
     public Page<Entry> findAll(Pageable pageable) {
@@ -71,6 +65,10 @@ public class EntryServiceImpl implements EntryService {
         return entry;
     }
 
+    /**
+     * increase impression in Entry
+     * @param entry
+     */
     public void increaseImpression(Entry entry){
         Impression impression = entry.getImpressions();
         impression.setQuantity(impression.getQuantity() + 1);
@@ -84,7 +82,7 @@ public class EntryServiceImpl implements EntryService {
     }
 
     @Transactional(readOnly = true)
-    public Page<Entry> findAllByCategory(String category, Pageable pageable) {
+    public Page<Entry> findAllByCategory(Set<String> category, Pageable pageable) {
         Page<Entry> entries = entryRepository.findAllByCategory(category, pageable);
         this.setLikes(entries.getContent());
         return entries;
@@ -93,18 +91,17 @@ public class EntryServiceImpl implements EntryService {
     @Transactional(readOnly = true)
     public Page<Entry> findEntryByCriteria(SearchCriteria searchCriteria, Pageable pageable) {
         String subject = searchCriteria.getSubject();
-        String categoryId = searchCriteria.getCategoryId();
+        Set<String> categories = searchCriteria.getCategories();
         DateTime fromPostDate = searchCriteria.getFromPostDate();
         DateTime toPostDate = searchCriteria.getToPostDate();
         String locale = searchCriteria.getLocale();
-
         Page<Entry> entries;
         if (searchCriteria.isSearch()){
-            entries = entryRepository.searchEntryByCriteria(subject, categoryId, fromPostDate, toPostDate, locale, searchCriteria.isDeleted(), pageable);
-        } else if (categoryId != null && locale != null && fromPostDate != null && toPostDate!= null){
-            entries = entryRepository.findEntryByCategoryAndLocaleAndPostDate(categoryId, locale, fromPostDate, toPostDate, searchCriteria.isDeleted(), pageable);
-        } else if (categoryId != null && locale != null && searchCriteria.isShowUnPosted()){
-            entries = entryRepository.findEntryByCategoryAndLocale(categoryId, locale, searchCriteria.isDeleted(), pageable);
+            entries = entryRepository.searchEntryByCriteria(subject, categories.iterator().next(), fromPostDate, toPostDate, locale, searchCriteria.isDeleted(), pageable);
+        } else if (categories != null && locale != null && fromPostDate != null && toPostDate!= null){
+            entries = entryRepository.findEntryByCategoryAndLocaleAndPostDate(categories, locale, fromPostDate, toPostDate, searchCriteria.isDeleted(), pageable);
+        } else if (categories != null && locale != null && searchCriteria.isShowUnPosted()){
+            entries = entryRepository.findEntryByCategoryAndLocale(categories, locale, searchCriteria.isDeleted(), pageable);
         } else {
             entries = entryRepository.findEntryByLocaleAndPostDate(locale, fromPostDate, toPostDate, searchCriteria.isDeleted(), pageable);
         }
@@ -113,6 +110,10 @@ public class EntryServiceImpl implements EntryService {
         return entries;
     }
 
+    /**
+     * Get likes for all Entry in list
+     * @param entries
+     */
     private void setLikes(List<Entry> entries) {
         for (Entry entry : entries) {
             entry.setCountLikes(entryLikeRepository.countAllLike(entry.getId()));

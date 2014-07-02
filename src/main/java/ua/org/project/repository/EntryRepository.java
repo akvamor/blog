@@ -16,32 +16,32 @@ import java.util.List;
  */
 public interface EntryRepository extends PagingAndSortingRepository<Entry, Long> {
 
-    @Query("select e from Entry e where e.categoryId = :categoryId and e.locale like :locale and e.postDate between :fromPostDate and :toPostDate and e.isDeleted = :isDeleted")
-    public Page<Entry> findEntryByCategoryAndLocaleAndPostDate(
-            @Param("categoryId")String categoryId,
+    @Query("select e from Entry e where e.category.categoryId in :categories  and e.locale like :locale and e.postDate between :fromPostDate and :toPostDate and e.isDeleted = :isDeleted")
+    Page<Entry> findEntryByCategoryAndLocaleAndPostDate(
+            @Param("categories")Collection<String> categoryId,
             @Param("locale") String locale,
             @Param("fromPostDate") DateTime fromPostDate,
             @Param("toPostDate") DateTime toPostDate,
             @Param("isDeleted") Boolean isDeleted,
             Pageable pageable);
 
-    @Query("select e from Entry e where e.categoryId = :categoryId and e.locale like :locale and e.isDeleted = :isDeleted")
-    public Page<Entry> findEntryByCategoryAndLocale(
-            @Param("categoryId")String categoryId,
+    @Query("select e from Entry e where e.category.categoryId in :categories  and e.locale like :locale and e.isDeleted = :isDeleted")
+    Page<Entry> findEntryByCategoryAndLocale(
+            @Param("categories")Collection<String> categories,
             @Param("locale") String locale,
             @Param("isDeleted") Boolean isDeleted,
             Pageable pageable);
 
     @Query("select e from Entry e where e.locale like :locale and e.postDate between :fromPostDate and :toPostDate and e.isDeleted = :isDeleted")
-    public Page<Entry> findEntryByLocaleAndPostDate(
+    Page<Entry> findEntryByLocaleAndPostDate(
             @Param("locale") String locale,
             @Param("fromPostDate") DateTime fromPostDate,
             @Param("toPostDate") DateTime toPostDate,
             @Param("isDeleted") Boolean isDeleted,
             Pageable pageable);
 
-    @Query("select e from Entry e where e.subject like :subject and e.categoryId like :categoryId and e.locale like :locale and e.postDate between :fromPostDate and :toPostDate and e.isDeleted = :isDeleted")
-    public Page<Entry> searchEntryByCriteria(
+    @Query("select e from Entry e where e.subject like :subject and (e.category.categoryId like :categoryId) and e.locale like :locale and e.postDate between :fromPostDate and :toPostDate and e.isDeleted = :isDeleted")
+    Page<Entry> searchEntryByCriteria(
             @Param("subject") String subject,
             @Param("categoryId") String categoryId,
             @Param("fromPostDate") DateTime fromPostDate,
@@ -50,9 +50,9 @@ public interface EntryRepository extends PagingAndSortingRepository<Entry, Long>
             @Param("isDeleted") Boolean isDeleted,
             Pageable pageable);
 
-    @Query("select e from Entry e where e.categoryId = :categoryId")
-    public Page<Entry> findAllByCategory(
-            @Param("categoryId") String categoryId,
+    @Query("select e from Entry e where e.category.categoryId in :categories")
+    Page<Entry> findAllByCategory(
+            @Param("categories") Collection<String> categories,
             Pageable pageable);
 
 }

@@ -7,7 +7,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
-import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -50,6 +49,12 @@ import java.util.*;
 @RequestMapping(value = {"/", "/index", "/blogs"})
 @Controller
 public class EntryController {
+
+    public static final String MENU = "menu";
+    public static final String ENTRY = "entry";
+    public static final String MESSAGE = "message";
+    public static final String DANGER = "danger";
+    public static final String SUCCESS = "success";
 
     final Logger logger = LoggerFactory.getLogger(EntryController.class);
     String defaultColumnSort = "postDate";
@@ -107,9 +112,16 @@ public class EntryController {
         String dateFormat = this.getLocaleDateFormat(locale);
         Page<Entry> entryPage;
 
+        Set<String> categories = new HashSet<String>();
+        Category category = categoryService.findById(categoryId);
+        categories.add(categoryId);
+        for (Category category1 : category.getSubCategories()) {
+            categories.add(category1.getCategoryId());
+        }
+
         if (findAll) {
             if (categoryId != null) {
-                entryPage = entryService.findAllByCategory(categoryId, pageRequest);
+                entryPage = entryService.findAllByCategory(categories, pageRequest);
             } else {
                 entryPage = entryService.findAllByPage(pageRequest);
             }
@@ -117,7 +129,7 @@ public class EntryController {
             SearchCriteria searchCriteria = new SearchCriteria();
             searchCriteria.setDeleted(showDeleted);
             searchCriteria.setShowUnPosted(showUnPosted);
-            searchCriteria.setCategoryId(categoryId);
+            searchCriteria.setCategories(categories);
             searchCriteria.setLocale("%" + locale + "%");
 
             if (fromPostDateString != null) {
@@ -139,7 +151,7 @@ public class EntryController {
                     searchCriteria.setSubject(subject);
                 }
                 if (categoryId != null){
-                    searchCriteria.setCategoryId("%" + categoryId + "%");
+                    searchCriteria.setCategories(Collections.singleton("%" + categoryId + "%"));
                 }
             }
             logger.info("Search criteria: " + searchCriteria.toString());
@@ -152,7 +164,7 @@ public class EntryController {
         entryGrid.setEntryData(Lists.newArrayList(entryPage.iterator()));
 
         uiModel.addAttribute("entries", entryGrid);
-        uiModel.addAttribute("menu", getMenu(categoryId));
+        uiModel.addAttribute(EntryController.MENU, getMenu(categoryId));
 
         return "blogs/list";
     }
@@ -165,7 +177,7 @@ public class EntryController {
     @RequestMapping(value = "contact", method = RequestMethod.GET)
     public String showContact(Model uiModel){
         Entry entry = entryService.findById(1l);
-        uiModel.addAttribute("entry", entry);
+        uiModel.addAttribute(EntryController.ENTRY, entry);
         return "blogs/show";
     }
 
@@ -196,13 +208,13 @@ public class EntryController {
             }
         }
 
-        uiModel.addAttribute("entry", entry);
+        uiModel.addAttribute(EntryController.ENTRY, entry);
 
         UploadItem uploadItem = new UploadItem();
         uploadItem.setBlogId(entry.getId());
 
         uiModel.addAttribute("uploadItem", uploadItem);
-        uiModel.addAttribute("menu", this.getMenu(entry.getCategoryId()));
+        uiModel.addAttribute(EntryController.MENU, this.getMenu(entry.getCategory().getCategoryId()));
 
         return "blogs/show";
     }
@@ -218,9 +230,9 @@ public class EntryController {
     @RequestMapping(params = "form", method = RequestMethod.GET)
     public String createForm(Model uiModel, @AuthenticationPrincipal User user) {
         Entry entry = new Entry();
-        uiModel.addAttribute("entry", entry);
+        uiModel.addAttribute(EntryController.ENTRY, entry);
         uiModel.addAttribute("currentDate", new DateTime());
-        uiModel.addAttribute("menu", this.getMenu(entry.getCategoryId()));
+        uiModel.addAttribute(EntryController.MENU, this.getMenu(entry.getCategory().getCategoryId()));
         return "blogs/create";
     }
 
@@ -249,16 +261,16 @@ public class EntryController {
         logger.info("Create post: " + entry.getId());
         logger.info("Entry: " + entry.toString());
         if (bindingResult.hasErrors()) {
-            uiModel.addAttribute("message", new Message(
-                    "danger",
+            uiModel.addAttribute(EntryController.MESSAGE, new Message(
+                    EntryController.DANGER,
                     messageSource.getMessage("message_entry_save_fail", new Object[]{}, locale)));
-            uiModel.addAttribute("entry", entry);
-            uiModel.addAttribute("menu", this.getMenu(entry.getCategoryId()));
+            uiModel.addAttribute(EntryController.ENTRY, entry);
+            uiModel.addAttribute(EntryController.MENU, this.getMenu(entry.getCategory().getCategoryId()));
             return "blogs/create";
         }
         uiModel.asMap().clear();
-        redirectAttributes.addFlashAttribute("message", new Message(
-                "success",
+        redirectAttributes.addFlashAttribute(EntryController.MESSAGE, new Message(
+                EntryController.SUCCESS,
                 messageSource.getMessage("message_entry_save_success", new Object[]{}, locale)));
 
         entry.addImpression(new Impression());
@@ -289,14 +301,14 @@ public class EntryController {
         Entry entry = entryService.findById(id);
 
         if (!entry.getCreatedBy().equals(user.getUsername())) {
-            redirectAttributes.addFlashAttribute("message", new Message(
-                    "warning",
+            redirectAttributes.addFlashAttribute(EntryController.MESSAGE, new Message(
+                    EntryController.DANGER,
                     messageSource.getMessage("message_entry_access_fail", new Object[]{}, locale)));
             return "redirect:/blogs/" + UrlUtil.encodeUrlPathSegment(entry.getId().toString(), httpServletRequest);
         }
-        uiModel.addAttribute("entry", entry);
+        uiModel.addAttribute(EntryController.ENTRY, entry);
         uiModel.addAttribute("currentDate", new DateTime());
-        uiModel.addAttribute("menu", this.getMenu(entry.getCategoryId()));
+        uiModel.addAttribute(EntryController.MENU, this.getMenu(entry.getCategory().getCategoryId()));
         return "blogs/update";
     }
 
@@ -325,23 +337,30 @@ public class EntryController {
 
         logger.info("Updating post id: " + entry.getId());
         if (bindingResult.hasErrors()) {
-            uiModel.addAttribute("message", new Message(
-                    "danger",
+            uiModel.addAttribute(EntryController.MESSAGE, new Message(
+                    EntryController.DANGER,
                     messageSource.getMessage("message_entry_save_fail", new Object[]{}, locale)));
             logger.warn(bindingResult.getAllErrors().toString());
             logger.warn(entry.toString());
-            uiModel.addAttribute("entry", entry);
-            uiModel.addAttribute("menu", this.getMenu(entry.getCategoryId()));
+            uiModel.addAttribute(EntryController.ENTRY, entry);
+            uiModel.addAttribute(EntryController.MENU, this.getMenu(entry.getCategory().getCategoryId()));
             return "blogs/update";
         }
         uiModel.asMap().clear();
-        redirectAttributes.addFlashAttribute("message", new Message(
-                "success",
+        redirectAttributes.addFlashAttribute(EntryController.MESSAGE, new Message(
+                EntryController.SUCCESS,
                 messageSource.getMessage("message_entry_save_success", new Object[]{}, locale)));
         entryService.save(entry);
         return "redirect:/blogs/" + UrlUtil.encodeUrlPathSegment(entry.getId().toString(), httpServletRequest);
     }
 
+    /**
+     * Remove the post. Set entry.isDeleted = true
+     * @param id
+     * @param redirectAttributes
+     * @param locale
+     * @return
+     */
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @RequestMapping(value = "remove/{id}", method = RequestMethod.GET)
     public String remove(
@@ -352,19 +371,26 @@ public class EntryController {
         logger.info("Deleting post id: " + id);
         Entry entry = entryService.findById(id);
         if (entry == null){
-            redirectAttributes.addFlashAttribute("message", new Message(
-                    "danger",
+            redirectAttributes.addFlashAttribute(EntryController.MESSAGE, new Message(
+                    EntryController.DANGER,
                     messageSource.getMessage("message_entry_removed_fail", new Object[]{}, locale)));
         } else {
             entry.setIsDeleted(true);
             entryService.save(entry);
-            redirectAttributes.addFlashAttribute("message", new Message(
-                    "success",
+            redirectAttributes.addFlashAttribute(EntryController.MESSAGE, new Message(
+                    EntryController.SUCCESS,
                     messageSource.getMessage("message_entry_removed_success", new Object[]{}, locale)));
         }
         return "redirect:blogs/" + id.toString();
     }
 
+    /**
+     * Turn back the post. Set entry.isDeleted = false
+     * @param id
+     * @param redirectAttributes
+     * @param locale
+     * @return
+     */
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @RequestMapping(value = "unremove/{id}")
     public String unremove(
@@ -374,19 +400,26 @@ public class EntryController {
     ) {
         Entry entry = entryService.findById(id);
         if (entry == null){
-            redirectAttributes.addFlashAttribute("message", new Message(
-                    "danger",
+            redirectAttributes.addFlashAttribute(EntryController.MESSAGE, new Message(
+                    EntryController.DANGER,
                     messageSource.getMessage("message_entry_unremoved_fail", new Object[]{}, locale)));
         } else {
             entry.setIsDeleted(false);
             entryService.save(entry);
-            redirectAttributes.addFlashAttribute("message", new Message(
-                    "success",
+            redirectAttributes.addFlashAttribute(EntryController.MESSAGE, new Message(
+                    EntryController.SUCCESS,
                     messageSource.getMessage("message_entry_unremoved_success", new Object[]{}, locale)));
         }
         return "redirect:blogs/" + id.toString();
     }
 
+    /**
+     * Remove attachment file
+     * @param id
+     * @param redirectAttributes
+     * @param locale
+     * @return
+     */
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @RequestMapping(value = "attachment/remove/{id}", method = RequestMethod.GET)
     public String removeAttachment(
@@ -397,19 +430,25 @@ public class EntryController {
         EntryAttachment entryAttachment = entryAttachmentService.findById(id);
         Entry entry = null;
         if (entryAttachment == null){
-            redirectAttributes.addFlashAttribute("message", new Message(
-                    "danger",
+            redirectAttributes.addFlashAttribute(EntryController.MESSAGE, new Message(
+                    EntryController.DANGER,
                     messageSource.getMessage("message_entry_attachment_removed_fail", new Object[]{}, locale)));
         } else {
             entry = entryAttachment.getEntry();
             entryAttachmentService.delete(entryAttachment);
-            redirectAttributes.addFlashAttribute("message", new Message(
-                    "success",
+            redirectAttributes.addFlashAttribute(EntryController.MESSAGE, new Message(
+                    EntryController.SUCCESS,
                     messageSource.getMessage("message_entry_attachment_removed_success", new Object[]{}, locale)));
         }
         return "redirect:/blogs/" + entry.getId().toString();
     }
 
+    /**
+     * Catch Exception
+     * @param exception
+     * @param httpServletRequest
+     * @return
+     */
     @ExceptionHandler(Exception.class)
     public String handleMyException(Exception exception, HttpServletRequest httpServletRequest) {
         return "redirect:/errorMessage/?error=" + UrlUtil.encodeUrlPathSegment("404", httpServletRequest);
@@ -421,7 +460,9 @@ public class EntryController {
             RedirectAttributes redirectAttributes,
             Locale locale
             ) {
-        redirectAttributes.addFlashAttribute("message", new Message("danger", messageSource.getMessage(error, new Object[]{}, locale)));
+        redirectAttributes.addFlashAttribute(EntryController.MESSAGE, new Message(
+                EntryController.DANGER,
+                messageSource.getMessage(error, new Object[]{}, locale)));
         return "redirect:/blogs";
     }
 

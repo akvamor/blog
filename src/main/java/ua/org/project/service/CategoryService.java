@@ -8,8 +8,8 @@ import java.util.List;
  * Created by Dmitry Petrov on 5/28/14.
  */
 public interface CategoryService {
-    public List<Category> findAll();
-    public Category findById(String id);
-    public List<Category> findAllParentCategory();
-    public List<Category> findAllSubCategory(String parentCategoryId);
+    List<Category> findAll();
+    Category findById(String id);
+    List<Category> findAllParentCategory();
+    List<Category> findAllSubCategory(String parentCategoryId);
 }

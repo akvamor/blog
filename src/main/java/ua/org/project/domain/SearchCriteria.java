@@ -2,6 +2,8 @@ package ua.org.project.domain;
 
 import org.joda.time.DateTime;
 
+import java.util.Set;
+
 /**
  * Created by Dmitry Petrov on 5/28/14.
  */
@@ -9,7 +11,7 @@ public class SearchCriteria {
 
     private String subject = "%";
 
-    private String categoryId;
+    private Set<String> categories;
 
     private DateTime fromPostDate = new DateTime(1900, 1, 1, 0, 0);
 
@@ -47,12 +49,12 @@ public class SearchCriteria {
         this.subject = subject;
     }
 
-    public String getCategoryId() {
-        return categoryId;
+    public Set<String> getCategories() {
+        return categories;
     }
 
-    public void setCategoryId(String categoryId) {
-        this.categoryId = categoryId;
+    public void setCategories(Set<String> categories) {
+        this.categories = categories;
     }
 
     public DateTime getFromPostDate() {
@@ -91,7 +93,7 @@ public class SearchCriteria {
     public String toString() {
         return "SearchCriteria{" +
                 "subject='" + subject + '\'' +
-                ", categoryId='" + categoryId + '\'' +
+                ", categories='" + categories + '\'' +
                 ", fromPostDate=" + fromPostDate +
                 ", toPostDate=" + toPostDate +
                 ", locale='" + locale + '\'' +

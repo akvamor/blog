@@ -16,6 +16,7 @@ import ua.org.project.domain.impl.Comment;
 import ua.org.project.domain.impl.Entry;
 import ua.org.project.service.CommentService;
 import ua.org.project.service.EntryService;
+import ua.org.project.web.controller.front.CommentController;
 
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.ConstraintViolation;
@@ -30,13 +31,11 @@ import java.util.*;
 @RequestMapping(value = {"/restful/comment"})
 @Controller
 public class CommentRestController {
+    public static final Comment COMMENT = new Comment();
     private static final Logger logger = LoggerFactory.getLogger(CommentRestController.class);
 
     @Autowired
     private CommentService commentService;
-
-    @Autowired
-    private MessageSource messageSource;
 
     @Autowired
     private EntryService entryService;
@@ -57,8 +56,7 @@ public class CommentRestController {
     @RequestMapping(params = "form", value = "/new", method = RequestMethod.GET)
     @ResponseBody
     public Comment createForm(@AuthenticationPrincipal User user){
-        Comment comment = new Comment();
-        return comment;
+        return CommentController.COMMENT;
     }
 
     @PreAuthorize("isAuthenticated()")

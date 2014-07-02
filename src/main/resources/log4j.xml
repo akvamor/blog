@@ -40,7 +40,7 @@
         <level value="warn" />
     </logger>
 
-<!--    <logger name="org.hibernate.jdbc">
+    <logger name="org.hibernate.jdbc">
         <level value="trace" />
     </logger>
     <logger name="org.hibernate.sql">
@@ -53,7 +53,7 @@
         <level value="TRACE"/>
     </logger>
 
-                          -->
+
     <!-- Root Logger -->
 	<root>
 		<priority value="warn" />

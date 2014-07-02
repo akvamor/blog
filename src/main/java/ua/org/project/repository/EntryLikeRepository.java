@@ -11,7 +11,7 @@ import ua.org.project.domain.impl.EntryLike;
  */
 public interface EntryLikeRepository extends CrudRepository<EntryLike, Long>{
     @Query("select count(l.id) from EntryLike l where l.entry.id = :entryId and l.like > 0")
-    public long countAllLike(@Param("entryId") Long entryId);
+    long countAllLike(@Param("entryId") Long entryId);
     @Query("select count(l.id) from EntryLike l where l.entry.id = :entryId and l.like < 0")
-    public long countAllNotLike(@Param("entryId") Long entryId);
+    long countAllNotLike(@Param("entryId") Long entryId);
 }

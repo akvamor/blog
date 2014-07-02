@@ -7,16 +7,17 @@ import ua.org.project.domain.SearchCriteria;
 
 import java.util.List;
 import java.util.Locale;
+import java.util.Set;
 
 /**
  * Created by Dmitry Petrov on 5/28/14.
  */
 public interface EntryService {
-    public Page<Entry> findAll(Pageable pageable);
-    public Entry findById(Long id);
-    public Entry save(Entry entry);
-    public Page<Entry> findAllByPage(Pageable pageable);
-    public Page<Entry> findAllByCategory(String category, Pageable pageable);
-    public Page<Entry> findEntryByCriteria(SearchCriteria searchCriteria, Pageable pageable);
-    public void increaseImpression(Entry entry);
+    Page<Entry> findAll(Pageable pageable);
+    Entry findById(Long id);
+    Entry save(Entry entry);
+    Page<Entry> findAllByPage(Pageable pageable);
+    Page<Entry> findAllByCategory(Set<String> category, Pageable pageable);
+    Page<Entry> findEntryByCriteria(SearchCriteria searchCriteria, Pageable pageable);
+    void increaseImpression(Entry entry);
 }

@@ -31,9 +31,6 @@ public class CommentServiceImpl implements CommentService {
 
     final Logger logger = LoggerFactory.getLogger(CommentServiceImpl.class);
 
-    @PersistenceContext
-    private EntityManager em;
-
     @Autowired
     private CommentRepository commentRepository;
 

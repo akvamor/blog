@@ -4,10 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.hibernate.envers.Audited;
 import org.hibernate.envers.NotAudited;
 import org.hibernate.validator.constraints.NotEmpty;
-import ua.org.project.domain.AbstractBlog;
-import ua.org.project.domain.AbstractLike;
-import ua.org.project.domain.Attachment;
-import ua.org.project.domain.Impression;
+import ua.org.project.domain.*;
 
 import javax.persistence.*;
 import javax.validation.constraints.Size;
@@ -26,7 +23,7 @@ public class Entry extends AbstractBlog implements Serializable {
     private static final int SHORT_BODY_LENGTH = 500;
     private static final String THREE_DOTS = "...";
 
-    private String categoryId;
+    private Category category;
     private String locale;
     private String subject;
     private String body;
@@ -92,12 +89,15 @@ public class Entry extends AbstractBlog implements Serializable {
 
 
     @NotEmpty
-    @Column(name = "CATEGORY_ID")
-    public String getCategoryId() {
-        return this.categoryId;
+    @JsonIgnore
+    @NotAudited
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "CATEGORY_ID")
+    public Category getCategory() {
+        return this.category;
     }
-    public void setCategoryId(String categoryId) {
-        this.categoryId = categoryId;
+    public void setCategory(Category category) {
+        this.category = category;
     }
 
 
@@ -146,6 +146,7 @@ public class Entry extends AbstractBlog implements Serializable {
         comments.add(comment);
         comment.setEntry(this);
     }
+
     public void addImpression(Impression impression){
         this.setImpressions(impression);
         impression.setEntry(this);
@@ -155,7 +156,7 @@ public class Entry extends AbstractBlog implements Serializable {
     }
 
     public String toString() {
-        return "Entry id: " + id + " - subject: " + subject + " - category: " + categoryId
+        return "Entry id: " + id + " - subject: " + subject + " - category: " + category.getCategoryId()
                 + " - post date: " + postDate
                 + " - created by: " + createdBy + " - created date: " + createdDate
                 + " - last modified by: " + lastModifiedBy + " - last modified date: " + lastModifiedDate

@@ -20,6 +20,8 @@ import java.util.*;
 @RequestMapping("/comment")
 public class CommentController {
 
+    public static final Comment COMMENT = new Comment();
+
     @Autowired
     CommentRestController commentRestController;
 
@@ -33,8 +35,7 @@ public class CommentController {
     @RequestMapping(params = "form", value = "/new", method = RequestMethod.GET)
     @ResponseBody
     public Comment createForm(@AuthenticationPrincipal User user){
-        Comment comment = new Comment();
-        return comment;
+        return CommentController.COMMENT;
     }
 
     @PreAuthorize("isAuthenticated()")

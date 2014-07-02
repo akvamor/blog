@@ -1,17 +1,15 @@
 package ua.org.project.service;
 
 import ua.org.project.domain.impl.Comment;
-import ua.org.project.domain.rest.CommentRest;
-
 import java.util.List;
 
 /**
  * Created by Dmitry Petrov on 5/28/14.
  */
 public interface CommentService {
-    public Comment findById(Long id);
-    public List<Comment> findByEntryId(Long entryId);
-    public List<Comment> findByEntryIdInTree(Long entryId);
-    public Comment save(Comment comment);
-    public void delete(Comment comment);
+    Comment findById(Long id);
+    List<Comment> findByEntryId(Long entryId);
+    List<Comment> findByEntryIdInTree(Long entryId);
+    Comment save(Comment comment);
+    void delete(Comment comment);
 }

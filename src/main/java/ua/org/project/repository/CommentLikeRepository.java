@@ -11,7 +11,7 @@ import ua.org.project.domain.impl.CommentLike;
 public interface CommentLikeRepository extends CrudRepository<CommentLike, Long>{
 
     @Query("select count(l.id) from CommentLike l where l.comment.id = :commentId and l.like > 0")
-    public long countAllLike(@Param("commentId") Long commentId);
+    long countAllLike(@Param("commentId") Long commentId);
     @Query("select count(l.id) from CommentLike l where l.comment.id = :commentId and l.like < 0")
-    public long countAllNotLike(@Param("commentId") Long commentId);
+    long countAllNotLike(@Param("commentId") Long commentId);
 }

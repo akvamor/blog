@@ -133,10 +133,11 @@ public abstract class AbstractBlog implements Blog, Auditable<String, Long>, Ser
     @JsonIgnore
     @Transient
     public final boolean isNew() {
-        if (id == null)
+        if (id == null) {
             return true;
-        else
+        } else {
             return false;
+        }
     }
 
     @JsonIgnore
