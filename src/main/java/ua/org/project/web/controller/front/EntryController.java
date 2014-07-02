@@ -17,6 +17,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 
 import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import ua.org.project.domain.Category;
@@ -27,10 +28,8 @@ import ua.org.project.domain.impl.EntryAttachment;
 import ua.org.project.service.CategoryService;
 import ua.org.project.service.EntryAttachmentService;
 import ua.org.project.service.EntryService;
-import ua.org.project.web.form.EntryGrid;
-import ua.org.project.web.form.MenuShow;
-import ua.org.project.web.form.UploadItem;
-import ua.org.project.web.form.Message;
+import ua.org.project.util.form.CategoryProperty;
+import ua.org.project.web.form.*;
 import ua.org.project.util.UrlUtil;
 
 import javax.servlet.http.HttpServletRequest;
@@ -78,6 +77,11 @@ public class EntryController {
     @Autowired
     private Validator validator;
 
+    @InitBinder
+    public void initBinder(WebDataBinder binder){
+        binder.registerCustomEditor(Category.class, new CategoryProperty(categoryService));
+    }
+
     /**
      * *********************************************
      * Show list of Posts by criteria and without.
@@ -110,15 +114,21 @@ public class EntryController {
 
         PageRequest pageRequest = this.getPageRequest(rows, page);
         String dateFormat = this.getLocaleDateFormat(locale);
-        Page<Entry> entryPage;
 
         Set<String> categories = new HashSet<String>();
-        Category category = categoryService.findById(categoryId);
-        categories.add(categoryId);
-        for (Category category1 : category.getSubCategories()) {
-            categories.add(category1.getCategoryId());
+        if (categoryId != null) {
+            Category category = categoryService.findById(categoryId);
+            for (Category category1 : category.getSubCategories()) {
+                categories.add(category1.getCategoryId());
+            }
+            categories.add(categoryId);
+        } else {
+            List<Category> subcategories = categoryService.findAll();
+            for (Category subCategory : subcategories) {
+                categories.add(subCategory.getCategoryId());
+            }
         }
-
+        Page<Entry> entryPage = null;
         if (findAll) {
             if (categoryId != null) {
                 entryPage = entryService.findAllByCategory(categories, pageRequest);
@@ -449,22 +459,22 @@ public class EntryController {
      * @param httpServletRequest
      * @return
      */
-    @ExceptionHandler(Exception.class)
-    public String handleMyException(Exception exception, HttpServletRequest httpServletRequest) {
-        return "redirect:/errorMessage/?error=" + UrlUtil.encodeUrlPathSegment("404", httpServletRequest);
-    }
-
-    @RequestMapping(value = "/errorMessage", method = RequestMethod.GET)
-    public String handleMyExceptionOnRedirect(
-            @RequestParam("error") String error,
-            RedirectAttributes redirectAttributes,
-            Locale locale
-            ) {
-        redirectAttributes.addFlashAttribute(EntryController.MESSAGE, new Message(
-                EntryController.DANGER,
-                messageSource.getMessage(error, new Object[]{}, locale)));
-        return "redirect:/blogs";
-    }
+//    @ExceptionHandler(Exception.class)
+//    public String handleMyException(Exception exception, HttpServletRequest httpServletRequest) {
+//        return "redirect:/errorMessage/?error=" + UrlUtil.encodeUrlPathSegment("404", httpServletRequest);
+//    }
+//
+//    @RequestMapping(value = "/errorMessage", method = RequestMethod.GET)
+//    public String handleMyExceptionOnRedirect(
+//            @RequestParam("error") String error,
+//            RedirectAttributes redirectAttributes,
+//            Locale locale
+//            ) {
+//        redirectAttributes.addFlashAttribute(EntryController.MESSAGE, new Message(
+//                EntryController.DANGER,
+//                messageSource.getMessage(error, new Object[]{}, locale)));
+//        return "redirect:/blogs";
+//    }
 
     /**
      * *********************************************

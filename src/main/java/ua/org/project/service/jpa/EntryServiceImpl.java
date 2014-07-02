@@ -12,13 +12,10 @@ import org.springframework.transaction.annotation.Transactional;
 import ua.org.project.domain.Impression;
 import ua.org.project.domain.SearchCriteria;
 import ua.org.project.domain.impl.Entry;
-import ua.org.project.repository.CategoryRepository;
 import ua.org.project.repository.EntryLikeRepository;
 import ua.org.project.repository.EntryRepository;
 import ua.org.project.service.EntryService;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
@@ -82,8 +79,8 @@ public class EntryServiceImpl implements EntryService {
     }
 
     @Transactional(readOnly = true)
-    public Page<Entry> findAllByCategory(Set<String> category, Pageable pageable) {
-        Page<Entry> entries = entryRepository.findAllByCategory(category, pageable);
+    public Page<Entry> findAllByCategory(Set<String> categories, Pageable pageable) {
+        Page<Entry> entries = entryRepository.findAllByCategory(categories, pageable);
         this.setLikes(entries.getContent());
         return entries;
     }

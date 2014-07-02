@@ -14,11 +14,11 @@ import java.util.List;
 /**
  * Created by Dmitry Petrov on 5/28/14.
  */
-
 @Service("categoryService")
 @Repository
 @Transactional
 public class CategoryServiceImpl implements CategoryService{
+
     @Autowired
     private CategoryRepository categoryRepository;
 
@@ -27,7 +27,7 @@ public class CategoryServiceImpl implements CategoryService{
         return Lists.newArrayList(categoryRepository.findAll());
     }
 
-    @Override
+    @Transactional(readOnly = true)
     public Category findById(String id) {
         return categoryRepository.findOne(id);
     }

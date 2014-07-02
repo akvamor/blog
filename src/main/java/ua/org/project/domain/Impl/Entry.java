@@ -7,6 +7,7 @@ import org.hibernate.validator.constraints.NotEmpty;
 import ua.org.project.domain.*;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.io.Serializable;
 import java.util.HashSet;
@@ -88,10 +89,10 @@ public class Entry extends AbstractBlog implements Serializable {
     }
 
 
-    @NotEmpty
+    @NotNull
     @JsonIgnore
     @NotAudited
-    @ManyToOne(fetch = FetchType.LAZY)
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "CATEGORY_ID")
     public Category getCategory() {
         return this.category;
@@ -146,7 +147,6 @@ public class Entry extends AbstractBlog implements Serializable {
         comments.add(comment);
         comment.setEntry(this);
     }
-
     public void addImpression(Impression impression){
         this.setImpressions(impression);
         impression.setEntry(this);
@@ -156,7 +156,7 @@ public class Entry extends AbstractBlog implements Serializable {
     }
 
     public String toString() {
-        return "Entry id: " + id + " - subject: " + subject + " - category: " + category.getCategoryId()
+        return "Entry id: " + id + " - subject: " + subject + " - category: "
                 + " - post date: " + postDate
                 + " - created by: " + createdBy + " - created date: " + createdDate
                 + " - last modified by: " + lastModifiedBy + " - last modified date: " + lastModifiedDate
