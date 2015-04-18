@@ -26,16 +26,8 @@
             <beans:bean class="org.springframework.http.converter.json.MappingJackson2HttpMessageConverter">
                 <beans:property name="objectMapper" ref="customJodaMapper"/>
             </beans:bean>
-            <!--<beans:bean class="org.springframework.http.converter.xml.MarshallingHttpMessageConverter">
-                <beans:property name="marshaller" ref="castorMarshaller"/>
-                <beans:property name="unmarshaller" ref="castorMarshaller"/>
-            </beans:bean>-->
         </message-converters>
     </annotation-driven>
-
-    <!--<beans:bean id="castorMarshaller" class="org.springframework.oxm.castor.CastorMarshaller">
-        <beans:property name="mappingLocation" value="classpath:oxm-mapping.xml"/>
-    </beans:bean>-->
 
     <context:component-scan base-package="ua.org.project.util"/>
 
@@ -52,23 +44,8 @@
 
     <default-servlet-handler/>
 
-    <!-- selects a static view for rendering without the need for an explicit controller -->
-    <!--<view-controller path="/uncaughtException" view-name="dataAccessFailure"/>-->
-    <!--<view-controller path="/resourceNotFound" view-name="resourceNotFound"/>-->
-    <!--<view-controller path="/dataAccessFailure" view-name="uncaughtException"/>-->
-   <!--<beans:bean class="org.springframework.web.servlet.handler.SimpleMappingExceptionResolver" p:defaultErrorView="uncaughtException">-->
-        <!--<beans:property name="exceptionMappings">-->
-            <!--<beans:props>-->
-                <!--<beans:prop key=".DataAccessException">dataAccessFailure</beans:prop>-->
-                <!--<beans:prop key=".NoSuchRequestHandlingMethodException">resourceNotFound</beans:prop>-->
-                <!--<beans:prop key=".TypeMismatchException">resourceNotFound</beans:prop>-->
-                <!--<beans:prop key=".MissingServletRequestParameterException">resourceNotFound</beans:prop>-->
-            <!--</beans:props>-->
-        <!--</beans:property>-->
-    <!--</beans:bean>-->
-
     <interceptors>
-        <beans:bean class="org.springframework.web.servlet.theme.ThemeChangeInterceptor"/>
+        <beans:bean scope="" class="org.springframework.web.servlet.theme.ThemeChangeInterceptor"/>
         <beans:bean class="org.springframework.web.servlet.i18n.LocaleChangeInterceptor" p:paramName="lang"/>
     </interceptors>
 
