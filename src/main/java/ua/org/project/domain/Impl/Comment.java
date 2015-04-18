@@ -30,7 +30,9 @@ public class Comment extends AbstractBlog implements Serializable {
     private String parentUser;
     private Set<CommentAttachment> attachments = new HashSet<CommentAttachment>();
 
-    public Comment() {           }
+    public Comment() {
+
+    }
 
     @OneToMany(fetch = FetchType.EAGER)
     @NotAudited
@@ -47,7 +49,6 @@ public class Comment extends AbstractBlog implements Serializable {
 
     @JsonIgnore
     @ManyToOne(fetch = FetchType.EAGER)
-    @NotAudited
     @JoinTable(name = "comment_tree",
             joinColumns = @JoinColumn(name="CHILD_ID"),
             inverseJoinColumns = @JoinColumn(name = "PARENT_ID"))
