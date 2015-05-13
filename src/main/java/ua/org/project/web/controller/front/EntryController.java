@@ -537,12 +537,7 @@ public class EntryController {
         if (page == null) {
             page = defaultStartPage;
         }
-
-        if (sort == null) {
-            pageRequest = new PageRequest(page - 1, rows);
-        } else {
-            pageRequest = new PageRequest(page - 1, rows, sort);
-        }
+        pageRequest = new PageRequest(page - 1, rows, sort);
         return pageRequest;
     }
 

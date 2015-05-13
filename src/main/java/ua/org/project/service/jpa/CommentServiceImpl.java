@@ -14,12 +14,8 @@ import ua.org.project.repository.CommentLikeRepository;
 import ua.org.project.repository.CommentRepository;
 import ua.org.project.service.CommentService;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.Set;
 
 /**
  * Created by Dmitry Petrov on 5/28/14.

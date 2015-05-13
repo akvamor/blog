@@ -13,7 +13,10 @@ import java.util.Set;
 @Entity
 @Table(name = "role")
 public class Role implements Serializable {
-    private String roleId;
+    
+	private static final long serialVersionUID = 1635882470659699136L;
+	
+	private String roleId;
     private String description;
     private Set<AppUser> appUsers = new HashSet<AppUser>(0);
 

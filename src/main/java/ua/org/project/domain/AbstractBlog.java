@@ -3,7 +3,6 @@ package ua.org.project.domain;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.hibernate.annotations.Type;
 import org.hibernate.envers.Audited;
-import org.hibernate.validator.constraints.NotEmpty;
 import org.joda.time.DateTime;
 import org.springframework.data.domain.Auditable;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -20,7 +19,9 @@ import java.util.*;
 @Audited
 public abstract class AbstractBlog implements Blog, Auditable<String, Long>, Serializable {
 
-    protected Long id;
+	private static final long serialVersionUID = 5752403396299942041L;
+
+	protected Long id;
     protected DateTime postDate;
     protected String createdBy;
     protected DateTime createdDate;

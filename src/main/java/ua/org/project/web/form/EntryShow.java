@@ -1,11 +1,8 @@
 package ua.org.project.web.form;
 
-import ua.org.project.domain.Attachment;
-import ua.org.project.domain.impl.Comment;
 import ua.org.project.domain.impl.Entry;
 
 import java.util.List;
-import java.util.Set;
 
 /**
  * Created by Dmitry Petrov on 5/31/14.

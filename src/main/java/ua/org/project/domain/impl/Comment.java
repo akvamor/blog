@@ -5,7 +5,6 @@ import org.hibernate.envers.Audited;
 import org.hibernate.envers.NotAudited;
 import org.hibernate.validator.constraints.NotEmpty;
 import ua.org.project.domain.AbstractBlog;
-import ua.org.project.domain.AbstractLike;
 import ua.org.project.domain.Attachment;
 
 import javax.persistence.*;
@@ -22,7 +21,8 @@ import java.util.Set;
 @Table(name = "comment")
 public class Comment extends AbstractBlog implements Serializable {
 
-    private Entry entry;
+	private static final long serialVersionUID = -4116615779286784867L;
+	private Entry entry;
     private String body;
     private String postBy;
     private Set<Comment> childComment = new HashSet<Comment>();

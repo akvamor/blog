@@ -9,7 +9,6 @@ import org.springframework.data.repository.query.Param;
 import ua.org.project.domain.impl.Entry;
 
 import java.util.Collection;
-import java.util.List;
 
 /**
  * Created by Dmitry Petrov on 5/28/14.

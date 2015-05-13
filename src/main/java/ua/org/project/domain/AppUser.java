@@ -13,7 +13,9 @@ import java.util.Set;
 @Table(name = "app_user")
 public class AppUser implements Serializable{
 
-    private String userId;
+	private static final long serialVersionUID = 8008965285355250122L;
+
+	private String userId;
     private String password;
     private String userName;
     private String createdBy;

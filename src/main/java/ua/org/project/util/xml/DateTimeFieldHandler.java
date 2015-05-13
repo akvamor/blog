@@ -5,13 +5,7 @@ import org.exolab.castor.mapping.ValidityException;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.MessageSource;
-import org.springframework.stereotype.Component;
 
-import javax.annotation.Resource;
-import java.util.Locale;
 import java.util.Properties;
 
 /**

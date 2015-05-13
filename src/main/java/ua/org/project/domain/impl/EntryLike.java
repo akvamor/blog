@@ -11,8 +11,12 @@ import java.io.Serializable;
 @Entity
 @Table(name = "ENTRY_LIKE")
 public class EntryLike extends AbstractLike implements Serializable {
-    private Entry entry;
-    @ManyToOne(fetch = FetchType.LAZY)
+
+	private static final long serialVersionUID = 4147935042023568449L;
+
+	private Entry entry;
+    
+	@ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ENTRY_ID")
     public Entry getEntry() {
         return entry;

@@ -8,7 +8,10 @@ import java.io.Serializable;
  */
 @MappedSuperclass
 public class Attachment implements Serializable {
-    private Long id;
+    
+	private static final long serialVersionUID = -1459457818226198996L;
+	
+	private Long id;
     private String fileName;
     private String contentType;
     private byte[] fileData;

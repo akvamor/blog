@@ -11,7 +11,9 @@ import java.io.Serializable;
 @Entity
 @Table(name = "ENTRY_ATTACHMENT_DETAIL")
 public class EntryAttachment extends Attachment implements Serializable {
-    private Entry entry;
+
+	private static final long serialVersionUID = -6793493738060551989L;
+	private Entry entry;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ENTRY_ID")

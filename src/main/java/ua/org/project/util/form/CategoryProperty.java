@@ -1,7 +1,5 @@
 package ua.org.project.util.form;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 import ua.org.project.domain.Category;
 import ua.org.project.service.CategoryService;
 

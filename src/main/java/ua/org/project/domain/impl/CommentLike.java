@@ -1,18 +1,21 @@
 package ua.org.project.domain.impl;
 
-import ua.org.project.domain.Attachment;
+import ua.org.project.domain.AbstractLike;
 
 import javax.persistence.*;
 import java.io.Serializable;
 
 /**
- * Created by Dmitry Petrov on 5/28/14.
+ * Created by Dmitry Petrov on 17.06.14.
  */
-@Entity
-@Table(name = "COMMENT_ATTACHMENT_DETAIL")
-public class CommentAttachment extends Attachment implements Serializable {
 
-    private Comment comment;
+@Entity
+@Table(name = "COMMENT_LIKE")
+public class CommentLike extends AbstractLike implements Serializable{
+
+	private static final long serialVersionUID = 7958989366062685375L;
+
+	private Comment comment;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "COMMENT_ID")

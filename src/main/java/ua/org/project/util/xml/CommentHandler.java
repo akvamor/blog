@@ -2,7 +2,7 @@ package ua.org.project.util.xml;
 
 import org.exolab.castor.mapping.GeneralizedFieldHandler;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationContext;
+
 import ua.org.project.domain.impl.Comment;
 import ua.org.project.service.CommentService;
 
@@ -35,7 +35,8 @@ public class CommentHandler extends GeneralizedFieldHandler {
         return comment;
     }
 
-    @Override
+    @SuppressWarnings("rawtypes")
+	@Override
     public Class getFieldType() {
         return Comment.class;
     }

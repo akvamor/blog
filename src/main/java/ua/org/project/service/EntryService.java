@@ -5,8 +5,6 @@ import org.springframework.data.domain.Pageable;
 import ua.org.project.domain.impl.Entry;
 import ua.org.project.domain.SearchCriteria;
 
-import java.util.List;
-import java.util.Locale;
 import java.util.Set;
 
 /**

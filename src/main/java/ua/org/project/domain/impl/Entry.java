@@ -21,7 +21,8 @@ import java.util.Set;
 @Table(name = "entry")
 public class Entry extends AbstractBlog implements Serializable {
 
-    private static final int SHORT_BODY_LENGTH = 500;
+	private static final long serialVersionUID = -2105667655692873010L;
+	private static final int SHORT_BODY_LENGTH = 500;
     private static final String THREE_DOTS = "...";
 
     private Category category;

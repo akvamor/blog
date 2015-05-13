@@ -1,9 +1,8 @@
 package ua.org.project.util.xml;
 
 import org.exolab.castor.mapping.GeneralizedFieldHandler;
-import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
+
 import ua.org.project.domain.impl.Entry;
 import ua.org.project.service.EntryService;
 
@@ -28,7 +27,8 @@ public class EntryHandler extends GeneralizedFieldHandler{
         return entry;
     }
 
-    @Override
+    @SuppressWarnings("rawtypes")
+	@Override
     public Class getFieldType() {
         return Entry.class;
     }

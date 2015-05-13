@@ -6,7 +6,6 @@ import javax.persistence.*;
 import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
-import java.util.TreeSet;
 
 /**
  * Created by Dmitry Petrov on 5/28/14.
@@ -14,7 +13,10 @@ import java.util.TreeSet;
 @Entity
 @Table(name = "category")
 public class Category implements Serializable{
-    private String categoryId;
+    
+	private static final long serialVersionUID = 8453121429295467869L;
+	
+	private String categoryId;
     private Category parentCategory;
     private Set<Category> subCategories = new HashSet<Category>();
 

@@ -12,7 +12,9 @@ import org.springframework.stereotype.Service;
 @Service("customJodaMapper")
 public class CustomJodaMapper extends ObjectMapper {
 
-    @Autowired
+    private static final long serialVersionUID = 4300885735883356562L;
+
+	@Autowired
     public CustomJodaMapper(
             JodaDateTimeSerializer jsonJodaDateTimeSerializer,
             JodaDateTimeDeserializer jsonJodaDateTimeDeserializer){

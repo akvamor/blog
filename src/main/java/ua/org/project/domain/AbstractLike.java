@@ -1,7 +1,5 @@
 package ua.org.project.domain;
 
-import ua.org.project.domain.impl.Comment;
-
 import javax.persistence.*;
 import java.io.Serializable;
 
@@ -11,7 +9,9 @@ import java.io.Serializable;
 @MappedSuperclass
 public class AbstractLike implements Serializable {
 
-    private Long id;
+	private static final long serialVersionUID = 8405172455246094537L;
+
+	private Long id;
     private int like;
     private AppUser appUser;
 
