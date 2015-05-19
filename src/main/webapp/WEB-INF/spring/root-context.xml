@@ -17,5 +17,4 @@
     <context:load-time-weaver/>
 
     <context:component-scan base-package="ua.org.project.service.jpa"/>
-
 </beans>
