@@ -4,7 +4,5 @@
     <field-handler name="dateHandler" class="ua.org.project.util.xml.DateTimeFieldHandler">
         <param name="date-format" value="yyyy-MM-dd"/>
     </field-handler>
-
-
-
+    
 </mapping>
