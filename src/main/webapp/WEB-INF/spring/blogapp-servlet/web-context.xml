@@ -37,12 +37,12 @@
             p:defaultEncoding="UTF-8"
             p:fallbackToSystemLocale="false"/>
 
-    <resources mapping="/resources/**" location="/, classpath:/META-INF/web-resources" />
+    <resources mapping="/resources/**" location="/" />
 
     <default-servlet-handler/>
 
     <interceptors>
-        <beans:bean scope="" class="org.springframework.web.servlet.theme.ThemeChangeInterceptor"/>
+        <beans:bean class="org.springframework.web.servlet.theme.ThemeChangeInterceptor"/>
         <beans:bean class="org.springframework.web.servlet.i18n.LocaleChangeInterceptor" p:paramName="lang"/>
     </interceptors>
 

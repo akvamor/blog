@@ -1,34 +1,31 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xmlns:util="http://www.springframework.org/schema/util"
 	xmlns:tx="http://www.springframework.org/schema/tx"
 	xmlns:jdbc="http://www.springframework.org/schema/jdbc"
 	xmlns:jpa="http://www.springframework.org/schema/data/jpa"
-	xmlns:p="http://www.springframework.org/schema/p"
 	xmlns:context="http://www.springframework.org/schema/context"
 	xsi:schemaLocation="http://www.springframework.org/schema/jdbc http://www.springframework.org/schema/jdbc/spring-jdbc-3.2.xsd
 		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
 		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.2.xsd
 		http://www.springframework.org/schema/data/jpa http://www.springframework.org/schema/data/jpa/spring-jpa-1.0.xsd
-		http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-3.2.xsd
-		http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.2.xsd">
+		http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-3.2.xsd">
 
     <bean id="transactionManager" class="org.springframework.orm.jpa.JpaTransactionManager">
         <property name="entityManagerFactory" ref="emf"/>
     </bean>
 
     <tx:annotation-driven transaction-manager="transactionManager" />
-        
+
     <jpa:repositories base-package="ua.org.project.repository"
                       entity-manager-factory-ref="emf"
-                      transaction-manager-ref="transactionManager"/>   
-    
+                      transaction-manager-ref="transactionManager"/>
+
     <bean id="emf" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
         <property name="dataSource" ref="dataSource" />
         <property name="jpaVendorAdapter">
             <bean class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter" />
-        </property>        
+        </property>
         <property name="packagesToScan" value="ua.org.project.domain"/>
         <property name="jpaProperties">
             <props>
@@ -42,10 +39,9 @@
                 <prop key="hibernate.use_sql_comments">false</prop>
             </props>
         </property>
-    </bean>    
-    
-    <context:annotation-config/>    
- 
+    </bean>
+
+    <context:annotation-config/>
 
     <jpa:auditing auditor-aware-ref="auditorAwareBean"/>
     <bean id="auditorAwareBean" class="ua.org.project.auditor.AuditorAwareBean"/>
@@ -54,6 +50,9 @@
     <jdbc:embedded-database id="dataSource" type="H2">
         <jdbc:script location="classpath:sql/schema.sql"/>
         <jdbc:script location="classpath:sql/initial-data.sql"/>
-    </jdbc:embedded-database>                      
-   
+    </jdbc:embedded-database>
+
+    <context:component-scan base-package="ua.org.project.service.jpa" />
+
+
 </beans>

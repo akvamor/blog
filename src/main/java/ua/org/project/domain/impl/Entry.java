@@ -1,8 +1,6 @@
 package ua.org.project.domain.impl;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import org.hibernate.envers.Audited;
-import org.hibernate.envers.NotAudited;
 import org.hibernate.validator.constraints.NotEmpty;
 import ua.org.project.domain.*;
 
@@ -17,7 +15,6 @@ import java.util.Set;
  * Created by Dmitry Petrov on 5/28/14.
  */
 @Entity
-@Audited
 @Table(name = "entry")
 public class Entry extends AbstractBlog implements Serializable {
 
@@ -80,7 +77,7 @@ public class Entry extends AbstractBlog implements Serializable {
     }
 
 
-    @NotAudited
+    
     @OneToOne(fetch = FetchType.EAGER, mappedBy = "entry", cascade = CascadeType.ALL)
     public Impression getImpressions() {
         return impressions;
@@ -92,7 +89,7 @@ public class Entry extends AbstractBlog implements Serializable {
 
     @NotNull
     @JsonIgnore
-    @NotAudited
+    
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "CATEGORY_ID")
     public Category getCategory() {
@@ -104,7 +101,7 @@ public class Entry extends AbstractBlog implements Serializable {
 
 
     @JsonIgnore
-    @NotAudited
+    
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "entry", cascade = CascadeType.ALL)
     @OrderBy("id DESC ")
     public Set<EntryAttachment> getAttachments() {
@@ -116,7 +113,7 @@ public class Entry extends AbstractBlog implements Serializable {
 
 
     @JsonIgnore
-    @NotAudited
+    
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "entry", cascade = CascadeType.ALL)
     @OrderBy("createdDate DESC ")
     public Set<Comment> getComments() {
@@ -128,7 +125,7 @@ public class Entry extends AbstractBlog implements Serializable {
 
 
     @JsonIgnore
-    @NotAudited
+    
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "entry", cascade = CascadeType.ALL)
     public Set<EntryLike> getLikes() {
         return likes;

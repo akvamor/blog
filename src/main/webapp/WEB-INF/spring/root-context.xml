@@ -7,8 +7,6 @@
 		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
 		http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd">
 
-    <context:property-placeholder location="classpath:app.properties"/>
-
     <import resource="security-context.xml"/>
 
     <import resource="classpath:datasource-tx-jpa-new.xml"/>
@@ -16,7 +14,7 @@
 	<context:component-scan base-package="ua.org.project.service.jpa"/>
 	
     <!-- ASPECT -->
-    <aop:aspectj-autoproxy/>
-    <context:load-time-weaver/>
+    <!--<aop:aspectj-autoproxy/>-->
+    <!--<context:load-time-weaver/>-->
 
 </beans>

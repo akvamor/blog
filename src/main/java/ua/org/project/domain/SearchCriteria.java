@@ -1,6 +1,6 @@
 package ua.org.project.domain;
 
-import org.joda.time.DateTime;
+import org.joda.time.LocalDateTime;
 
 import java.util.Set;
 
@@ -13,9 +13,9 @@ public class SearchCriteria {
 
     private Set<String> categories;
 
-    private DateTime fromPostDate = new DateTime(1900, 1, 1, 0, 0);
+    private LocalDateTime fromPostDate = new LocalDateTime(1900, 1, 1, 0, 0);
 
-    private DateTime toPostDate = new DateTime(2200, 12, 31, 23, 59);
+    private LocalDateTime toPostDate = new LocalDateTime(2200, 12, 31, 23, 59);
 
     private String locale = "%en-EN%";
 
@@ -57,19 +57,19 @@ public class SearchCriteria {
         this.categories = categories;
     }
 
-    public DateTime getFromPostDate() {
+    public LocalDateTime getFromPostDate() {
         return fromPostDate;
     }
 
-    public void setFromPostDate(DateTime fromPostDate) {
+    public void setFromPostDate(LocalDateTime fromPostDate) {
         this.fromPostDate = fromPostDate;
     }
 
-    public DateTime getToPostDate() {
+    public LocalDateTime getToPostDate() {
         return toPostDate;
     }
 
-    public void setToPostDate(DateTime toPostDate) {
+    public void setToPostDate(LocalDateTime toPostDate) {
         this.toPostDate = toPostDate;
     }
 

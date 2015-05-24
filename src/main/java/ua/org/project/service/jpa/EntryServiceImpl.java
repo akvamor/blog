@@ -1,6 +1,6 @@
 package ua.org.project.service.jpa;
 
-import org.joda.time.DateTime;
+import org.joda.time.LocalDateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -57,7 +57,7 @@ public class EntryServiceImpl implements EntryService {
             username = principal.toString();
         }
         entry.setLastModifiedBy(username);
-        entry.setLastModifiedDate(new DateTime());
+        entry.setLastModifiedDate(new LocalDateTime());
         entry = entryRepository.save(entry);
         return entry;
     }
@@ -89,8 +89,8 @@ public class EntryServiceImpl implements EntryService {
     public Page<Entry> findEntryByCriteria(SearchCriteria searchCriteria, Pageable pageable) {
         String subject = searchCriteria.getSubject();
         Set<String> categories = searchCriteria.getCategories();
-        DateTime fromPostDate = searchCriteria.getFromPostDate();
-        DateTime toPostDate = searchCriteria.getToPostDate();
+        LocalDateTime fromPostDate = searchCriteria.getFromPostDate();
+        LocalDateTime toPostDate = searchCriteria.getToPostDate();
         String locale = searchCriteria.getLocale();
         Page<Entry> entries;
         if (searchCriteria.isSearch()){

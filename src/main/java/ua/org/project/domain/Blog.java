@@ -1,6 +1,6 @@
 package ua.org.project.domain;
 
-import org.joda.time.DateTime;
+import org.joda.time.LocalDateTime;
 
 /**
  * Created by Dmitry Petrov on 5/27/14.
@@ -8,6 +8,6 @@ import org.joda.time.DateTime;
 public interface Blog {
     String getBody();
     void setBody(String body);
-    DateTime getPostDate();
-    void setPostDate(DateTime postDate);
+    LocalDateTime getPostDate();
+    void setPostDate(LocalDateTime postDate);
 }

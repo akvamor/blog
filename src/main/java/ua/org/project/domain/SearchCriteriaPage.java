@@ -1,6 +1,7 @@
 package ua.org.project.domain;
 
 import org.joda.time.DateTime;
+import org.joda.time.LocalDateTime;
 
 /**
  * Created by Dmitry Petrov on 5/28/14.
@@ -11,9 +12,9 @@ public class SearchCriteriaPage {
 
     private String categoryId;
 
-    private DateTime fromPostDate;
+    private LocalDateTime fromPostDate;
 
-    private DateTime toPostDate;
+    private LocalDateTime toPostDate;
 
     private int offset;
 
@@ -35,19 +36,19 @@ public class SearchCriteriaPage {
         this.categoryId = categoryId;
     }
 
-    public DateTime getFromPostDate() {
+    public LocalDateTime getFromPostDate() {
         return fromPostDate;
     }
 
-    public void setFromPostDate(DateTime fromPostDate) {
+    public void setFromPostDate(LocalDateTime fromPostDate) {
         this.fromPostDate = fromPostDate;
     }
 
-    public DateTime getToPostDate() {
+    public LocalDateTime getToPostDate() {
         return toPostDate;
     }
 
-    public void setToPostDate(DateTime toPostDate) {
+    public void setToPostDate(LocalDateTime toPostDate) {
         this.toPostDate = toPostDate;
     }
 

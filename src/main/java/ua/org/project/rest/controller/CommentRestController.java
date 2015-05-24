@@ -1,15 +1,15 @@
 package ua.org.project.rest.controller;
 
 import org.joda.time.DateTime;
+import org.joda.time.LocalDateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.User;
-import org.springframework.security.web.bind.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
-import ua.org.project.auditor.AuditorAwareBean;
 import ua.org.project.domain.impl.Comment;
 import ua.org.project.domain.impl.Entry;
 import ua.org.project.service.CommentService;
@@ -40,9 +40,6 @@ public class CommentRestController {
     @Autowired
     private Validator validator;
 
-    @Autowired
-    private AuditorAwareBean auditorAwareBean;
-
     @RequestMapping(value = "/list/{id}", method = RequestMethod.GET)
     @ResponseBody
     public List<Comment> listTree(@PathVariable("id") Long id) {
@@ -68,9 +65,9 @@ public class CommentRestController {
     ) {
         if (comment.getId() == null) {
             comment.setCreatedBy(user.getUsername());
-            comment.setCreatedDate(new DateTime());
-            comment.setPostDate(new DateTime());
-            comment.setPostBy(auditorAwareBean.getCurrentAuditor());
+            comment.setCreatedDate(new LocalDateTime());
+            comment.setPostDate(new LocalDateTime());
+            comment.setPostBy(user.getUsername());
             comment.setCountLikes(0l);
             comment.setCountNotLikes(0l);
         }

@@ -2,6 +2,7 @@ package ua.org.project.web.controller.front;
 
 import com.google.common.collect.Lists;
 import org.joda.time.DateTime;
+import org.joda.time.LocalDateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -11,8 +12,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.User;
-import org.springframework.security.web.bind.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 
@@ -97,7 +98,7 @@ public class EntryController {
      * @param toPostDateString
      * @return **********************************************
      */
-    @RequestMapping(method = RequestMethod.GET)
+    @RequestMapping(method = {RequestMethod.GET, RequestMethod.HEAD})
     public String list(
             Model uiModel,
             Locale locale,
@@ -143,14 +144,14 @@ public class EntryController {
             searchCriteria.setLocale("%" + locale + "%");
 
             if (fromPostDateString != null) {
-                DateTime fromPostDate = DateTimeFormat.forPattern(dateFormat).parseDateTime(fromPostDateString);
+                LocalDateTime fromPostDate = DateTimeFormat.forPattern(dateFormat).parseLocalDateTime(fromPostDateString);
                 searchCriteria.setFromPostDate(fromPostDate);
             }
             if (toPostDateString != null) {
-                DateTime toPostDate = DateTimeFormat.forPattern(dateFormat).parseDateTime(toPostDateString);
+                LocalDateTime toPostDate = DateTimeFormat.forPattern(dateFormat).parseLocalDateTime(toPostDateString);
                 searchCriteria.setToPostDate(toPostDate);
             } else {
-                DateTime dateTime = new DateTime();
+                LocalDateTime dateTime = new LocalDateTime();
                 dateTime = dateTime.plusDays(1);
                 searchCriteria.setToPostDate(dateTime);
             }

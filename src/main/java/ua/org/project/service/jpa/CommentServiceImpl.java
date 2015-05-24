@@ -1,6 +1,7 @@
 package ua.org.project.service.jpa;
 
 import org.joda.time.DateTime;
+import org.joda.time.LocalDateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -62,7 +63,7 @@ public class CommentServiceImpl implements CommentService {
             username = principal.toString();
         }
         comment.setLastModifiedBy(username);
-        comment.setLastModifiedDate(new DateTime());
+        comment.setLastModifiedDate(new LocalDateTime());
         return commentRepository.save(comment);
     }
 

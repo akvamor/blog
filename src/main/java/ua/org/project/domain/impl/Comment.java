@@ -1,8 +1,6 @@
 package ua.org.project.domain.impl;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import org.hibernate.envers.Audited;
-import org.hibernate.envers.NotAudited;
 import org.hibernate.validator.constraints.NotEmpty;
 import ua.org.project.domain.AbstractBlog;
 import ua.org.project.domain.Attachment;
@@ -17,7 +15,6 @@ import java.util.Set;
  * Created by Dmitry Petrov on 5/28/14.
  */
 @Entity
-@Audited
 @Table(name = "comment")
 public class Comment extends AbstractBlog implements Serializable {
 
@@ -35,7 +32,6 @@ public class Comment extends AbstractBlog implements Serializable {
     }
 
     @OneToMany(fetch = FetchType.EAGER)
-    @NotAudited
     @JoinTable(name = "comment_tree",
         joinColumns = @JoinColumn(name="PARENT_ID"),
         inverseJoinColumns = @JoinColumn(name = "CHILD_ID"))
@@ -99,7 +95,6 @@ public class Comment extends AbstractBlog implements Serializable {
     }
 
     @JsonIgnore
-    @NotAudited
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "comment", cascade = CascadeType.ALL)
     @OrderBy("id DESC ")
     public Set<CommentAttachment> getAttachments() {

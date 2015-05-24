@@ -1,6 +1,7 @@
 package ua.org.project.repository;
 
 import org.joda.time.DateTime;
+import org.joda.time.LocalDateTime;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.Query;
@@ -19,8 +20,8 @@ public interface EntryRepository extends PagingAndSortingRepository<Entry, Long>
     Page<Entry> findEntryByCategoryAndLocaleAndPostDate(
             @Param("categories")Collection<String> categoryId,
             @Param("locale") String locale,
-            @Param("fromPostDate") DateTime fromPostDate,
-            @Param("toPostDate") DateTime toPostDate,
+            @Param("fromPostDate") LocalDateTime fromPostDate,
+            @Param("toPostDate") LocalDateTime toPostDate,
             @Param("isDeleted") Boolean isDeleted,
             Pageable pageable);
 
@@ -34,8 +35,8 @@ public interface EntryRepository extends PagingAndSortingRepository<Entry, Long>
     @Query("select e from Entry e where e.locale like :locale and e.postDate between :fromPostDate and :toPostDate and e.isDeleted = :isDeleted")
     Page<Entry> findEntryByLocaleAndPostDate(
             @Param("locale") String locale,
-            @Param("fromPostDate") DateTime fromPostDate,
-            @Param("toPostDate") DateTime toPostDate,
+            @Param("fromPostDate") LocalDateTime fromPostDate,
+            @Param("toPostDate") LocalDateTime toPostDate,
             @Param("isDeleted") Boolean isDeleted,
             Pageable pageable);
 
@@ -43,8 +44,8 @@ public interface EntryRepository extends PagingAndSortingRepository<Entry, Long>
     Page<Entry> searchEntryByCriteria(
             @Param("subject") String subject,
             @Param("categoryId") String categoryId,
-            @Param("fromPostDate") DateTime fromPostDate,
-            @Param("toPostDate") DateTime toPostDate,
+            @Param("fromPostDate") LocalDateTime fromPostDate,
+            @Param("toPostDate") LocalDateTime toPostDate,
             @Param("locale") String locale,
             @Param("isDeleted") Boolean isDeleted,
             Pageable pageable);

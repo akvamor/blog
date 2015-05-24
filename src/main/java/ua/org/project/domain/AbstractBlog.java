@@ -2,8 +2,7 @@ package ua.org.project.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.hibernate.annotations.Type;
-import org.hibernate.envers.Audited;
-import org.joda.time.DateTime;
+import org.joda.time.LocalDateTime;
 import org.springframework.data.domain.Auditable;
 import org.springframework.format.annotation.DateTimeFormat;
 
@@ -16,17 +15,16 @@ import java.util.*;
  */
 
 @MappedSuperclass
-@Audited
-public abstract class AbstractBlog implements Blog, Auditable<String, Long>, Serializable {
+public abstract class AbstractBlog implements Blog, Serializable {
 
 	private static final long serialVersionUID = 5752403396299942041L;
 
 	protected Long id;
-    protected DateTime postDate;
+    protected LocalDateTime postDate;
     protected String createdBy;
-    protected DateTime createdDate;
+    protected LocalDateTime createdDate;
     protected String lastModifiedBy;
-    protected DateTime lastModifiedDate;
+    protected LocalDateTime lastModifiedDate;
     protected int version;
     protected Long countLikes;
     protected Long countNotLikes;
@@ -53,12 +51,12 @@ public abstract class AbstractBlog implements Blog, Auditable<String, Long>, Ser
 
 
     @Column(name = "CREATED_DATE")
-    @Type(type = "org.joda.time.contrib.hibernate.PersistentDateTime")
+    @Type(type="org.jadira.usertype.dateandtime.joda.PersistentLocalDateTime")
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
-    public DateTime getCreatedDate() {
+    public LocalDateTime getCreatedDate() {
         return createdDate;
     }
-    public void setCreatedDate(DateTime createdDate) {
+    public void setCreatedDate(LocalDateTime createdDate) {
         this.createdDate = createdDate;
     }
 
@@ -72,12 +70,12 @@ public abstract class AbstractBlog implements Blog, Auditable<String, Long>, Ser
     }
 
     @Column(name = "LAST_MODIFIED_DATE")
-    @Type(type = "org.joda.time.contrib.hibernate.PersistentDateTime")
+    @Type(type="org.jadira.usertype.dateandtime.joda.PersistentLocalDateTime")
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
-    public DateTime getLastModifiedDate() {
+    public LocalDateTime getLastModifiedDate() {
         return lastModifiedDate;
     }
-    public void setLastModifiedDate(DateTime lastModifiedDate) {
+    public void setLastModifiedDate(LocalDateTime lastModifiedDate) {
         this.lastModifiedDate = lastModifiedDate;
     }
 
@@ -93,12 +91,12 @@ public abstract class AbstractBlog implements Blog, Auditable<String, Long>, Ser
 
 
     @Column(name = "POST_DATE")
-    @Type(type = "org.joda.time.contrib.hibernate.PersistentDateTime")
+    @Type(type="org.jadira.usertype.dateandtime.joda.PersistentLocalDateTime")
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
-    public DateTime getPostDate() {
+    public LocalDateTime getPostDate() {
         return this.postDate;
     }
-    public void setPostDate(DateTime postDate) {
+    public void setPostDate(LocalDateTime postDate) {
         this.postDate = postDate;
     }
 
