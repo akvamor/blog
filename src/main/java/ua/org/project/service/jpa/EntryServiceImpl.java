@@ -49,17 +49,7 @@ public class EntryServiceImpl implements EntryService {
     }
 
     public Entry save(Entry entry) {
-        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        String username ;
-        if (principal instanceof UserDetails) {
-            username = ((UserDetails)principal).getUsername();
-        } else {
-            username = principal.toString();
-        }
-        entry.setLastModifiedBy(username);
-        entry.setLastModifiedDate(new LocalDateTime());
-        entry = entryRepository.save(entry);
-        return entry;
+        return entryRepository.save(entry);
     }
 
     /**

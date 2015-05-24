@@ -13,7 +13,9 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 
@@ -265,6 +267,7 @@ public class EntryController {
             @Valid Entry entry,
             BindingResult bindingResult,
             Model uiModel,
+            @AuthenticationPrincipal User user,
             HttpServletRequest httpServletRequest,
             RedirectAttributes redirectAttributes,
             Locale locale
@@ -285,6 +288,10 @@ public class EntryController {
                 messageSource.getMessage("message_entry_save_success", new Object[]{}, locale)));
 
         entry.addImpression(new Impression());
+
+        entry.setLastModifiedBy(user.getUsername());
+        entry.setLastModifiedDate(new LocalDateTime());
+
         entry = entryService.save(entry);
 
         return "redirect:/blogs/" + UrlUtil.encodeUrlPathSegment(entry.getId().toString(), httpServletRequest);
