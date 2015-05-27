@@ -13,9 +13,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.User;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 
@@ -88,17 +86,6 @@ public class EntryController {
     /**
      * *********************************************
      * Show list of Posts by criteria and without.
-     *
-     * @param uiModel
-     * @param locale
-     * @param page
-     * @param rows
-     * @param isSearch
-     * @param subject
-     * @param categoryId
-     * @param fromPostDateString
-     * @param toPostDateString
-     * @return **********************************************
      */
     @RequestMapping(method = {RequestMethod.GET, RequestMethod.HEAD})
     public String list(
@@ -118,7 +105,7 @@ public class EntryController {
         PageRequest pageRequest = this.getPageRequest(rows, page);
         String dateFormat = this.getLocaleDateFormat(locale);
 
-        Set<String> categories = new HashSet<String>();
+        Set<String> categories = new HashSet<>();
         if (categoryId != null) {
             Category category = categoryService.findById(categoryId);
             for (Category category1 : category.getSubCategories()) {
@@ -131,7 +118,7 @@ public class EntryController {
                 categories.add(subCategory.getCategoryId());
             }
         }
-        Page<Entry> entryPage = null;
+        Page<Entry> entryPage;
         if (findAll) {
             if (categoryId != null) {
                 entryPage = entryService.findAllByCategory(categories, pageRequest);
@@ -158,7 +145,7 @@ public class EntryController {
                 searchCriteria.setToPostDate(dateTime);
             }
             if (isSearch) {
-                searchCriteria.setSearch(isSearch);
+                searchCriteria.setSearch(true);
                 if (subject != null) {
                     subject = "%" + subject + "%";
                     searchCriteria.setSubject(subject);
@@ -184,8 +171,6 @@ public class EntryController {
 
     /**
      * First post must
-     * @param uiModel
-     * @return
      */
     @RequestMapping(value = "contact", method = RequestMethod.GET)
     public String showContact(Model uiModel){
@@ -197,10 +182,6 @@ public class EntryController {
     /**
      * *********************************************
      * Show post Details
-     *
-     * @param id
-     * @param uiModel
-     * @return **********************************************
      */
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
     public String show(
@@ -235,13 +216,10 @@ public class EntryController {
     /**
      * *********************************************
      * Form for creating new post
-     *
-     * @param uiModel
-     * @return **********************************************
      */
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @RequestMapping(params = "form", method = RequestMethod.GET)
-    public String createForm(Model uiModel, @AuthenticationPrincipal User user) {
+    public String createForm(Model uiModel) {
         Entry entry = new Entry();
         uiModel.addAttribute(EntryController.ENTRY, entry);
         uiModel.addAttribute("currentDate", new DateTime());
@@ -252,14 +230,6 @@ public class EntryController {
     /**
      * *********************************************
      * Process of saving new post
-     *
-     * @param entry
-     * @param bindingResult
-     * @param uiModel
-     * @param httpServletRequest
-     * @param redirectAttributes
-     * @param locale
-     * @return **********************************************
      */
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @RequestMapping(params = "form", method = RequestMethod.POST)
@@ -300,10 +270,6 @@ public class EntryController {
     /**
      * *********************************************
      * Form for updating post
-     *
-     * @param id
-     * @param uiModel
-     * @return **********************************************
      */
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @RequestMapping(value = "/{id}", params = "form", method = RequestMethod.GET)
@@ -333,27 +299,19 @@ public class EntryController {
     /**
      * *****************************************************
      * Process for saving post
-     *
-     * @param entry
-     * @param bindingResult
-     * @param uiModel
-     * @param httpServletRequest
-     * @param redirectAttributes
-     * @param locale
-     * @return *********************************************
      */
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @RequestMapping(value = "/{id}", params = "form", method = RequestMethod.POST)
     public String update(
+            @PathVariable Long id,
             @Valid Entry entry,
             BindingResult bindingResult,
             Model uiModel,
             HttpServletRequest httpServletRequest,
             RedirectAttributes redirectAttributes,
-            @AuthenticationPrincipal User user,
             Locale locale) {
 
-        logger.info("Updating post id: " + entry.getId());
+        logger.info("Updating post id: " + id);
         if (bindingResult.hasErrors()) {
             uiModel.addAttribute(EntryController.MESSAGE, new Message(
                     EntryController.DANGER,
@@ -374,10 +332,6 @@ public class EntryController {
 
     /**
      * Remove the post. Set entry.isDeleted = true
-     * @param id
-     * @param redirectAttributes
-     * @param locale
-     * @return
      */
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @RequestMapping(value = "remove/{id}", method = RequestMethod.GET)
@@ -404,10 +358,6 @@ public class EntryController {
 
     /**
      * Turn back the post. Set entry.isDeleted = false
-     * @param id
-     * @param redirectAttributes
-     * @param locale
-     * @return
      */
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @RequestMapping(value = "unremove/{id}")
@@ -433,10 +383,6 @@ public class EntryController {
 
     /**
      * Remove attachment file
-     * @param id
-     * @param redirectAttributes
-     * @param locale
-     * @return
      */
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @RequestMapping(value = "attachment/remove/{id}", method = RequestMethod.GET)
@@ -458,38 +404,13 @@ public class EntryController {
                     EntryController.SUCCESS,
                     messageSource.getMessage("message_entry_attachment_removed_success", new Object[]{}, locale)));
         }
-        return "redirect:/blogs/" + entry.getId().toString();
+        return "redirect:/blogs/" + entry.getId();
     }
 
-    /**
-     * Catch Exception
-     * @param exception
-     * @param httpServletRequest
-     * @return
-     */
-//    @ExceptionHandler(Exception.class)
-//    public String handleMyException(Exception exception, HttpServletRequest httpServletRequest) {
-//        return "redirect:/errorMessage/?error=" + UrlUtil.encodeUrlPathSegment("404", httpServletRequest);
-//    }
-//
-//    @RequestMapping(value = "/errorMessage", method = RequestMethod.GET)
-//    public String handleMyExceptionOnRedirect(
-//            @RequestParam("error") String error,
-//            RedirectAttributes redirectAttributes,
-//            Locale locale
-//            ) {
-//        redirectAttributes.addFlashAttribute(EntryController.MESSAGE, new Message(
-//                EntryController.DANGER,
-//                messageSource.getMessage(error, new Object[]{}, locale)));
-//        return "redirect:/blogs";
-//    }
 
     /**
      * *********************************************
      * Return date format by Locale
-     *
-     * @param locale
-     * @return **********************************************
      */
     private String getLocaleDateFormat(Locale locale) {
         String dateFormat = messageSource.getMessage("date_format_pattern", new Object[]{}, locale);
@@ -502,10 +423,6 @@ public class EntryController {
     /**
      * *********************************************
      * Return Right Menu
-     *
-     * @param categoryId
-     * @return MenuShow
-     * **********************************************
      */
     private MenuShow getMenu(String categoryId) {
         logger.info("Get category id: " + categoryId);
@@ -513,7 +430,7 @@ public class EntryController {
         if (categories == null) {
             categories = categoryService.findAll();
         }
-        Category currentCategory = null;
+        Category currentCategory;
         if (categoryId != null) {
             currentCategory = categoryService.findById(categoryId);
             if (currentCategory != null && currentCategory.getParentCategory() != null) {
@@ -529,14 +446,10 @@ public class EntryController {
 
     /**
      * Create PageRequest
-     *
-     * @param rows
-     * @param page
-     * @return
      */
     private PageRequest getPageRequest(Integer rows, Integer page) {
         Sort sort = new Sort(Sort.Direction.DESC, defaultColumnSort);
-        PageRequest pageRequest = null;
+        PageRequest pageRequest;
 
         if (rows == null) {
             rows = defaultCountRows;
