@@ -1,4 +1,4 @@
-package ua.org.project.web.controller;
+package ua.org.project.web.selenium;
 
 import com.thoughtworks.selenium.SeleneseTestBase;
 import com.thoughtworks.selenium.webdriven.WebDriverBackedSelenium;
