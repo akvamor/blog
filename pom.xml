@@ -9,7 +9,7 @@
 
     <properties>
         <spring.version>4.1.6.RELEASE</spring.version>
-        <org.springsecurity-version>4.0.1.RELEASE</org.springsecurity-version>
+        <org.springsecurity-version>3.2.7.RELEASE</org.springsecurity-version>
         <org.slf4j-version>1.7.12</org.slf4j-version>
     </properties>
 

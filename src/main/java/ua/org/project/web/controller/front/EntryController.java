@@ -12,8 +12,9 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
+
 import org.springframework.security.core.userdetails.User;
+import org.springframework.security.web.bind.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 
@@ -221,9 +222,11 @@ public class EntryController {
     @RequestMapping(params = "form", method = RequestMethod.GET)
     public String createForm(Model uiModel) {
         Entry entry = new Entry();
+        entry.setCreatedDate(new LocalDateTime());
+        entry.setLastModifiedDate(new LocalDateTime());
         uiModel.addAttribute(EntryController.ENTRY, entry);
         uiModel.addAttribute("currentDate", new DateTime());
-        uiModel.addAttribute(EntryController.MENU, this.getMenu(entry.getCategory().getCategoryId()));
+        uiModel.addAttribute(EntryController.MENU, this.getMenu(null));
         return "blogs/create";
     }
 
@@ -245,6 +248,9 @@ public class EntryController {
         logger.info("Create post: " + entry.getId());
         logger.info("Entry: " + entry.toString());
         if (bindingResult.hasErrors()) {
+            logger.debug("Form has error:");
+            bindingResult.getAllErrors().forEach(x -> System.out.println(x.getObjectName() + " Error " + x.getDefaultMessage()));
+
             uiModel.addAttribute(EntryController.MESSAGE, new Message(
                     EntryController.DANGER,
                     messageSource.getMessage("message_entry_save_fail", new Object[]{}, locale)));

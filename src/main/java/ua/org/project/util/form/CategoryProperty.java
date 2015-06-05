@@ -25,6 +25,8 @@ public class CategoryProperty extends PropertyEditorSupport {
     @Override
     public String getAsText() {
         Category cat = (Category) this.getValue();
+        if (cat == null)
+            cat = categoryService.findAll().stream().findFirst().get();
         return cat.getCategoryId();
     }
 

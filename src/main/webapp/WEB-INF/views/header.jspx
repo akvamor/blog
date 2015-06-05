@@ -60,6 +60,7 @@
                 <div class="form-group input-group-sm" >
                     <input type="password" placeholder="${labelPassword}" class="form-control" name="j_password"/>
                 </div>
+                <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
                 <button type="submit" name="login" class="btn btn-sm btn-default"><span class="glyphicon glyphicon-log-in"><jsp:text/></span> ${labelSignIn}</button>
             </form>
         </sec:authorize>

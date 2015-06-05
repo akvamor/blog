@@ -44,8 +44,8 @@ public class Entry extends AbstractBlog implements Serializable {
     }
 
     @Column(name = "SUBJECT")
-    @NotEmpty(message = "{validation.posting.subject.NotEmpty.message}}")
-    @Size(min = 5, max = 200, message = "{validation.posting.subject.Size.message}}")
+    @NotEmpty(message = "{validation.posting.subject.NotEmpty.message}")
+    @Size(min = 5, max = 200, message = "{validation.posting.subject.Size.message}")
     public String getSubject() {
         return this.subject;
     }

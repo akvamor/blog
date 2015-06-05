@@ -90,7 +90,7 @@ To change this template use File | Settings | File Templates.
                            $("#postDate").datepicker({
                                dateFormat: "yy-mm-dd",
                                changeYear: true
-                           })
+                           });
 //                           $('#postBody').ckeditor({
 //                               language: '${language}',
 //                               toolbarGroups : [
@@ -134,14 +134,8 @@ To change this template use File | Settings | File Templates.
 
             <form:hidden path="lastModifiedBy" value="${pageContext.request.userPrincipal.name}"/>
             <form:hidden path="lastModifiedDate" value="${currentDate}"/>
-            <c:if test="${not empty entry.id}">
-                <form:hidden path="createdBy" />
-                <form:hidden path="createdDate"/>
-            </c:if>
-            <c:if test="${empty entry.id}">
-                <form:hidden path="createdBy" value="${pageContext.request.userPrincipal.name}"/>
-                <form:hidden path="createdDate" value="${currentDate}"/>
-            </c:if>
+            <form:hidden path="createdBy" value="${pageContext.request.userPrincipal.name}"/>
+            <form:hidden path="createdDate" value="${currentDate}"/>
             <form:hidden path="version"/>
 
             <button type="submit" class="btn btn-success pull-right">

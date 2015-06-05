@@ -3,6 +3,7 @@ package ua.org.project.security.provider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
@@ -24,6 +25,7 @@ public class AppUserDetailsServiceImpl implements UserDetailsService {
 
     final Logger logger = LoggerFactory.getLogger(AppUserDetailsServiceImpl.class);
 
+    @Qualifier("appUserService")
     @Autowired
     private AppUserService userService;
 
