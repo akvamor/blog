@@ -7,6 +7,7 @@ import org.springframework.data.domain.Auditable;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.util.*;
 
@@ -48,7 +49,6 @@ public abstract class AbstractBlog implements Blog, Serializable {
     public void setCreatedBy(String createdBy) {
         this.createdBy = createdBy;
     }
-
 
     @Column(name = "CREATED_DATE")
     @Type(type="org.jadira.usertype.dateandtime.joda.PersistentLocalDateTime")

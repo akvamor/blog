@@ -1,7 +1,6 @@
 package ua.org.project.web.controller.front;
 
 import com.google.common.collect.Lists;
-import org.joda.time.DateTime;
 import org.joda.time.LocalDateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.slf4j.Logger;
@@ -35,9 +34,11 @@ import ua.org.project.web.form.*;
 import ua.org.project.util.UrlUtil;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.Part;
 import javax.validation.Valid;
 import javax.validation.Validator;
 import javax.validation.ConstraintViolation;
+import java.io.IOException;
 import java.util.*;
 
 /**
@@ -78,6 +79,9 @@ public class EntryController {
 
     @Autowired
     private Validator validator;
+
+    @Autowired
+    private FileUploadController fileUploadController;
 
     @InitBinder
     public void initBinder(WebDataBinder binder){
@@ -225,7 +229,6 @@ public class EntryController {
         entry.setCreatedDate(new LocalDateTime());
         entry.setLastModifiedDate(new LocalDateTime());
         uiModel.addAttribute(EntryController.ENTRY, entry);
-        uiModel.addAttribute("currentDate", new DateTime());
         uiModel.addAttribute(EntryController.MENU, this.getMenu(null));
         return "blogs/create";
     }
@@ -243,7 +246,8 @@ public class EntryController {
             @AuthenticationPrincipal User user,
             HttpServletRequest httpServletRequest,
             RedirectAttributes redirectAttributes,
-            Locale locale
+            Locale locale,
+            @RequestParam("file")Part file
     ) {
         logger.info("Create post: " + entry.getId());
         logger.info("Entry: " + entry.toString());
@@ -264,9 +268,24 @@ public class EntryController {
                 messageSource.getMessage("message_entry_save_success", new Object[]{}, locale)));
 
         entry.addImpression(new Impression());
-
+        entry.setCreatedBy(user.getUsername());
+        entry.setCreatedDate(new LocalDateTime());
         entry.setLastModifiedBy(user.getUsername());
         entry.setLastModifiedDate(new LocalDateTime());
+
+        if (file.getSize() > 0){
+            try {
+                fileUploadController.saveFile(file, true, entry, null);
+            } catch (IOException e) {
+                logger.error(e.getMessage());
+                uiModel.addAttribute(EntryController.MESSAGE, new Message(
+                        EntryController.DANGER,
+                        messageSource.getMessage("message_entry_save_fail", new Object[]{}, locale)));
+            }
+            uiModel.addAttribute(EntryController.ENTRY, entry);
+            uiModel.addAttribute(EntryController.MENU, this.getMenu(entry.getCategory().getCategoryId()));
+            return "blogs/update";
+        }
 
         entry = entryService.save(entry);
 
@@ -297,7 +316,6 @@ public class EntryController {
             return "redirect:/blogs/" + UrlUtil.encodeUrlPathSegment(entry.getId().toString(), httpServletRequest);
         }
         uiModel.addAttribute(EntryController.ENTRY, entry);
-        uiModel.addAttribute("currentDate", new DateTime());
         uiModel.addAttribute(EntryController.MENU, this.getMenu(entry.getCategory().getCategoryId()));
         return "blogs/update";
     }
@@ -314,8 +332,10 @@ public class EntryController {
             BindingResult bindingResult,
             Model uiModel,
             HttpServletRequest httpServletRequest,
+            @AuthenticationPrincipal User user,
             RedirectAttributes redirectAttributes,
-            Locale locale) {
+            Locale locale,
+            @RequestParam("file")Part file) {
 
         logger.info("Updating post id: " + id);
         if (bindingResult.hasErrors()) {
@@ -329,10 +349,37 @@ public class EntryController {
             return "blogs/update";
         }
         uiModel.asMap().clear();
+
+        Entry oldVersion = entryService.findById(entry.getId());
+
+        oldVersion.setLastModifiedDate(new LocalDateTime());
+        oldVersion.setLastModifiedBy(user.getUsername());
+        oldVersion.setLocale(entry.getLocale());
+        oldVersion.setBody(entry.getBody());
+        oldVersion.setBodyShort(entry.getBodyShort());
+        oldVersion.setSubject(entry.getSubject());
+        oldVersion.setPostDate(entry.getPostDate());
+        oldVersion.setCategory(entry.getCategory());
+
         redirectAttributes.addFlashAttribute(EntryController.MESSAGE, new Message(
                 EntryController.SUCCESS,
                 messageSource.getMessage("message_entry_save_success", new Object[]{}, locale)));
-        entryService.save(entry);
+
+        if (file.getSize() > 0){
+            try {
+                fileUploadController.saveFile(file, true, oldVersion, null);
+            } catch (IOException e) {
+                logger.error(e.getMessage());
+                uiModel.addAttribute(EntryController.MESSAGE, new Message(
+                        EntryController.DANGER,
+                        messageSource.getMessage("message_entry_save_fail", new Object[]{}, locale)));
+            }
+            uiModel.addAttribute(EntryController.ENTRY, oldVersion);
+            uiModel.addAttribute(EntryController.MENU, this.getMenu(oldVersion.getCategory().getCategoryId()));
+            return "blogs/update";
+        }
+        entryService.save(oldVersion);
+
         return "redirect:/blogs/" + UrlUtil.encodeUrlPathSegment(entry.getId().toString(), httpServletRequest);
     }
 
@@ -340,7 +387,7 @@ public class EntryController {
      * Remove the post. Set entry.isDeleted = true
      */
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    @RequestMapping(value = "remove/{id}", method = RequestMethod.GET)
+    @RequestMapping(value = "/remove/{id}", method = RequestMethod.GET)
     public String remove(
             @PathVariable("id") Long id,
             RedirectAttributes redirectAttributes,
@@ -359,14 +406,14 @@ public class EntryController {
                     EntryController.SUCCESS,
                     messageSource.getMessage("message_entry_removed_success", new Object[]{}, locale)));
         }
-        return "redirect:blogs/" + id.toString();
+        return "redirect:/blogs/" + id.toString();
     }
 
     /**
      * Turn back the post. Set entry.isDeleted = false
      */
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    @RequestMapping(value = "unremove/{id}")
+    @RequestMapping(value = "/unremove/{id}")
     public String unremove(
             @PathVariable("id") Long id,
             RedirectAttributes redirectAttributes,
@@ -384,7 +431,7 @@ public class EntryController {
                     EntryController.SUCCESS,
                     messageSource.getMessage("message_entry_unremoved_success", new Object[]{}, locale)));
         }
-        return "redirect:blogs/" + id.toString();
+        return "redirect:/blogs/" + id.toString();
     }
 
     /**

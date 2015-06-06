@@ -48,13 +48,10 @@ public class FileUploadController {
     @RequestMapping(method = RequestMethod.POST)
     public String processUpload(
             UploadItem uploadItem,
-            BindingResult result,
-            Model uiModel,
             HttpServletRequest request,
-            HttpServletResponse response,
             RedirectAttributes redirectAttributes,
             Locale locale,
-            @RequestParam("file")Part file) throws IOException {
+            @RequestParam("file")Part file){
 
         Long blogId = uploadItem.getBlogId();
         Long commentId = uploadItem.getCommentId();
@@ -62,33 +59,30 @@ public class FileUploadController {
         Message message;
 
         if (file.getSize() > 0){
-            if (uploadType.equalsIgnoreCase("entry")){
-                EntryAttachment entryAttachment = new EntryAttachment();
-                entryAttachment.setFileName(getFileName(file));
-                entryAttachment.setFileData(org.apache.commons.io.IOUtils.toByteArray(file.getInputStream()));
-                entryAttachment.setContentType(file.getContentType());
-
-                Entry entry = entryService.findById(blogId);
-                entryAttachment.setEntry(entry);
-                entry.addAttachment(entryAttachment);
-                entryService.save(entry);
-            } else {
-                CommentAttachment commentAttachment = new CommentAttachment();
-                commentAttachment.setFileName(getFileName(file));
-                commentAttachment.setFileData(org.apache.commons.io.IOUtils.toByteArray(file.getInputStream()));
-                commentAttachment.setContentType(file.getContentType());
-
-                Comment comment = commentService.findById(commentId);
-                commentAttachment.setComment(comment);
-                commentService.save(comment);
+            try {
+                if (uploadType.equalsIgnoreCase("entry")){
+                    Entry entry = entryService.findById(blogId);
+                    saveFile(file, true, entry, null);
+                } else {
+                    Comment comment = commentService.findById(commentId);
+                    saveFile(file, true, null, comment);
+                }
+                message = new Message(
+                        "success",
+                        messageSource.getMessage(
+                                "message_blog_attachment_file_successfully",
+                                new Object[]{getFileName(file)},
+                                locale));
+            } catch (IOException e) {
+                logger.error(e.getMessage());
+                redirectAttributes.addFlashAttribute("validationResult", "error");
+                message = new Message(
+                        "error",
+                        messageSource.getMessage(
+                                "message_blog_attachment_file_error",
+                                new Object[]{},
+                                locale));
             }
-
-            message = new Message(
-                    "success",
-                    messageSource.getMessage(
-                            "message_blog_attachment_file_successfully",
-                            new Object[]{getFileName(file)},
-                            locale));
         } else {
             redirectAttributes.addFlashAttribute("validationResult", "error");
             message = new Message(
@@ -101,6 +95,27 @@ public class FileUploadController {
         redirectAttributes.addFlashAttribute("message", message);
 
         return "redirect:/blogs/" + UrlUtil.encodeUrlPathSegment(blogId.toString(), request);
+    }
+
+    public void saveFile(Part file, boolean isEntry, Entry entry, Comment comment) throws IOException {
+        if (isEntry){
+            EntryAttachment entryAttachment = new EntryAttachment();
+            entryAttachment.setFileName(getFileName(file));
+            entryAttachment.setFileData(org.apache.commons.io.IOUtils.toByteArray(file.getInputStream()));
+            entryAttachment.setContentType(file.getContentType());
+
+            entryAttachment.setEntry(entry);
+            entry.addAttachment(entryAttachment);
+            entryService.save(entry);
+        } else {
+            CommentAttachment commentAttachment = new CommentAttachment();
+            commentAttachment.setFileName(getFileName(file));
+            commentAttachment.setFileData(org.apache.commons.io.IOUtils.toByteArray(file.getInputStream()));
+            commentAttachment.setContentType(file.getContentType());
+
+            commentAttachment.setComment(comment);
+            commentService.save(comment);
+        }
     }
 
     private String getFileName(Part file){

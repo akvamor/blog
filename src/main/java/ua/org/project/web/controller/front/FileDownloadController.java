@@ -16,6 +16,7 @@ import ua.org.project.service.EntryAttachmentService;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 
 /**
  * Created by Dmitry Petrov on 5/31/14.
@@ -51,7 +52,6 @@ public class FileDownloadController {
     @ResponseBody
     public byte[] downloadCommentAttachment(
             @PathVariable("id") Long id,
-            HttpServletRequest request,
             HttpServletResponse response) {
         logger.info("Processing download for comment attachment with id {}", id);
         CommentAttachment commentAttachment = commentAttachmentService.findById(id);
@@ -65,11 +65,12 @@ public class FileDownloadController {
 
     @RequestMapping(value = "/images/{type}/{id}", method = RequestMethod.GET)
     @ResponseBody
-    public byte[] showPhoto(
+    public void showPhoto(
             @PathVariable("type") String type,
-            @PathVariable("id") Long id
-    ){
+            @PathVariable("id") Long id,
+            HttpServletResponse response){
         Attachment attachment;
+
         if (type.equals("entry")){
             attachment = entryAttachmentService.findById(id);
         } else {
@@ -78,7 +79,14 @@ public class FileDownloadController {
         if (attachment.getFileData() != null) {
             logger.info("Download photo for {}, id: {}", type, id);
         }
-        return attachment.getFileData();
+        response.setContentType("image/jpeg, image/jpg, image/png, image/gif");
+
+        try {
+            response.getOutputStream().write(attachment.getFileData());
+            response.getOutputStream().close();
+        } catch (IOException e) {
+            logger.error(e.getMessage());
+        }
     }
 
 }

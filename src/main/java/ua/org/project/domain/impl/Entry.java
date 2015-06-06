@@ -19,13 +19,13 @@ import java.util.Set;
 public class Entry extends AbstractBlog implements Serializable {
 
 	private static final long serialVersionUID = -2105667655692873010L;
-	private static final int SHORT_BODY_LENGTH = 500;
     private static final String THREE_DOTS = "...";
 
     private Category category;
     private String locale;
     private String subject;
     private String body;
+    private String bodyShort;
     private Impression impressions;
     private Set<EntryAttachment> attachments = new HashSet<EntryAttachment>();
     private Set<EntryLike> likes = new HashSet<EntryLike>();
@@ -33,15 +33,11 @@ public class Entry extends AbstractBlog implements Serializable {
 
     public Entry() {     }
 
-    @Transient
-    public String getShortBody() {
-        if (body.length() <= SHORT_BODY_LENGTH)
-            return body;
-        StringBuffer result = new StringBuffer(SHORT_BODY_LENGTH + 3);
-        result.append(body.substring(0, SHORT_BODY_LENGTH));
-        result.append(THREE_DOTS);
-        return result.toString();
-    }
+    @NotEmpty(message = "{validation.posting.bodyshort.NotEmpty.message}")
+    @Column(name = "BODY_SHORT")
+    public String getBodyShort() {return bodyShort;}
+    public void setBodyShort(String bodyShort) {this.bodyShort = bodyShort;}
+
 
     @Column(name = "SUBJECT")
     @NotEmpty(message = "{validation.posting.subject.NotEmpty.message}")
@@ -76,7 +72,6 @@ public class Entry extends AbstractBlog implements Serializable {
         this.locale = locale;
     }
 
-
     
     @OneToOne(fetch = FetchType.EAGER, mappedBy = "entry", cascade = CascadeType.ALL)
     public Impression getImpressions() {
@@ -89,7 +84,6 @@ public class Entry extends AbstractBlog implements Serializable {
 
     @NotNull
     @JsonIgnore
-    
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "CATEGORY_ID")
     public Category getCategory() {
@@ -101,7 +95,6 @@ public class Entry extends AbstractBlog implements Serializable {
 
 
     @JsonIgnore
-    
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "entry", cascade = CascadeType.ALL)
     @OrderBy("id DESC ")
     public Set<EntryAttachment> getAttachments() {
@@ -113,7 +106,6 @@ public class Entry extends AbstractBlog implements Serializable {
 
 
     @JsonIgnore
-    
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "entry", cascade = CascadeType.ALL)
     @OrderBy("createdDate DESC ")
     public Set<Comment> getComments() {
@@ -125,7 +117,6 @@ public class Entry extends AbstractBlog implements Serializable {
 
 
     @JsonIgnore
-    
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "entry", cascade = CascadeType.ALL)
     public Set<EntryLike> getLikes() {
         return likes;

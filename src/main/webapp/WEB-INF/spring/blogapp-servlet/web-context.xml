@@ -37,7 +37,7 @@
             p:defaultEncoding="UTF-8"
             p:fallbackToSystemLocale="false"/>
 
-    <resources mapping="/resources/**" location="/" />
+    <resources mapping="/resources/**" location="/resources/" />
 
     <default-servlet-handler/>
 

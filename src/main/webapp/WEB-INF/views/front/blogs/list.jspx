@@ -46,7 +46,7 @@
         <c:forEach var="item" items="${entries.entryData}">
             <div class="col-6 col-sm-6 col-lg-6">
                 <h4>${item.subject}</h4>
-                ${item.shortBody}
+                ${item.bodyShort}
 
                 <ul class="list-inline blog-panel-likes">
                     <c:if test="${item.isDeleted == true}">

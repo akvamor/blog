@@ -38,6 +38,7 @@ To change this template use File | Settings | File Templates.
                 modelAttribute="entry"
                 method="post"
                 cssClass="form-horizontal"
+                enctype="multipart/form-data"
                 role="form">
 
 
@@ -79,6 +80,49 @@ To change this template use File | Settings | File Templates.
             </div>
 
 
+            <form:errors path="bodyShort" element="div" cssClass="alert alert-warning"/>
+            <div class="form-group">
+                <form:label cssClass="col-sm-2 control-label" path="bodyShort"><spring:message code="label_body_short"/></form:label>
+                <div class="col-sm-10">
+                    <form:textarea rows="50" path="bodyShort" id="shortPostBody" cssClass="form-control"/>
+                    <script type="text/javascript">
+                        $(document).ready(function(){
+
+                            CKEDITOR.disableAutoInline = true;
+
+                            var config = {
+                                extraPlugins: 'codesnippet',
+                                toolbar: [
+                                    { name: 'document', groups: [ 'mode', 'document', 'doctools' ], items: [ 'Source', '-', 'Save', 'NewPage', 'Preview', 'Print', '-', 'Templates' ] },
+                                    { name: 'clipboard', groups: [ 'clipboard', 'undo' ], items: [ 'Cut', 'Copy', 'Paste', 'PasteText', 'PasteFromWord', '-', 'Undo', 'Redo' ] },
+                                    { name: 'editing', groups: [ 'find', 'selection', 'spellchecker' ], items: [ 'Find', 'Replace', '-', 'SelectAll', '-', 'Scayt' ] },
+                                    { name: 'forms', items: [ 'Form', 'Checkbox', 'Radio', 'TextField', 'Textarea', 'Select', 'Button', 'ImageButton', 'HiddenField' ] },
+                                    '/',
+                                    { name: 'basicstyles', groups: [ 'basicstyles', 'cleanup' ], items: [ 'Bold', 'Italic', 'Underline', 'Strike', 'Subscript', 'Superscript', '-', 'RemoveFormat' ] },
+                                    { name: 'paragraph', groups: [ 'list', 'indent', 'blocks', 'align', 'bidi' ], items: [ 'NumberedList', 'BulletedList', '-', 'Outdent', 'Indent', '-', 'Blockquote', 'CreateDiv', '-', 'JustifyLeft', 'JustifyCenter', 'JustifyRight', 'JustifyBlock', '-', 'BidiLtr', 'BidiRtl', 'Language' ] },
+                                    { name: 'links', items: [ 'Link', 'Unlink', 'Anchor' ] },
+                                    { name: 'insert', items: [ 'Image', 'Flash', 'Table', 'HorizontalRule', 'Smiley', 'SpecialChar', 'PageBreak', 'Iframe' ] },
+                                    '/',
+                                    { name: 'styles', items: [ 'Styles', 'Format', 'Font', 'FontSize' ] },
+                                    { name: 'colors', items: [ 'TextColor', 'BGColor' ] },
+                                    { name: 'tools', items: [ 'Maximize', 'ShowBlocks' ] },
+                                    { name: 'others', items: [ '-' ] },[ 'CodeSnippet' ]
+                                ],
+                                codeSnippet_theme: 'monokai_sublime',
+                                height: 200
+                            };
+
+                            CKEDITOR.replace( 'shortPostBody', config );
+
+                            if (CKEDITOR.env.ie) {
+                                if (CKEDITOR.env.version == 8) CKEDITOR.document.getById('ie8-warning').addClass('warning');
+                            }
+
+                        })
+                    </script>
+                </div>
+            </div>
+
             <form:errors path="body" element="div" cssClass="alert alert-warning"/>
             <div class="form-group">
                 <form:label cssClass="col-sm-2 control-label" path="body">${labelBody}:</form:label>
@@ -91,31 +135,26 @@ To change this template use File | Settings | File Templates.
                                dateFormat: "yy-mm-dd",
                                changeYear: true
                            });
-//                           $('#postBody').ckeditor({
-//                               language: '${language}',
-//                               toolbarGroups : [
-//                                   { name: 'clipboard',   groups: [ 'clipboard', 'undo' ] },
-//                                   { name: 'basicstyles', groups: [ 'basicstyles', 'cleanup' ] },
-//                                   { name: 'paragraph',   groups: [ 'list', 'indent', 'blocks', 'align', 'bidi', 'codesnipped' ] },
-//                                   { name: 'codesnipped' },
-//                                   { name: 'styles' },
-//                                   { name: 'colors' },
-//                                   { name: 'tools' },
-//                                   { name: 'links' }
-//                               ],
-//                               autoGrow_minHeight : 338,
-//                               uiColor: '#CCCCCC'
-//                           })
 
                            CKEDITOR.disableAutoInline = true;
 
                            var config = {
                                extraPlugins: 'codesnippet',
                                toolbar: [
-                                   [ 'Clipboard' ],[ 'Undo', 'Redo' ],
-                                   [ 'list', 'indent', 'blocks', 'align', 'bidi', 'codesnipped' ],
-                                   [ 'Bold', 'Italic', 'Underline' ],
-                                   [ 'Basicstyles', 'Cleanup' ],[ 'Source' ],[ 'CodeSnippet' ]
+                                   { name: 'document', groups: [ 'mode', 'document', 'doctools' ], items: [ 'Source', '-', 'Save', 'NewPage', 'Preview', 'Print', '-', 'Templates' ] },
+                                   { name: 'clipboard', groups: [ 'clipboard', 'undo' ], items: [ 'Cut', 'Copy', 'Paste', 'PasteText', 'PasteFromWord', '-', 'Undo', 'Redo' ] },
+                                   { name: 'editing', groups: [ 'find', 'selection', 'spellchecker' ], items: [ 'Find', 'Replace', '-', 'SelectAll', '-', 'Scayt' ] },
+                                   { name: 'forms', items: [ 'Form', 'Checkbox', 'Radio', 'TextField', 'Textarea', 'Select', 'Button', 'ImageButton', 'HiddenField' ] },
+                                   '/',
+                                   { name: 'basicstyles', groups: [ 'basicstyles', 'cleanup' ], items: [ 'Bold', 'Italic', 'Underline', 'Strike', 'Subscript', 'Superscript', '-', 'RemoveFormat' ] },
+                                   { name: 'paragraph', groups: [ 'list', 'indent', 'blocks', 'align', 'bidi' ], items: [ 'NumberedList', 'BulletedList', '-', 'Outdent', 'Indent', '-', 'Blockquote', 'CreateDiv', '-', 'JustifyLeft', 'JustifyCenter', 'JustifyRight', 'JustifyBlock', '-', 'BidiLtr', 'BidiRtl', 'Language' ] },
+                                   { name: 'links', items: [ 'Link', 'Unlink', 'Anchor' ] },
+                                   { name: 'insert', items: [ 'Image', 'Flash', 'Table', 'HorizontalRule', 'Smiley', 'SpecialChar', 'PageBreak', 'Iframe' ] },
+                                   '/',
+                                   { name: 'styles', items: [ 'Styles', 'Format', 'Font', 'FontSize' ] },
+                                   { name: 'colors', items: [ 'TextColor', 'BGColor' ] },
+                                   { name: 'tools', items: [ 'Maximize', 'ShowBlocks' ] },
+                                   { name: 'others', items: [ '-' ] },[ 'CodeSnippet' ]
                                ],
                                codeSnippet_theme: 'monokai_sublime',
                                height: 400
@@ -132,16 +171,45 @@ To change this template use File | Settings | File Templates.
                 </div>
             </div>
 
-            <form:hidden path="lastModifiedBy" value="${pageContext.request.userPrincipal.name}"/>
-            <form:hidden path="lastModifiedDate" value="${currentDate}"/>
-            <form:hidden path="createdBy" value="${pageContext.request.userPrincipal.name}"/>
-            <form:hidden path="createdDate" value="${currentDate}"/>
-            <form:hidden path="version"/>
+            <spring:message code="label_file_upload" var="labelFileUpload"/>
+            <spring:message code="label_file_button" var="upload"/>
 
+            <div class="form-group">
+                <label class="col-sm-2 control-label" for="file">${labelFileUpload}:</label>
+                <div class="col-sm-10">
+                    <input name="file" type="file" class="form-control"/>
+                </div>
+            </div>
+            <script type="text/javascript">
+                $(document).ready(function(){
+                    $('#uploadEntryAttachment').click(function() {
+                        $('#entryAttachmentUpload').slideToggle("slow").focus();
+                    });
+                });
+            </script>
+
+            <c:if test="${not empty entry.attachments}">
+                <hr/>
+                <div class="panel panel-success">
+                    <div class="panel-heading">${attachmentLabel}</div>
+                    <table class="table">
+                        <c:forEach items="${entry.attachments}" var="attachment">
+                            <tr>
+                                <td style="width:30px"><a href="${homeURL}/filedownload/entry/${attachment.id}" target="_blank"><span class="glyphicon glyphicon-file"><jsp:text/></span></a></td>
+                                <sec:authorize access="hasRole('ROLE_ADMIN')">
+                                    <td style="width:30px"><a href="${homeURL}/attachment/remove/${attachment.id}"><span class="glyphicon glyphicon-remove"><jsp:text/></span></a></td>
+                                </sec:authorize>
+                                <td>${attachment.fileName}</td>
+                            </tr>
+                        </c:forEach>
+                    </table>
+                </div>
+            </c:if>
+
+            <form:hidden path="version"/>
             <button type="submit" class="btn btn-success pull-right">
                 <span>${buttonSave}</span>
             </button>
-
         </form:form>
     </div>
 

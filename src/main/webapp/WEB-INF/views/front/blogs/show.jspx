@@ -89,10 +89,6 @@
     <!-- Display comments -->
     <jsp:include page="comment.jspx"/>
 
-    <sec:authorize access="hasRole('ROLE_ADMIN')">
-        <jsp:include page="audit.jspx"/>
-    </sec:authorize>
-
 </div>
 
 
