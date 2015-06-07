@@ -11,7 +11,7 @@ import java.util.Set;
  * Created by Dmitry Petrov on 5/28/14.
  */
 @Entity
-@Table(name = "role")
+@Table(name = "ROLE")
 public class Role implements Serializable {
     
 	private static final long serialVersionUID = 1635882470659699136L;

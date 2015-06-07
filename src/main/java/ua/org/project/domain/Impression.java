@@ -9,7 +9,7 @@ import javax.persistence.*;
  * Created by Dmitry Petrov on 28.06.14.
  */
 @Entity
-@Table(name = "entry_impression")
+@Table(name = "ENTRY_IMPRESSION")
 public class Impression {
 
     private Long id;

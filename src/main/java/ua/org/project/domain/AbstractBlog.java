@@ -8,6 +8,7 @@ import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
+import java.awt.*;
 import java.io.Serializable;
 import java.util.*;
 
@@ -150,7 +151,10 @@ public abstract class AbstractBlog implements Blog, Serializable {
 
         Set<Attachment> attachments = this.getAttachmentAbstract();
         for (Attachment attachment : attachments) {
-            if (attachment.getContentType().equals("image/jpeg")){
+            if (attachment.getContentType().equals("image/jpeg") ||
+                    attachment.getContentType().equals("image/png")||
+                    attachment.getContentType().equals("image/gif") ||
+                    attachment.getContentType().equals("image/pjpeg")){
                 list.add(attachment.getId());
             }
         }

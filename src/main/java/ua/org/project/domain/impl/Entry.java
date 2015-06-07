@@ -15,7 +15,7 @@ import java.util.Set;
  * Created by Dmitry Petrov on 5/28/14.
  */
 @Entity
-@Table(name = "entry")
+@Table(name = "ENTRY")
 public class Entry extends AbstractBlog implements Serializable {
 
 	private static final long serialVersionUID = -2105667655692873010L;

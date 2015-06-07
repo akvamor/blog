@@ -15,7 +15,7 @@ import java.util.Set;
  * Created by Dmitry Petrov on 5/28/14.
  */
 @Entity
-@Table(name = "comment")
+@Table(name = "COMMENT")
 public class Comment extends AbstractBlog implements Serializable {
 
 	private static final long serialVersionUID = -4116615779286784867L;
@@ -32,7 +32,7 @@ public class Comment extends AbstractBlog implements Serializable {
     }
 
     @OneToMany(fetch = FetchType.EAGER)
-    @JoinTable(name = "comment_tree",
+    @JoinTable(name = "COMMENT_TREE",
         joinColumns = @JoinColumn(name="PARENT_ID"),
         inverseJoinColumns = @JoinColumn(name = "CHILD_ID"))
     public Set<Comment> getChildComment() {
@@ -45,7 +45,7 @@ public class Comment extends AbstractBlog implements Serializable {
 
     @JsonIgnore
     @ManyToOne(fetch = FetchType.EAGER)
-    @JoinTable(name = "comment_tree",
+    @JoinTable(name = "COMMENT_TREE",
             joinColumns = @JoinColumn(name="CHILD_ID"),
             inverseJoinColumns = @JoinColumn(name = "PARENT_ID"))
     public Comment getParentComment() {

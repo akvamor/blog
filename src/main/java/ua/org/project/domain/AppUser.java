@@ -10,7 +10,7 @@ import java.util.Set;
  * Created by Dmitry Petrov on 5/28/14.
  */
 @Entity
-@Table(name = "app_user")
+@Table(name = "APP_USER")
 public class AppUser implements Serializable{
 
 	private static final long serialVersionUID = 8008965285355250122L;
@@ -117,7 +117,7 @@ public class AppUser implements Serializable{
     }
 
     @ManyToMany(fetch = FetchType.EAGER)
-    @JoinTable(name = "user_role_detail",
+    @JoinTable(name = "USER_ROLE_DETAIL",
             joinColumns = @JoinColumn(name = "USER_ID"),
             inverseJoinColumns = @JoinColumn(name = "ROLE_ID"))
     public Set<Role> getRoles() {
